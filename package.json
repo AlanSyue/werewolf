@@ -12,7 +12,8 @@
         "prod": "cross-var $npm_execpath run production",
         "production": "cross-env NODE_ENV=production webpack --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
         "test": "cross-env NODE_ENV=test jest",
-        "tdd": "cross-var $npm_execpath run test -- --watch --notify"
+        "tdd": "cross-var $npm_execpath run test -- --watch --notify",
+        "postinstall": "npm run prod"
     },
     "devDependencies": {
         "@coreui/coreui": "^2.1.12",
