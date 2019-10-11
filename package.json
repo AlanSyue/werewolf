@@ -63,5 +63,9 @@
     },
     "engines": {
         "node": ">=6.0.0"
+    },
+    "dependencies": {
+        "laravel-echo": "^1.6.1",
+        "pusher-js": "^5.0.2"
     }
 }

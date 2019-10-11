@@ -44,14 +44,6 @@
                                     </p>
                                 </div>
                             </div>
-
-                            <div class="card mb-4">
-                                <div class="card-header">Header</div>
-                                <div class="card-body">
-                                    <h4 class="card-title">Info card title</h4>
-                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                </div>
-                            </div><!--card-->
                         </div><!--col-md-4-->
 
                         <div class="col-md-8 order-2 order-sm-1">
@@ -59,11 +51,11 @@
                                 <div class="col">
                                     <div class="card mb-4">
                                         <div class="card-header">
-                                            Item
+                                            手錶資訊
                                         </div><!--card-header-->
 
                                         <div class="card-body">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non qui facilis deleniti expedita fuga ipsum numquam aperiam itaque cum maxime.
+                                            test
                                         </div><!--card-body-->
                                     </div><!--card-->
                                 </div><!--col-md-6-->
@@ -73,25 +65,11 @@
                                 <div class="col">
                                     <div class="card mb-4">
                                         <div class="card-header">
-                                            Item
+                                            過往資訊
                                         </div><!--card-header-->
 
                                         <div class="card-body">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non qui facilis deleniti expedita fuga ipsum numquam aperiam itaque cum maxime.
-                                        </div><!--card-body-->
-                                    </div><!--card-->
-                                </div><!--col-md-6-->
-                            </div><!--row-->
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            Item
-                                        </div><!--card-header-->
-
-                                        <div class="card-body">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non qui facilis deleniti expedita fuga ipsum numquam aperiam itaque cum maxime.
+                                            ...
                                         </div><!--card-body-->
                                     </div><!--card-->
                                 </div><!--col-md-6-->
@@ -99,40 +77,16 @@
                                 <div class="col">
                                     <div class="card mb-4">
                                         <div class="card-header">
-                                            Item
+                                            即時資訊
                                         </div><!--card-header-->
 
-                                        <div class="card-body">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non qui facilis deleniti expedita fuga ipsum numquam aperiam itaque cum maxime.
+                                        <div class="card-body" id="dashboard-messages">
+                                            ...
                                         </div><!--card-body-->
                                     </div><!--card-->
                                 </div><!--col-md-6-->
 
-                                <div class="w-100"></div>
 
-                                <div class="col">
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            Item
-                                        </div><!--card-header-->
-
-                                        <div class="card-body">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non qui facilis deleniti expedita fuga ipsum numquam aperiam itaque cum maxime.
-                                        </div><!--card-body-->
-                                    </div><!--card-->
-                                </div><!--col-md-6-->
-
-                                <div class="col">
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            Item
-                                        </div><!--card-header-->
-
-                                        <div class="card-body">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Non qui facilis deleniti expedita fuga ipsum numquam aperiam itaque cum maxime.
-                                        </div><!--card-body-->
-                                    </div><!--card-->
-                                </div><!--col-md-6-->
                             </div><!--row-->
                         </div><!--col-md-8-->
                     </div><!-- row -->
@@ -141,3 +95,12 @@
         </div><!-- row -->
     </div><!-- row -->
 @endsection
+
+@push('after-scripts')
+<script>
+    window.Laravel = {!! json_encode([
+    'userId' => auth()->check() ? auth()->user()->id : null,
+    ]) !!};
+</script>
+{!! script(mix('js/dashboard.js')) !!}
+@endpush
