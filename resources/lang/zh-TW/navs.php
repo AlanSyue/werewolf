@@ -18,8 +18,8 @@ return [
     ],
 
     'frontend' => [
-        'contact' => 'Contact',
-        'dashboard' => '儀表板',
+        'contact' => '聯絡我們',
+        'dashboard' => '個人主頁',
         'login' => '登錄',
         'macros' => '宏',
         'register' => '註冊',

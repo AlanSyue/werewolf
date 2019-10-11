@@ -113,8 +113,8 @@ return [
         ],
 
         'contact' => [
-            'box_title' => 'Contact Us',
-            'button' => 'Send Information',
+            'box_title' => '聯絡我們',
+            'button' => '送出',
         ],
 
         'passwords' => [
