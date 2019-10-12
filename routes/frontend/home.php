@@ -5,7 +5,8 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\User\AccountController;
 use App\Http\Controllers\Frontend\User\ProfileController;
 use App\Http\Controllers\Frontend\User\DashboardController;
-
+use App\Http\Controllers\Frontend\RoomsController;
+use App\Http\Controllers\Frontend\MessagesController;
 /*
  * Frontend Controllers
  * All route names are prefixed with 'frontend.'.
@@ -32,4 +33,13 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         // User Profile Specific
         Route::patch('profile/update', [ProfileController::class, 'update'])->name('profile.update');
     });
+    Route::group(['prefix' => 'rooms'], function () {
+        Route::get('', [RoomsController::class, 'index'])->name('rooms.index');
+        Route::get('create', [RoomsController::class, 'create'])->name('rooms.create');
+        Route::post('store', [RoomsController::class, 'store'])->name('rooms.store');
+        Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
+        Route::post('{room}/join', [RoomsController::class, 'join'])->name('rooms.join');
+    });
+
+    Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');
 });

@@ -18,3 +18,18 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
 Broadcast::channel('all', function ($user) {
     return true;
 });
+
+Broadcast::channel('room.{roomId}', function ($user, $roomId) {
+    if ($user->hasJoined($roomId)) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email
+        ];
+    }
+    return true;
+});
+
+Broadcast::channel('message', function ($user) {
+    return Auth::check();
+});
