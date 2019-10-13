@@ -19,6 +19,6 @@ class Room extends Model
      * @return array
      */
     protected $fillable = [
-        'name', 'description', 'user_id',
+        'user_id'
     ];
 }

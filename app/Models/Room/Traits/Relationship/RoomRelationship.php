@@ -4,6 +4,7 @@ namespace App\Models\Room\Traits\Relationship;
 
 use App\Models\Auth\User;
 use App\Models\Room\Message;
+use App\Models\Game\Game;
 
 /**
  * Class UserRelationship.
@@ -27,5 +28,15 @@ trait RoomRelationship
     public function messages()
     {
         return $this->hasMany(Message::class, 'room_id');
+    }
+
+    /**
+     * Define room relationship
+     * 
+     * @return mixed
+     */
+    public function games()
+    {
+        return $this->hasMany(Game::class, 'room_id');
     }
 }

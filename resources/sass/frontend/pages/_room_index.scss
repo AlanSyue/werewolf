@@ -1,0 +1,19 @@
+#room_index{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .card{
+        color: #DEDEDE;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        padding: 4em;
+        background-color: none;
+        .card-body{
+            button{
+                width: 100%;
+                margin-bottom: 1em;
+            }
+        }
+    }
+}

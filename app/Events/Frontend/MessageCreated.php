@@ -17,11 +17,6 @@ class MessageCreated implements ShouldBroadcast
     use Dispatchable, SerializesModels, InteractsWithSockets;
 
     /**
-     * The queue on which to broadcast the event
-     */
-    public $broadcastQueue = 'events:message-created';
-
-    /**
      * The message to be broadcasted
      */
     public $message;

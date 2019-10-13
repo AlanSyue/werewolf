@@ -17,11 +17,6 @@ class RoomJoined implements ShouldBroadcast
     use SerializesModels;
 
     /**
-     * The name of the queue on which to place the event
-     */
-    public $broadcastQueue = 'events:room-joined';
-
-    /**
      * The user that joined the room
      */
     public $user;

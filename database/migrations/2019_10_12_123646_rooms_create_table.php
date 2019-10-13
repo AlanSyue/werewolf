@@ -16,10 +16,7 @@ class RoomsCreateTable extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedBigInteger('game_id')->default('0');
-            $table->string('pin_code')->default('0');
-            $table->string('name');
-            $table->string('description');
+            $table->unsignedBigInteger('user_id')->index();
             $table->timestamps();
         });
     }

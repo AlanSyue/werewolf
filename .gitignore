@@ -34,3 +34,5 @@ yarn.lock
 /public/css
 /public/mix-manifest.json
 /public/fonts
+/public/*.js
+/public/*.map

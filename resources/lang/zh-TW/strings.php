@@ -128,5 +128,9 @@ return [
         ],
 
         'welcome_to' => 'Welcome to :place',
+        'room_index' => [
+            'create_room' => '建立遊戲房',
+            'login_room' => '進入遊戲',
+        ]
     ],
 ];

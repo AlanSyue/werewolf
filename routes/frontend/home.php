@@ -34,8 +34,10 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         Route::patch('profile/update', [ProfileController::class, 'update'])->name('profile.update');
     });
     Route::group(['prefix' => 'rooms'], function () {
-        Route::get('', [RoomsController::class, 'index'])->name('rooms.index');
+        // Route::get('', [RoomsController::class, 'index'])->name('rooms.index');
         Route::get('create', [RoomsController::class, 'create'])->name('rooms.create');
+        Route::get('login', [RoomsController::class, 'loginPage'])->name('rooms.login');
+        Route::post('login', [RoomsController::class, 'login']);
         Route::post('store', [RoomsController::class, 'store'])->name('rooms.store');
         Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
         Route::post('{room}/join', [RoomsController::class, 'join'])->name('rooms.join');

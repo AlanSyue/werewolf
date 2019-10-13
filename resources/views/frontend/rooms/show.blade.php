@@ -4,11 +4,6 @@
 <section id="content">
     <section class="hbox stretch">
     <section>
-        <section class="vbox">
-        <header class="header bg-light lt b-b b-light">
-            <a href="{{route('frontend.rooms.index')}}" class="btn btn-sm btn-default pull-right btn-rounded">All Rooms</a>
-            <p><strong>{{$room->name}}</strong></p>
-        </header>
         @if (count($room->messages))
         <section class="w-f scrollable wrapper">              
             <section class="chat-list">
@@ -52,7 +47,6 @@
                     <button class="btn btn-sm btn-danger font-bold btn-rounded" id="send-msg-btn" type="button">Send</button>
                 </span>
             </div>
-            <small id="whisper-typing" style="font-style:italic"></small>
             </form>
         </footer>
         </section>
@@ -76,6 +70,5 @@
     </aside>
     <!-- / side content -->
     </section>
-    <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen,open" data-target="#nav,html"></a>
 </section>
 @endsection

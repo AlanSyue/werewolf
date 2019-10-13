@@ -1,0 +1,16 @@
+#room_login{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .card{
+        max-width: 50%;
+        color: #222222;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        padding: 1em 4em;
+        background-color: none;
+        .card-body{
+        }
+    }
+}

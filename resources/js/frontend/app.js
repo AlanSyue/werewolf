@@ -9,30 +9,20 @@ import '../bootstrap';
 import '../plugins';
 import Vue from 'vue';
 
-window.Vue = Vue;
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
 
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
-
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
 
-const app = new Vue({
-    el: '#app',
-});
+window.axios = axios;
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+
+// const app = new Vue({
+//     el: "#app"
+// });
+
 
 (function($, Echo) {
     const selectors = {
@@ -41,7 +31,6 @@ const app = new Vue({
             sendMsgBtn: "#send-msg-btn",
             roomIdInput: "#room-id-input",
             chatListContainer: ".chat-list",
-            whisperTyping: "#whisper-typing",
             authUserNameInput: "#auth-user-name-input",
             onlineListContainer: "#online-list-container"
         },
@@ -61,7 +50,6 @@ const app = new Vue({
             })
             .joining(user => {
                 let child = `<div><a href="#">${user.name}</a></div>`;
-
                 $(selectors.onlineListContainer).append(child);
             })
             .leaving(user => {
@@ -119,29 +107,20 @@ const app = new Vue({
         }
     };
 
-    const whisper = function() {
-        setTimeout(function() {
-            Echo.private("message").whisper("typing", {
-                name: authUserName
-            });
-        }, 300);
-    };
+    // const listenForWhisper = function() {
+    //     Echo.private("message").listenForWhisper("typing", e => {
+    //         $(selectors.whisperTyping).text(`${e.name} is typing...`);
 
-    const listenForWhisper = function() {
-        Echo.private("message").listenForWhisper("typing", e => {
-            $(selectors.whisperTyping).text(`${e.name} is typing...`);
+    //         setTimeout(function() {
+    //             $(selectors.whisperTyping).text("");
+    //         }, 900);
+    //     });
+    // };
 
-            setTimeout(function() {
-                $(selectors.whisperTyping).text("");
-            }, 900);
-        });
-    };
-
-    $(document.body).on("keypress", selectors.msgInput, whisper);
+    // $(document.body).on("keypress", selectors.msgInput, whisper);
     $(document.body).on("click", selectors.sendMsgBtn, sendMsg);
 
     $(document).ready(function() {
         joinedRoom();
-        // listenForWhisper();
     });
 })(window.$, window.Echo);
