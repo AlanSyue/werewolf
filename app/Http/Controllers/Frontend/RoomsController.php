@@ -10,18 +10,22 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repositories\Frontend\Game\GameRepository;
 use App\Repositories\Frontend\Room\RoomRepository;
-use Illuminate\Support\Facades\Crypt;
+use App\Services\Frontend\RoomService;
+use App\Http\Resources\Frontend\RoomResource;
+
 
 class RoomsController extends Controller
 {
 
     /**
-     * GameRepository constructor.
+     * RoomsController constructor.
      *
-     * @param  Room  $model
+     * @param  RoomService  $roomService
+     * @param  RoomRepository  $roomRepository
      */
-    public function __construct(RoomRepository $roomRepository)
+    public function __construct(RoomService $roomService, RoomRepository $roomRepository)
     {
+        $this->roomService = $roomService;
         $this->roomRepository = $roomRepository;
     }
 
@@ -53,9 +57,9 @@ class RoomsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function loginPage()
+    public function joinPage()
     {
-        return view('frontend.rooms.login');
+        return view('frontend.rooms.join');
     }
 
     /**
@@ -93,7 +97,6 @@ class RoomsController extends Controller
                 'kingwolf_amount' => $request->input('kingwolf_amount', 0)
             ];
             $room = $this->roomRepository->createGameRoom($roomInsertData, $gameInsertData);
-            $user->addRoom($room);
         } catch (Exception $e) {
             Log::error('Exception while creating a chatroom', [
                 'file' => $e->getFile(),
@@ -105,28 +108,7 @@ class RoomsController extends Controller
 
         $encodeRoomId = base64_encode($room->id);
         return redirect()
-            ->route('frontend.rooms.show', $encodeRoomId)
-            ->with([
-                'is_room_major' => true
-            ]);
-    }
-
-
-    public function login(Request $request, Room $room)
-    {
-        $this->validate($request, [
-            'pin_code' => 'required',
-        ]);
-        $encodeRoomId = $request->input('pin_code', '');
-        $roomId = base64_decode($encodeRoomId);
-        if (!$room->where('id', $roomId)->exists()) {
-            return back()->withInput();
-        }
-        return redirect()
-            ->route('frontend.rooms.show', $encodeRoomId)
-            ->with([
-                'is_room_major' => false
-            ]);
+            ->route('frontend.rooms.show', $encodeRoomId);
     }
 
     /**
@@ -137,8 +119,9 @@ class RoomsController extends Controller
         $user = Auth::user();
         $roomId = base64_decode($encodeRoomId);
         $room = $this->roomRepository->getById($roomId);
-        $room->join($user);
+        $this->roomRepository->updateRoomUser($user, $room);
         $room = $room->load('messages');
+        event(new RoomJoined($request->user(), $room));
         return view('frontend.rooms.show', compact('room'));
     }
 
@@ -148,22 +131,42 @@ class RoomsController extends Controller
      * @param Room $room
      * @param \Illuminate\Http\Request $request
      */
-    public function join(Room $room, Request $request)
+    public function join(Room $model, Request $request)
     {
-        try {
-            $room->join($request->user());
+        $this->validate($request, [
+            'pin_code' => 'required',
+        ]);
+        $encodeRoomId = $request->input('pin_code', '');
+        $roomId = base64_decode($encodeRoomId);
 
-            event(new RoomJoined($request->user(), $room));
-        } catch (Exception $e) {
+        $room = $model->find($roomId);
+        if (!$room) {
+            return back()->withInput();
+        }
+        try { } catch (Exception $e) {
             Log::error('Exception while joining a chat room', [
                 'file' => $e->getFile(),
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),
             ]);
-
             return back();
         }
 
-        return redirect()->route('frontend.rooms.show', ['room' => $room->id]);
+        return redirect()
+            ->route('frontend.rooms.show', $encodeRoomId);
+    }
+
+    /**
+     * Show room with messages
+     */
+    public function roomData(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            abort(403);
+        }
+        $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
+        return new RoomResource($roomRelationData);
     }
 }

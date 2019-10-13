@@ -4,6 +4,7 @@ namespace App\Models\Room\Traits\Relationship;
 
 use App\Models\Auth\User;
 use App\Models\Room\Message;
+use App\Models\Room\RoomUser;
 use App\Models\Game\Game;
 
 /**
@@ -14,10 +15,10 @@ trait RoomRelationship
     /**
      * The rooms that belongs to the user
      */
-    public function users()
+    public function roomUsers()
     {
-        return $this->belongsToMany(User::class, 'room_user')
-            ->withTimestamps();
+
+        return $this->hasMany(RoomUser::class, 'room_id');
     }
 
     /**

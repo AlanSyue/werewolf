@@ -23,10 +23,6 @@ Route::post('contact/send', [ContactController::class, 'send'])->name('contact.s
  */
 Route::group(['middleware' => ['auth', 'password_expires']], function () {
     Route::group(['namespace' => 'User', 'as' => 'user.'], function () {
-        // User Dashboard Specific
-        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-        Route::get('test/analysis', [DashboardController::class, 'testAnalysis'])->name('test.analysis');
         // User Account Specific
         Route::get('account', [AccountController::class, 'index'])->name('account');
 
@@ -36,11 +32,12 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     Route::group(['prefix' => 'rooms'], function () {
         // Route::get('', [RoomsController::class, 'index'])->name('rooms.index');
         Route::get('create', [RoomsController::class, 'create'])->name('rooms.create');
-        Route::get('login', [RoomsController::class, 'loginPage'])->name('rooms.login');
-        Route::post('login', [RoomsController::class, 'login']);
+        Route::get('join', [RoomsController::class, 'joinPage'])->name('rooms.join');
+        Route::post('join', [RoomsController::class, 'join']);
         Route::post('store', [RoomsController::class, 'store'])->name('rooms.store');
+        Route::get('data', [RoomsController::class, 'roomData'])->name('rooms.roomData');
         Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
-        Route::post('{room}/join', [RoomsController::class, 'join'])->name('rooms.join');
+        // Route::post('{room}/join', [RoomsController::class, 'join'])->name('rooms.join');
     });
 
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');

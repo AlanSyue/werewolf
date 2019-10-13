@@ -18,6 +18,7 @@ class CraeteRoomUserTable extends Migration
             $table->bigInteger('room_id');
             $table->bigInteger('user_id');
             $table->timestamps();
+            $table->unique('user_id');
         });
     }
 

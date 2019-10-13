@@ -4,7 +4,7 @@ namespace App\Models\Auth\Traits\Relationship;
 
 use App\Models\Auth\SocialAccount;
 use App\Models\Auth\PasswordHistory;
-use App\Models\Room\Room;
+use App\Models\Room\RoomUser;
 use App\Models\Room\Message;
 
 /**
@@ -31,10 +31,9 @@ trait UserRelationship
     /**
      * The rooms that this user belongs to
      */
-    public function rooms()
+    public function room()
     {
-        return $this->belongsToMany(Room::class, 'room_user')
-            ->withTimestamps();
+        return $this->hasOne(RoomUser::class, 'user_id');
     }
 
     /**

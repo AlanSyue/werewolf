@@ -100,18 +100,6 @@ trait UserMethod
         return config('access.users.requires_approval') && !$this->confirmed;
     }
 
-    /** room */
-
-    /**
-     * Add a new room
-     * 
-     * @param \App\Room $room
-     */
-    public function addRoom($room)
-    {
-        return $this->rooms()->attach($room);
-    }
-
     /**
      * Check if user has joined room
      * 
@@ -121,8 +109,6 @@ trait UserMethod
      */
     public function hasJoined($roomId)
     {
-        $room = $this->rooms->where('id', $roomId)->first();
-
-        return $room ? true : false;
+        return $this->room->where('room_id', $roomId)->exists();
     }
 }

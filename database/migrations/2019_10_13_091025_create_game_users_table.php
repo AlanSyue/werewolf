@@ -17,10 +17,10 @@ class CreateGameUsersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index();
             $table->unsignedBigInteger('game_id')->index();
-            $table->unsignedTinyInteger('sear_id');
+            $table->unsignedTinyInteger('seat_index');
             $table->unsignedInteger('role_type')->index();
-            $table->unsignedTinyInteger('skill_use_status');
-            $table->unsignedTinyInteger('is_live');
+            $table->unsignedTinyInteger('skill_use_status')->default(0);
+            $table->unsignedTinyInteger('is_live')->default(1);
             $table->timestamps();
         });
     }

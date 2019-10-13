@@ -10,16 +10,6 @@ use App\Models\Auth\User;
 trait RoomMethod
 {
     /**
-     * Join a chat room
-     * 
-     * @param \App\Models\Auth\User $user
-     */
-    public function join(User $user)
-    {
-        return $this->users()->attach($user);
-    }
-
-    /**
      * Leave a chat room
      * 
      * @param \App\Models\Auth\User $user

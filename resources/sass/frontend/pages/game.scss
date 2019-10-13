@@ -1,0 +1,48 @@
+#game{
+    >.container-fluid{
+        padding: 1em;
+        .seat_header{
+            padding: 4px;
+        }
+        .seat_area{
+            border-radius: 3px;
+            border: 1px solid #222;
+            padding:1em;
+            margin-bottom: 1em;
+            .seat_unit{
+                position: relative;
+                border-radius: 3px;
+                border: 1px solid #222;
+                margin-bottom:1em;
+                label{
+                    position: absolute;
+                    border-radius: 3px;
+                    left:0;
+                    right:0;
+                    background-color: #222;
+                    color: #FFF;
+                    width: 1em;
+                    height: 1em;
+                }
+                .dummy{
+                    margin-top: 100%;
+                }
+                .seat_input{
+                    position: absolute;
+                    top:0;
+                    bottom:0;
+                    width: 100%;
+                    text-align-last:center;
+                    background-color: none;
+
+                }
+            }
+        }
+        .wait_area{
+            .list-group{
+                width: 100%;
+                margin-bottom: 1em;
+            }
+        }
+    }
+}
