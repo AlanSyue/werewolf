@@ -38,6 +38,7 @@ class RoomResource extends JsonResource
         return [
             'room' => [
                 'id' => $this->id,
+                'mayor_user_id' => $this->user_id,
                 'pin_code' => base64_encode($this->id),
             ],
             'game' => $this->games->first(),

@@ -23,8 +23,8 @@ Broadcast::channel('room.{roomId}', function ($user, $roomId) {
     if ($user->hasJoined($roomId)) {
         return [
             'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email
+            'full_name' => $user->full_name,
+            'first_name' => $user->first_name
         ];
     }
     return true;

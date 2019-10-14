@@ -45,6 +45,13 @@ class RoomRepository extends BaseRepository
         return $room;
     }
 
+    public function getRoomUsers($roomId)
+    {
+        return $this->roomUserModel
+            ->where('room_id', $roomId)
+            ->get();
+    }
+
     public function getRoomUserForUser(User $user)
     {
         return $this->roomUserModel

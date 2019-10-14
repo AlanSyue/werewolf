@@ -4,7 +4,7 @@ namespace App\Models\Game\Traits\Relationship;
 
 use App\Models\Auth\User;
 use App\Models\Room\Room;
-use App\Models\Gmae\GameUser;
+use App\Models\Game\GameUser;
 
 /**
  * Class UserRelationship.

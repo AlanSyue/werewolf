@@ -1,6 +1,9 @@
 let getters = {
-    room: state => {
-        return state.room;
+    gameData: state => {
+        return state.gameData;
+    },
+    auth: state => {
+        return state.auth;
     }
 };
 

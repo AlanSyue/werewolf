@@ -41,4 +41,5 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     });
 
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');
+    Route::get('auth', [AccountController::class, 'getAuth'])->name('auth.get');
 });
