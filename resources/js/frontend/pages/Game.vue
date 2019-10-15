@@ -1,4 +1,5 @@
 <template>
+
     <section id="game">
         <div class="container-fluid">
             <div class="row">
@@ -8,24 +9,27 @@
                             <div class="col">
                                 <div class="row seat_header">
                                     <h5>房間: {{room.pin_code}}</h5>
-                                    <div v-if="room.mayor_user_id == auth.id">
-                                            <button type="button" class="btn btn-outline-success" >更新</button>
-                                            <button type="button" class="btn btn-outline-warning" >確認</button>
-                                    </div>
+                                    <el-row v-if="room.mayor_user_id == auth.id">
+                                        <el-button @click="updateRoomSeats" type="primary" plain>確認座位</el-button>
+                                        <el-button @click="startGame" type="primary" plain>開始遊戲</el-button>
+                                    </el-row>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div v-for="seat in roomSeats" :key="seat.id" class=" col-3 col-lg-2">
+                            <div v-for="seat in roomSeats" :key="seat.id" class=" col-4 col-lg-3">
                                 <div class="seat_unit">
                                     <label for="">{{seat.id}}</label>
                                     <div class="dummy"></div>
-                                    <select class="seat_input" v-model="seat.user_id">
-                                        <option value="0">未選擇</option>
-                                        <option v-for="user in roomUsers" v-bind:key="user.id" v-bind:value="user.id">
-                                            {{ user.first_name }}
-                                        </option>
-                                    </select>
+                                    <el-select v-if="room.mayor_user_id == auth.id" v-model="seat.user_id" placeholder='座位'>
+                                        <el-option
+                                        v-for="user in roomUsers"
+                                        :key="user.id"
+                                        :label="user.first_name"
+                                        :value="user.id">
+                                        </el-option>
+                                    </el-select>
+                                    <el-button v-else>{{seat.user_id}}</el-button>
                                 </div>
                             </div>
                         </div>

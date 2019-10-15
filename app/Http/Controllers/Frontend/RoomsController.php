@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Models\Room\Room;
 use App\Events\Frontend\RoomJoined;
+use App\Events\Frontend\GameUserUpdated;
+use App\Events\Frontend\GameStarted;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -156,9 +158,6 @@ class RoomsController extends Controller
             ->route('frontend.rooms.show', $encodeRoomId);
     }
 
-    /**
-     * Show room with messages
-     */
     public function roomData(Request $request)
     {
         $user = Auth::user();
@@ -168,5 +167,29 @@ class RoomsController extends Controller
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
         return new RoomResource($roomRelationData);
+    }
+    public function upadteRoomSeats(Request $request)
+    {
+        $this->validate($request, [
+            'seats' => 'required'
+        ]);
+        $seats = $request->input('seats');
+        $user = Auth::user();
+        $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
+        $isSuccess = $this->roomRepository->createOrUpdateGameUser($game, $seats);
+        if ($isSuccess) {
+            $gameUsers = $this->roomRepository->getGameUsers($game->id);
+        }
+        event(new GameUserUpdated($gameUsers->toArray(), $game));
+        return $gameUsers;
+    }
+
+    public function startGame()
+    {
+        $user = Auth::user();
+        $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
+        event(new GameStarted($game));
     }
 }

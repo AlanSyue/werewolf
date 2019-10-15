@@ -7,6 +7,7 @@ use App\Models\Auth\User;
 use App\Models\Game\Game;
 use App\Models\Room\Room;
 use App\Models\Room\RoomUser;
+use App\Models\Game\GameUser;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\BaseRepository;
 
@@ -23,11 +24,13 @@ class RoomRepository extends BaseRepository
     public function __construct(
         Room $model,
         RoomUser $roomUserModel,
-        Game $gameModel
+        Game $gameModel,
+        GameUser $gameUserModel
     ) {
         $this->model = $model;
         $this->roomUserModel = $roomUserModel;
         $this->gameModel = $gameModel;
+        $this->gameUserModel = $gameUserModel;
     }
 
     public function createGameRoom($roomInsertData, $gameInsertData)
@@ -45,6 +48,16 @@ class RoomRepository extends BaseRepository
         return $room;
     }
 
+    public function getRoomByUserId($roomId)
+    {
+        return $this->roomModel->find($roomId);
+    }
+
+    public function getGameByRoomId($roomId)
+    {
+        return $this->gameModel->where('room_id', $roomId)->first();
+    }
+
     public function getRoomUsers($roomId)
     {
         return $this->roomUserModel
@@ -59,6 +72,16 @@ class RoomRepository extends BaseRepository
             ->first();
     }
 
+    public function updateRoomUser(User $user, Room $room)
+    {
+        $roomUser = $this->roomUserModel
+            ->updateOrCreate([
+                'user_id' => $user->id
+            ], [
+                'room_id' => $room->id
+            ]);
+        return $roomUser ? true : false;
+    }
 
     public function getRoomAllRelationData($roomId)
     {
@@ -75,14 +98,73 @@ class RoomRepository extends BaseRepository
             ->first();
     }
 
-    public function updateRoomUser(User $user, Room $room)
+    public function createOrUpdateGameUser(Game $game, array $seats)
     {
-        $roomUser = $this->roomUserModel
-            ->updateOrCreate([
-                'user_id' => $user->id
-            ], [
-                'room_id' => $room->id
-            ]);
-        return $roomUser ? true : false;
+        $this->gameUserModel->where('game_id', $game->id)->delete();
+        $insertData = $this->getGameUserInsertDataWithRandomRoleType($game, $seats);
+        $bool = $this->gameUserModel
+            ->insert($insertData);
+        return $bool;
+    }
+
+    public function getGameUsers($gameId)
+    {
+        return $this->gameUserModel->where('game_id', $gameId)->get();
+    }
+
+    public function getGameUserInsertDataWithRandomRoleType(Game $game, array $seats)
+    {
+        $roleTypeTable = $this->getRoleTypeTable();
+        $roleTypes = [];
+        for ($i = 0; $i < $game->civilian_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['civilian']);
+        }
+        for ($i = 0; $i < $game->werewolf_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['werewolf']);
+        }
+        for ($i = 0; $i < $game->snowwolf_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['snowwolf']);
+        }
+        for ($i = 0; $i < $game->kingwolf_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['kingwolf']);
+        }
+        for ($i = 0; $i < $game->prophet_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['prophet']);
+        }
+        for ($i = 0; $i < $game->witch_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['witch']);
+        }
+        for ($i = 0; $i < $game->knight_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['knight']);
+        }
+        for ($i = 0; $i < $game->hunter_amount; $i++) {
+            array_push($roleTypes, $roleTypeTable['hunter']);
+        }
+        \Log::info($seats);
+        return collect($seats)->map(function ($seat) use ($game, $roleTypes) {
+            $randIndex = rand(0, count($roleTypes) - 1);
+            $roleType = $roleTypes[$randIndex];
+            unset($roleTypes[$randIndex]);
+            return [
+                'game_id' => $game->id,
+                'seat_index' => $seat['id'],
+                'user_id' => $seat['user_id'],
+                'role_type' => $roleType
+            ];
+        })->toArray();
+    }
+
+    protected function getRoleTypeTable()
+    {
+        return [
+            'civilian' => 1001,
+            'werewolf' => 2001,
+            'snowwolf' => 2002,
+            'kingwolf' => 2003,
+            'prophet' => 3001,
+            'witch' => 3002,
+            'knight' => 3003,
+            'hunter' => 3004,
+        ];
     }
 }

@@ -37,8 +37,13 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         Route::post('store', [RoomsController::class, 'store'])->name('rooms.store');
         Route::get('data', [RoomsController::class, 'roomData'])->name('rooms.roomData');
         Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
+        Route::post('seats', [RoomsController::class, 'upadteRoomSeats'])->name('rooms.seats');
         // Route::post('{room}/join', [RoomsController::class, 'join'])->name('rooms.join');
     });
+    Route::group(['prefix' => 'game'], function () {
+        Route::post('start', [RoomsController::class, 'startGame'])->name('game.start');
+    });
+
 
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');
     Route::get('auth', [AccountController::class, 'getAuth'])->name('auth.get');
