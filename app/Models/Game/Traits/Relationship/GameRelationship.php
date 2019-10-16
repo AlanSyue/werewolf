@@ -24,7 +24,7 @@ trait GameRelationship
      * 
      * @return mixed
      */
-    public function users()
+    public function gameUsers()
     {
         return $this->hasMany(GameUser::class, 'game_id');
     }

@@ -17,6 +17,7 @@ class RoomResource extends JsonResource
     public function toArray($request)
     {
         $game = $this->games->first();
+        $gameData = $game->toArray();
         $gameUserAmount = [
             'civilianAmount' => $game->civilian_amount,
             'werewolfAmount' => $game->werewolf_amount,
@@ -28,12 +29,18 @@ class RoomResource extends JsonResource
             'hunterAmount' => $game->hunter_amount,
         ];
         $totalGameUser = array_sum($gameUserAmount);
-        $seats = collect(range(1, $totalGameUser))->map(function ($seatId) {
-            return [
-                'id' => $seatId,
-                'user_id' => 0
-            ];
-        });
+        if (count($game->gameUsers) == $totalGameUser) {
+            $gameUsers = $game->gameUsers;
+            unset($gameData['gameUsers']);
+        } else {
+            $gameUsers = collect(range(1, $totalGameUser))->map(function ($seatIndex) {
+                return [
+                    'id' => 0,
+                    'seat_index' => $seatIndex,
+                    'user_id' => null,
+                ];
+            });
+        }
 
         return [
             'room' => [
@@ -41,11 +48,11 @@ class RoomResource extends JsonResource
                 'mayor_user_id' => $this->user_id,
                 'pin_code' => base64_encode($this->id),
             ],
-            'game' => $this->games->first(),
+            'game' => $gameData,
             'users' => $this->roomUsers->map(function ($roomUser) {
                 return $roomUser->user;
             }),
-            'seats' => $seats
+            'gameUsers' => $gameUsers
         ];
     }
 }

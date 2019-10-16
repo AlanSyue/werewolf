@@ -5,8 +5,8 @@ let actions = {
             .then(res => {
                 commit("FETCH_GAME", res.data.data.game);
                 commit("FETCH_ROOM", res.data.data.room);
-                commit("FETCH_SEATS", res.data.data.seats);
                 commit("FETCH_ROOM_USERS", res.data.data.users);
+                commit("UPDATE_GAME_USERS", res.data.data.gameUsers);
             })
             .catch(err => {
                 console.log(err);
@@ -22,22 +22,14 @@ let actions = {
                 console.log(err);
             });
     },
-    updateRoomSeats({ commit }, seats){
+    updateRoomSeats({ commit }, seats) {
         let postData = {
-            seats : seats
+            seats: seats
         };
         axios
             .post("/rooms/seats", postData)
             .then(res => {
-                let data = res.data;
-                let seats = res.data.map(function(gameUser){
-                    return {
-                        id : gameUser.seat_index,
-                        user_id : gameUser.user_id
-                    };
-                })
-                commit("UPDATE_SEATS", seats);
-                commit("UPDATE_GAME_USERS", data);
+                commit("UPDATE_GAME_USERS", res.data);
             })
             .catch(err => {
                 console.log(err);

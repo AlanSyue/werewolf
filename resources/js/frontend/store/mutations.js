@@ -5,12 +5,6 @@ let mutations = {
     FETCH_ROOM(state, room) {
         return (state.room = room);
     },
-    FETCH_SEATS(state, seats) {
-        return (state.seats = seats);
-    },
-    UPDATE_SEATS(state, seats) {
-        return (state.seats = seats);
-    },
     FETCH_ROOM_USERS(state, users) {
         return (state.users = users);
     },

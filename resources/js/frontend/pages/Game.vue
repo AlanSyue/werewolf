@@ -10,18 +10,18 @@
                                 <div class="row seat_header">
                                     <h5>房間: {{room.pin_code}}</h5>
                                     <el-row v-if="room.mayor_user_id == auth.id">
-                                        <el-button @click="updateRoomSeats" type="primary" plain>確認座位</el-button>
-                                        <el-button @click="startGame" type="primary" plain>開始遊戲</el-button>
+                                        <el-button v-if="isValidSeatSetting" @click="startGame" type="success" plain>開始遊戲</el-button>
+                                        <el-button v-else :disabled="isUserDuplicatedInSeats" @click="updateRoomSeats" type="primary" plain>{{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}</el-button>
                                     </el-row>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div v-for="seat in roomSeats" :key="seat.id" class=" col-4 col-lg-3">
+                            <div v-for="gameUser in gameUsers" :key="gameUser.seat_index" class=" col-4 col-lg-3">
                                 <div class="seat_unit">
-                                    <label for="">{{seat.id}}</label>
+                                    <label for="">{{gameUser.seat_id}}</label>
                                     <div class="dummy"></div>
-                                    <el-select v-if="room.mayor_user_id == auth.id" v-model="seat.user_id" placeholder='座位'>
+                                    <el-select v-if="room.mayor_user_id == auth.id" @change="changeSeat" v-model="gameUser.user_id" placeholder='未選擇'>
                                         <el-option
                                         v-for="user in roomUsers"
                                         :key="user.id"
@@ -29,7 +29,7 @@
                                         :value="user.id">
                                         </el-option>
                                     </el-select>
-                                    <el-button v-else>{{seat.user_id}}</el-button>
+                                    <el-button v-else>{{(gameUser.user_id)? roomUserObject[gameUser.user_id].first_name: '未選擇'}}</el-button>
                                 </div>
                             </div>
                         </div>

@@ -2,7 +2,9 @@
 
 export default {
     data: function() {
-        return {};
+        return {
+            isSavedGameUsers: false
+        };
     },
     computed: {
         room: function() {
@@ -14,11 +16,34 @@ export default {
         roomUsers() {
             return this.$store.state.users;
         },
-        roomSeats() {
-            return this.$store.state.seats;
+        gameUsers() {
+            return this.$store.state.gameUsers;
         },
         auth() {
             return this.$store.state.auth;
+        },
+        isUserDuplicatedInSeats() {
+            let gameUsers = this.gameUsers;
+            let isConatinsUnSelectedSeat = gameUsers.filter(function(user){
+                return !(user.user_id);
+            }).length > 0;
+            if(isConatinsUnSelectedSeat){
+                return true;
+            }
+            let seatCount = gameUsers.length;
+            let seatUserIds = _.map(gameUsers, user => user.user_id);
+            let seatUniqueUserCount = _.uniq(seatUserIds).length;
+            return !(seatCount == seatUniqueUserCount);
+        },
+        isValidSeatSetting(){
+            return !this.isUserDuplicatedInSeats && this.isSavedGameUsers;
+        },
+        roomUserObject() {
+            let object = {};
+            _.forEach(this.roomUsers, function(user, key){
+                object[user.id] = user;
+            })
+            return object;
         }
     },
     watch: {
@@ -35,11 +60,6 @@ export default {
     },
     mounted() {},
     methods: {
-        getUserName(id) {
-            return this.users.filter(function(user) {
-                $user.id == id;
-            })[0];
-        },
         fetchGameData() {
             this.$store.dispatch("fetchGameData");
         },
@@ -47,9 +67,13 @@ export default {
             this.$store.dispatch("fetchAuth");
         },
         updateRoomSeats() {
-            this.$store.dispatch("updateRoomSeats", this.roomSeats);
+            this.isSavedGameUsers = true;
+            this.$store.dispatch("updateRoomSeats", this.gameUsers);
         },
-        startGame(){
+        changeSeat() {
+            this.isSavedGameUsers = false;
+        },
+        startGame() {
             axios
                 .post("/game/start")
                 .then(res => {
