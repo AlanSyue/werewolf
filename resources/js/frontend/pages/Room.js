@@ -1,6 +1,7 @@
 
 
 export default {
+    name: 'Game',
     data: function() {
         return {
             isSavedGameUsers: false

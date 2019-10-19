@@ -7,7 +7,7 @@
                     <div class="container seat_area">
                         <div class="row">
                             <div class="col">
-                                <div class="row seat_header">
+                                <div class="row seat_heaㄎer">
                                     <h5>房間: {{room.pin_code}}</h5>
                                     <el-row v-if="room.mayor_user_id == auth.id">
                                         <el-button v-if="isValidSeatSetting" @click="startGame" type="success" plain>開始遊戲</el-button>
@@ -76,4 +76,4 @@
     </section>
 </template>
 
-<script src="./game.js"></script>
+<script src="./Room.js"></script>

@@ -79,7 +79,7 @@ class RoomsController extends Controller
             'knight_amount' => 'required',
             'hunter_amount' => 'required',
             'werewolf_amount' => 'required',
-            'snowwolf_amount' => 'required',
+            // 'snowwolf_amount' => 'required',
             'kingwolf_amount' => 'required'
         ]);
 
@@ -109,8 +109,11 @@ class RoomsController extends Controller
         }
 
         $encodeRoomId = base64_encode($room->id);
-        return redirect()
-            ->route('frontend.rooms.show', $encodeRoomId);
+
+        return response()->json([
+            'id' => $room->id,
+            'encodeRoomId' => $encodeRoomId
+        ]);
     }
 
     /**

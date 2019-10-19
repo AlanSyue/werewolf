@@ -34,6 +34,26 @@ let actions = {
             .catch(err => {
                 console.log(err);
             });
+    },
+    createRoom({commit}, room_data){
+        let post_data = {
+            civilian_amount: room_data["civilian_amount"],
+            prophet_amount: room_data["prophet_amount"],
+            witch_amount: room_data["witch_amount"],
+            knight_amount: room_data["knight_amount"],
+            hunter_amount: room_data["hunter_amount"],
+            werewolf_amount: room_data["werewolf_amount"],
+            kingwolf_amount: room_data["kingwolf_amount"]
+        };
+        axios
+            .post("/rooms/store", post_data)
+            .then(res => {
+                commit("CREATE_ROOM", res.data);
+                router.go({ path: "/room" });
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 };
 

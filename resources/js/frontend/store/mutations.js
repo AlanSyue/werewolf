@@ -5,6 +5,9 @@ let mutations = {
     FETCH_ROOM(state, room) {
         return (state.room = room);
     },
+    CREATE_ROOM(state, room){
+        return (state.room = room); 
+    },
     FETCH_ROOM_USERS(state, users) {
         return (state.users = users);
     },

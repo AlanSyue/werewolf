@@ -1,0 +1,25 @@
+#home{
+    width: 100%;
+    height: 100vh;
+    .content{
+        width: 50%;
+        max-width: 400px;
+        .el-col{
+            margin-bottom: 20px;
+            .square{
+                position: relative;
+                width: 100%;
+                &:after {
+                    content: "";
+                    display: block;
+                    padding-bottom: 100%;
+                }
+                border: 1px solid #000;
+                border-radius: 3px;
+            }
+            .el-button{
+                width: 100%;
+            }
+        }
+    }
+}

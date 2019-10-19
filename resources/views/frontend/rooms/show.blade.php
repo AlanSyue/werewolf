@@ -1,5 +1,5 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-<Game></Game>
+<Room></Room>
 @endsection

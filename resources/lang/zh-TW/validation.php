@@ -183,6 +183,8 @@ return [
         ],
 
         'frontend' => [
+            'first_name' => '名字',
+            'last_name' => '姓氏',
             'email' => '電子郵件',
             'name' => '用戶名',
             'password' => '密碼',
