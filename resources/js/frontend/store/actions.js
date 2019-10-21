@@ -1,7 +1,7 @@
 let actions = {
     fetchGameData({ commit }) {
         axios
-            .get("/rooms/data")
+            .get("/room/data")
             .then(res => {
                 commit("FETCH_GAME", res.data.data.game);
                 commit("FETCH_ROOM", res.data.data.room);
@@ -27,7 +27,7 @@ let actions = {
             seats: seats
         };
         axios
-            .post("/rooms/seats", postData)
+            .post("/room/seats", postData)
             .then(res => {
                 commit("UPDATE_GAME_USERS", res.data);
             })
@@ -35,7 +35,7 @@ let actions = {
                 console.log(err);
             });
     },
-    createRoom({commit}, room_data){
+    createRoom({ commit }, room_data) {
         let post_data = {
             civilian_amount: room_data["civilian_amount"],
             prophet_amount: room_data["prophet_amount"],
@@ -46,10 +46,22 @@ let actions = {
             kingwolf_amount: room_data["kingwolf_amount"]
         };
         axios
-            .post("/rooms/store", post_data)
-            .then(res => {
+            .post("/room/store", post_data)
+            .then(function(res) {
                 commit("CREATE_ROOM", res.data);
-                router.go({ path: "/room" });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    },
+    joinRoom({ commit }, pin_code) {
+        let post_data = {
+            pin_code: pin_code
+        };
+        axios
+            .post("/room/join", post_data)
+            .then(function(res) {
+                commit("FETCH_ROOM", res.data);
             })
             .catch(err => {
                 console.log(err);

@@ -12,11 +12,8 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import store from "./store/index";
 import routes from "./routes";
-
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
-
-
 Vue.use(ElementUI);
 
 // const files = require.context('./', true, /\.vue$/i);
@@ -37,5 +34,8 @@ router.beforeEach((to, from, next) => {
 const app = new Vue({
     el: "#app",
     router,
-    store
+    store,
+    created() {
+        this.$store.dispatch("fetchAuth");
+    }
 });

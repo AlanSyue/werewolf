@@ -10,9 +10,9 @@ use App\Http\Controllers\Frontend\MessagesController;
 
 Route::group(['middleware' => ['auth', 'password_expires']], function () {
 
-    Route::get('/', [HomeController::class, 'index'])->name('index');
-    Route::get('contact', [ContactController::class, 'index'])->name('contact');
-    Route::post('contact/send', [ContactController::class, 'send'])->name('contact.send');
+    // Route::get('/', [HomeController::class, 'index'])->name('index');
+    // Route::get('contact', [ContactController::class, 'index'])->name('contact');
+    // Route::post('contact/send', [ContactController::class, 'send'])->name('contact.send');
 
     Route::group(['namespace' => 'User', 'as' => 'user.'], function () {
         // User Account Specific
@@ -21,16 +21,12 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         // User Profile Specific
         Route::patch('profile/update', [ProfileController::class, 'update'])->name('profile.update');
     });
-    Route::group(['prefix' => 'rooms'], function () {
-        // Route::get('', [RoomsController::class, 'index'])->name('rooms.index');
-        // Route::get('create', [RoomsController::class, 'create'])->name('rooms.create');
-        // Route::get('join', [RoomsController::class, 'joinPage'])->name('rooms.join');
+    Route::group(['prefix' => 'room'], function () {
         Route::post('join', [RoomsController::class, 'join']);
         Route::post('store', [RoomsController::class, 'store'])->name('rooms.store');
         Route::get('data', [RoomsController::class, 'roomData'])->name('rooms.roomData');
-        Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
+        // Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
         Route::post('seats', [RoomsController::class, 'upadteRoomSeats'])->name('rooms.seats');
-        // Route::post('{room}/join', [RoomsController::class, 'join'])->name('rooms.join');
     });
     Route::group(['prefix' => 'game'], function () {
         Route::post('start', [RoomsController::class, 'startGame'])->name('game.start');

@@ -32,39 +32,6 @@ class RoomsController extends Controller
     }
 
     /**
-     * Display a listing of the chat rooms.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $rooms = Room::with('users')->paginate(5);
-        return view('frontend.rooms.index', compact('rooms'));
-    }
-
-    /**
-     * Show the form for creating a chat room.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $reuqest)
-    {
-
-        $room = app(Room::class);
-        return view('frontend.rooms.create', compact('room'));
-    }
-
-    /**
-     * Display a listing of the chat rooms.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function joinPage()
-    {
-        return view('frontend.rooms.join');
-    }
-
-    /**
      * Store a newly created room in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -99,6 +66,7 @@ class RoomsController extends Controller
                 'kingwolf_amount' => $request->input('kingwolf_amount', 0)
             ];
             $room = $this->roomRepository->createGameRoom($roomInsertData, $gameInsertData);
+            $this->roomRepository->updateRoomUser($user, $room);
         } catch (Exception $e) {
             Log::error('Exception while creating a chatroom', [
                 'file' => $e->getFile(),
@@ -117,20 +85,6 @@ class RoomsController extends Controller
     }
 
     /**
-     * Show room with messages
-     */
-    public function show(Request $request, $encodeRoomId)
-    {
-        $user = Auth::user();
-        $roomId = base64_decode($encodeRoomId);
-        $room = $this->roomRepository->getById($roomId);
-        $this->roomRepository->updateRoomUser($user, $room);
-        $room = $room->load('messages');
-        event(new RoomJoined($request->user(), $room));
-        return view('frontend.rooms.show', compact('room'));
-    }
-
-    /**
      * Allow user to join chat room
      * 
      * @param Room $room
@@ -138,6 +92,7 @@ class RoomsController extends Controller
      */
     public function join(Room $model, Request $request)
     {
+        $user = Auth::user();
         $this->validate($request, [
             'pin_code' => 'required',
         ]);
@@ -157,8 +112,10 @@ class RoomsController extends Controller
             return back();
         }
 
-        return redirect()
-            ->route('frontend.rooms.show', $encodeRoomId);
+        $this->roomRepository->updateRoomUser($user, $room);
+        event(new RoomJoined($request->user(), $room));
+
+        return $room;
     }
 
     public function roomData(Request $request)
@@ -171,6 +128,7 @@ class RoomsController extends Controller
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
         return new RoomResource($roomRelationData);
     }
+
     public function upadteRoomSeats(Request $request)
     {
         $this->validate($request, [

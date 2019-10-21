@@ -1,21 +1,28 @@
 export default {
     data: function() {
-        return {};
+        return {
+            pin_code: ""
+        };
     },
-    computed: {
-        game() {
-            return this.$store.state.game;
-        },
-        auth() {
-            return this.$store.state.auth;
-        }
-    },
+    computed: {},
     watch: {},
-    created() {
-        this.$store.dispatch("fetchAuth");
-        this.$store.dispatch("fetchGameData");
-    },
+    created() {},
     mounted() {},
     methods: {
+        joinRoom() {
+            let self = this;
+            this.$store
+                .dispatch("joinRoom", self.pin_code)
+                .then(() =>
+                    this.$router.push({
+                        path: "/room",
+                        params: self.pin_code
+                    })
+                )
+                .catch(e => {
+                    console.debug(e);
+                    this.pin_code = "";
+                });
+        }
     }
 };

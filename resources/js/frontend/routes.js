@@ -6,7 +6,7 @@ import RoomJoin from "./pages/RoomJoin.vue";
 
 const routes = [
     {
-        path: "*",
+    path: "*",
         component: NotFound,
         meta: { title: "查無此頁面" }
     },
@@ -21,12 +21,12 @@ const routes = [
         meta: { title: "遊戲室" }
     },
     {
-        path: "/rooms/create",
+        path: "/room/create",
         component: RoomCreate,
         meta: { title: "建立遊戲" }
     },
     {
-        path: "/rooms/join",
+        path: "/room/join",
         component: RoomJoin,
         meta: { title: "加入房間" }
     }
