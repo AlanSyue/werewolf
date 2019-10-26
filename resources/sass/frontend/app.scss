@@ -1,3 +1,4 @@
+@import '../reset';
 @import "../global";
 
 // Fonts
@@ -13,7 +14,7 @@
 @import 'pages/layout';
 // @import 'pages/dashboard';
 @import 'pages/room_index';
+@import 'pages/room';
 @import 'pages/room_create';
 @import 'pages/room_join';
 @import 'pages/home';
-@import 'pages/game';

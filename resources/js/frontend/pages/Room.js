@@ -4,7 +4,10 @@ export default {
     name: 'Game',
     data: function() {
         return {
-            isSavedGameUsers: false
+            isSavedGameUsers: false,
+            godDescriptionDialogVisible: false,
+            werewolfDescriptionDialogVisible: false,
+            civilianDescriptionDialogVisible: false
         };
     },
     computed: {

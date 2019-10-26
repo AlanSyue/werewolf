@@ -40,6 +40,14 @@ main{
             }
         }
     }
+    .el-footer{
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        padding:0;
+    }
+
     @media screen and (min-width: 1024px) {
         padding-top: 56px;
     }
@@ -47,11 +55,4 @@ main{
         justify-content: center;
         align-items: center;
     }
-}
-
-.el-footer{
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
 }
