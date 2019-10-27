@@ -1,8 +1,11 @@
 <template>
     <section id="room">
         <div class="seat-area">
-            <el-row class="seat-list">
-                <el-col :span="8" v-for="gameUser in gameUsers" :key="gameUser.seat_index">
+            <el-row type="flex" align="center" v-for="gameUser in gameUsers" :key="gameUser.seat_index" >
+                <el-col :span="8">
+                    <span>座位 {{gameUser.seat_index}} : </span>
+                </el-col>
+                <el-col :span="16">
                     <el-select v-if="room.mayor_user_id == auth.id" @change="changeSeat" v-model="gameUser.user_id" placeholder='未選擇'>
                         <el-option
                         v-for="user in roomUsers"
@@ -42,15 +45,15 @@
         </el-row>
         <el-footer class="bg-gray">
             <el-row type="flex">
-                <el-col :span="8">
+                <el-col :span="8" class="justify-center">
                     <span>房號：{{room.pin_code}}</span>
                 </el-col>
-                <el-col :span="8">
-                    <span>人數：{{roomUsers.length}}</span>
+                <el-col :span="8" class="justify-center">
+                    <span>線上人數：{{roomUsers.length}}</span>
                 </el-col>
                 <el-col :span="8" v-if="room.mayor_user_id == auth.id">
-                    <el-button v-if="isValidSeatSetting" @click="startGame" type="success" width="100" plain>開始遊戲</el-button>
-                    <el-button v-else :disabled="isUserDuplicatedInSeats" @click="updateRoomSeats" type="primary" plain>{{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}</el-button>
+                    <el-button v-loading="loading" v-if="isValidSeatSetting" @click="startGame" type="success" width="100" plain>開始遊戲</el-button>
+                    <el-button v-loading="loading" v-else :disabled="isUserDuplicatedInSeats" @click="updateRoomSeats" type="primary" plain>{{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}</el-button>
                 </el-col>
             </el-row>
         </el-footer>

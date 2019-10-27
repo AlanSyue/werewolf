@@ -1,16 +1,17 @@
-#home{
+#login{
     width: 100%;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-image: url('/img/frontend/game/background.jpg');
     background-size: 130% auto;
     background-repeat: no-repeat;
     background-position: center center;
-    .el-col{
-        margin-bottom: 20px;
-        a{
-            width: 50%;
-            max-width: 400px;
-        }
+    .content{
+        width: 80%;
+        max-width: 400px;
+        padding: 1em;
         .el-button{
             width: 100%;
         }

@@ -30,11 +30,16 @@ class RegisterRequest extends FormRequest
     {
         return [
             'first_name' => ['required', 'string'],
-            'last_name' => ['required', 'string'],
-            'email' => ['required', 'string', 'email', Rule::unique('users')],
-            'password' => PasswordRules::register($this->email),
             'g-recaptcha-response' => ['required_if:captcha_status,true', 'captcha'],
         ];
+
+        // return [
+        //     'first_name' => ['required', 'string'],
+        //     'last_name' => ['required', 'string'],
+        //     'email' => ['required', 'string', 'email', Rule::unique('users')],
+        //     'password' => PasswordRules::register($this->email),
+        //     'g-recaptcha-response' => ['required_if:captcha_status,true', 'captcha'],
+        // ];
     }
 
     /**

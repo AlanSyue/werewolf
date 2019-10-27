@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Events\Frontend\Auth\UserConfirmed;
 use App\Events\Frontend\Auth\UserProviderRegistered;
 use App\Notifications\Frontend\Auth\UserNeedsConfirmation;
+use Illuminate\Support\Str;
 
 /**
  * Class UserRepository.
@@ -93,15 +94,27 @@ class UserRepository extends BaseRepository
     public function create(array $data)
     {
         return DB::transaction(function () use ($data) {
+            // $user = $this->model::create([
+            //     'first_name' => $data['first_name'],
+            //     'last_name' => $data['last_name'],
+            //     'email' => $data['email'],
+            //     'confirmation_code' => md5(uniqid(mt_rand(), true)),
+            //     'active' => true,
+            //     'password' => $data['password'],
+            //     // If users require approval or needs to confirm email
+            //     'confirmed' => !(config('access.users.requires_approval') || config('access.users.confirm_email')),
+            // ]);
+
+
             $user = $this->model::create([
                 'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'email' => $data['email'],
+                'last_name' => 'default',
+                'email' => Str::random(100) . '@user.com',
                 'confirmation_code' => md5(uniqid(mt_rand(), true)),
                 'active' => true,
-                'password' => $data['password'],
+                'password' => 'secret',
                 // If users require approval or needs to confirm email
-                'confirmed' => ! (config('access.users.requires_approval') || config('access.users.confirm_email')),
+                'confirmed' => !(config('access.users.requires_approval') || config('access.users.confirm_email')),
             ]);
 
             if ($user) {
@@ -116,10 +129,10 @@ class UserRepository extends BaseRepository
              *
              * If this is a social account they are confirmed through the social provider by default
              */
-            if (config('access.users.confirm_email')) {
-                // Pretty much only if account approval is off, confirm email is on, and this isn't a social account.
-                $user->notify(new UserNeedsConfirmation($user->confirmation_code));
-            }
+            // if (config('access.users.confirm_email')) {
+            //     // Pretty much only if account approval is off, confirm email is on, and this isn't a social account.
+            //     $user->notify(new UserNeedsConfirmation($user->confirmation_code));
+            // }
 
             // Return the user object
             return $user;
@@ -257,9 +270,9 @@ class UserRepository extends BaseRepository
          * The true flag indicate that it is a social account
          * Which triggers the script to use some default values in the create method
          */
-        if (! $user) {
+        if (!$user) {
             // Registration is not enabled
-            if (! config('access.registration')) {
+            if (!config('access.registration')) {
                 throw new GeneralException(__('exceptions.frontend.auth.registration_disabled'));
             }
 
@@ -285,7 +298,7 @@ class UserRepository extends BaseRepository
         }
 
         // See if the user has logged in with this social account before
-        if (! $user->hasProvider($provider)) {
+        if (!$user->hasProvider($provider)) {
             // Gather the provider data for saving and associate it with the user
             $user->providers()->save(new SocialAccount([
                 'provider' => $provider,
@@ -324,12 +337,12 @@ class UserRepository extends BaseRepository
             $result['last_name'] = null;
         }
 
-        if (! empty($parts) && $size === 1) {
+        if (!empty($parts) && $size === 1) {
             $result['first_name'] = $parts[0];
             $result['last_name'] = null;
         }
 
-        if (! empty($parts) && $size >= 2) {
+        if (!empty($parts) && $size >= 2) {
             $result['first_name'] = $parts[0];
             $result['last_name'] = $parts[1];
         }

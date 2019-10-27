@@ -1,21 +1,14 @@
 body{
     height: 100vh;
-}
-header{
-    display: none;
-    @media screen and (min-width: 1024px) {
-        display: block;
-        position: fixed;
-        z-index: 9999;
-        width:100%;
-        top:0;
-        left:0;
-    }
+    background-color: #000;
 }
 
-main{
+#app{
     position: relative;
+    width: 100%;
     min-height: 100vh;
+    background-color: white;
+    margin: 0 auto;
     .el-page-header{
         height: 56px;
         background-color: #DEDEDE;
@@ -40,19 +33,29 @@ main{
             }
         }
     }
-    .el-footer{
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        padding:0;
-    }
-
     @media screen and (min-width: 1024px) {
-        padding-top: 56px;
+        width: 500px;
+        height: 70vh;
     }
+    
     .section-center{
         justify-content: center;
         align-items: center;
     }
+    .el-footer{
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        padding:0;
+        height: 60px;
+        .el-row{
+            padding: 0;
+            .el-button{
+                height: 60px;
+                width: 100%;
+            }
+        }
+    }
 }
+

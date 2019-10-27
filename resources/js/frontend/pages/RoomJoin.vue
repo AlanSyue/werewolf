@@ -8,8 +8,9 @@
         </el-row>
         <el-footer class="bg-gray">
             <el-row type="flex">
-                <el-col :span="20"></el-col>
-                <el-col :span="4"><el-button @click="joinRoom">加入遊戲室</el-button></el-col>
+                <el-col :span="24">
+                    <el-button type="success" @click="joinRoom">加入遊戲室</el-button>
+                </el-col>
             </el-row>
         </el-footer>
     </section>

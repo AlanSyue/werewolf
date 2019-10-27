@@ -16,4 +16,12 @@ class DashboardController extends Controller
     {
         return view('backend.dashboard');
     }
+
+    /**
+     * @return \Illuminate\View\View
+     */
+    public function login()
+    {
+        return view('backend.login');
+    }
 }

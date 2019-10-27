@@ -4,6 +4,7 @@ export default {
     name: 'Game',
     data: function() {
         return {
+            loading: false,
             isSavedGameUsers: false,
             godDescriptionDialogVisible: false,
             werewolfDescriptionDialogVisible: false,
@@ -78,6 +79,7 @@ export default {
             this.isSavedGameUsers = false;
         },
         startGame() {
+            this.loading = true;
             axios
                 .post("/game/start")
                 .then(res => {
@@ -85,6 +87,9 @@ export default {
                 })
                 .catch(err => {
                     console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
                 });
         },
         handleEventService: function joinedRoom(roomId) {
@@ -92,8 +97,14 @@ export default {
                 .here(users => {
                     this.$store.state.users = users;
                 })
-                .joining(user => {
-                    this.$store.state.users.push(user);
+                .joining(newUser => {
+                    let users = this.$store.state.users.filter(
+                        function(originUser) {
+                            return originUser.id != newUser.id;
+                        }
+                    );
+                    users.push(newUser);
+                    this.$store.state.users = users;
                 })
                 .leaving(user => {
                     this.$store.state.users = this.$store.state.users.filter(
@@ -103,6 +114,7 @@ export default {
                     );
                 })
                 .listen("Frontend\\GameUserUpdated", e => {
+                    console.log(e);
                     let data = e.gameUsers;
                     let seats = data.map(function(gameUser) {
                         return {

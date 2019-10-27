@@ -63,3 +63,18 @@
     align-items: center;
     justify-content: center;
 }
+.flex-direction-column{
+    flex-direction: column;
+}
+
+
+.square{
+    position: relative;
+    width: 100%;
+    &:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+    }
+    border: 1px solid #000;
+}

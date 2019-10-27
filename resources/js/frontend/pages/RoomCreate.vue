@@ -34,11 +34,9 @@
         </el-row>
         <el-footer class="bg-gray">
             <el-row type="flex">
-                <el-col :span="12"></el-col>
-                <el-col :span="8" type="flex" justify="center" align="center" >
-                    <label>{{ player_count}} 人局</label>
+                <el-col :span="24">
+                    <el-button type="success" @click="createRoom">創建房間( {{ player_count}} 人局 )</el-button>
                 </el-col>
-                <el-col :span="4"><el-button @click="createRoom">創建房間</el-button></el-col>
             </el-row>
         </el-footer>
     </section>

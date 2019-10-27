@@ -23,17 +23,10 @@
         @stack('after-styles')
     </head>
     <body>
-        @include('includes.partials.read-only')
-
         <div id="app">
-            @include('includes.partials.logged-in-as')
-            <header>
-            @include('frontend.includes.nav')
-            @include('includes.partials.messages')
-            </header>
-            <main>
-                @yield('content')
-            </main>
+            <page-header></page-header>
+            <router-view></router-view>
+            @yield('content')
         </div><!-- #app -->
 
         <!-- Scripts -->
