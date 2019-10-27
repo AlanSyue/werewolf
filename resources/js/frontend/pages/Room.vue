@@ -1,24 +1,10 @@
 <template>
     <section id="room">
         <div class="seat-area">
-            <el-row type="flex" align="center" v-for="gameUser in gameUsers" :key="gameUser.seat_index" >
-                <el-col :span="8">
-                    <span>座位 {{gameUser.seat_index}} : </span>
-                </el-col>
-                <el-col :span="16">
-                    <el-select v-if="room.mayor_user_id == auth.id" @change="changeSeat" v-model="gameUser.user_id" placeholder='未選擇'>
-                        <el-option
-                        v-for="user in roomUsers"
-                        :key="user.id"
-                        :label="user.first_name"
-                        :value="user.id">
-                        </el-option>
-                    </el-select>
-                    <el-button v-else>{{(gameUser.user_id)? roomUserObject[gameUser.user_id].first_name: '未選擇'}}</el-button>
-                </el-col>
-            </el-row>
+            <el-col :span="6" v-for="gameUser in gameUsers" :key="gameUser.seat_index" class="justify-center square">
+                <el-tag>{{(gameUser.user_id)? roomUserObject[gameUser.user_id].first_name: '未選擇'}}</el-tag>
+            </el-col>
         </div>
-
         <el-row type="flex">
             <el-col :span="6">
                 <span>角色配置</span>
@@ -43,21 +29,61 @@
             <el-col :span="16"><el-tag type="primary" >平民: {{game.civilian_amount}}</el-tag></el-col>
             <el-col :span="4"><el-button type="text" @click="civilianDescriptionDialogVisible = true">查看</el-button></el-col>
         </el-row>
+        
         <el-footer class="bg-gray">
             <el-row type="flex">
-                <el-col :span="8" class="justify-center">
+                <el-col :span="6" class="justify-center">
                     <span>房號：{{room.pin_code}}</span>
                 </el-col>
-                <el-col :span="8" class="justify-center">
-                    <span>線上人數：{{roomUsers.length}}</span>
+                <el-col :span="6" class="justify-center">
+                    <span>人數：{{roomUsers.length}}</span>
                 </el-col>
-                <el-col :span="8" v-if="room.mayor_user_id == auth.id">
-                    <el-button v-loading="loading" v-if="isValidSeatSetting" @click="startGame" type="success" width="100" plain>開始遊戲</el-button>
-                    <el-button v-loading="loading" v-else :disabled="isUserDuplicatedInSeats" @click="updateRoomSeats" type="primary" plain>{{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}</el-button>
+                <el-col :span="6" v-if="room.mayor_user_id == auth.id">
+                    <el-button :loading="loading" @click="seatSelectorDialogVisible = true">選擇座位</el-button>
+                </el-col>
+                <el-col :span="6" v-if="room.mayor_user_id == auth.id">
+                    <el-button :loading="loading" :disabled="isInvalidSeatSetting" @click="startGame" type="success" plain>開始遊戲</el-button>
                 </el-col>
             </el-row>
         </el-footer>
-
+        <el-dialog
+            v-if="room.mayor_user_id == auth.id"
+            title="選擇座位"
+            :visible.sync="seatSelectorDialogVisible"
+            width="90%"
+            center>
+            <el-row type="flex" align="center" v-for="gameUser in gameUsers" :key="gameUser.seat_index" >
+                <el-col :span="8">
+                    <span>座位 {{gameUser.seat_index}} : </span>
+                </el-col>
+                <el-col :span="16">
+                    <el-select @change="changeSeat" v-model="gameUser.user_id" placeholder='未選擇'>
+                        <el-option
+                        v-for="user in roomUsers"
+                        :key="user.id"
+                        :label="user.first_name"
+                        :value="user.id">
+                        </el-option>
+                    </el-select>
+                </el-col>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+                <el-button v-loading="loading" :disabled="isUserDuplicatedInSeats" @click="seatSelectorDialogVisible=false;updateRoomSeats();" type="primary" plain>
+                    {{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}
+                </el-button>
+            </span>
+        </el-dialog>
+        <el-dialog
+            title="狼人角色"
+            :visible.sync="werewolfDescriptionDialogVisible"
+            width="90%"
+            center>
+            <p>狼王：除被女巫毒殺以外，在出局時可以選擇一民玩家一起出局</p>
+            <p>狼人：夜晚可以與其他狼隊友討論暗殺掉一名玩家</p>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="werewolfDescriptionDialogVisible = false">知道了</el-button>
+            </span>
+        </el-dialog>
         <el-dialog
             title="神職角色"
             :visible.sync="godDescriptionDialogVisible"

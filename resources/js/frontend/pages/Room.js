@@ -1,11 +1,12 @@
 
 
 export default {
-    name: 'Game',
+    name: "Game",
     data: function() {
         return {
             loading: false,
             isSavedGameUsers: false,
+            seatSelectorDialogVisible: false,
             godDescriptionDialogVisible: false,
             werewolfDescriptionDialogVisible: false,
             civilianDescriptionDialogVisible: false
@@ -29,10 +30,11 @@ export default {
         },
         isUserDuplicatedInSeats() {
             let gameUsers = this.gameUsers;
-            let isConatinsUnSelectedSeat = gameUsers.filter(function(user){
-                return !(user.user_id);
-            }).length > 0;
-            if(isConatinsUnSelectedSeat){
+            let isConatinsUnSelectedSeat =
+                gameUsers.filter(function(user) {
+                    return !user.user_id;
+                }).length > 0;
+            if (isConatinsUnSelectedSeat) {
                 return true;
             }
             let seatCount = gameUsers.length;
@@ -40,14 +42,14 @@ export default {
             let seatUniqueUserCount = _.uniq(seatUserIds).length;
             return !(seatCount == seatUniqueUserCount);
         },
-        isValidSeatSetting(){
-            return !this.isUserDuplicatedInSeats && this.isSavedGameUsers;
+        isInvalidSeatSetting() {
+            return this.isUserDuplicatedInSeats || !this.isSavedGameUsers;
         },
         roomUserObject() {
             let object = {};
-            _.forEach(this.roomUsers, function(user, key){
+            _.forEach(this.roomUsers, function(user, key) {
                 object[user.id] = user;
-            })
+            });
             return object;
         }
     },
@@ -98,11 +100,11 @@ export default {
                     this.$store.state.users = users;
                 })
                 .joining(newUser => {
-                    let users = this.$store.state.users.filter(
-                        function(originUser) {
-                            return originUser.id != newUser.id;
-                        }
-                    );
+                    let users = this.$store.state.users.filter(function(
+                        originUser
+                    ) {
+                        return originUser.id != newUser.id;
+                    });
                     users.push(newUser);
                     this.$store.state.users = users;
                 })

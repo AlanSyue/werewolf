@@ -1,8 +1,18 @@
 #room{
     .seat-area{
-        margin: 2em;
-        padding: 1em;
-        border: 1px solid #dedede;
+        padding: 2em;
+        .el-col{
+            display: inline-flex;
+            float: none;
+        }
+        .el-tag{
+            width: 4em;
+            height: 4em;
+            padding: 0 5px;
+            white-space: normal;
+            text-align: center;
+            line-height: 4em;
+        }
     }
     .role-description{
         padding-top: 0.8em;
