@@ -11,16 +11,20 @@ export default {
     methods: {
         joinRoom() {
             let self = this;
-            this.$store
+            let sss = this.$store
                 .dispatch("joinRoom", self.pin_code)
-                .then(() =>
+                .then(res => {
                     this.$router.push({
                         path: "/room",
                         params: self.pin_code
-                    })
-                )
+                    });
+                })
                 .catch(e => {
-                    console.debug(e);
+                    console.error(e);
+                    this.$message({
+                        message: "加入房間錯誤！",
+                        type: "warning"
+                    });
                     this.pin_code = "";
                 });
         }

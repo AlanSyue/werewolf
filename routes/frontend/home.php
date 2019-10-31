@@ -14,7 +14,6 @@ Route::get('admin/login', [DashboardController::class, 'login'])->name('admin.lo
 
 Route::group(['middleware' => ['auth', 'password_expires']], function () {
 
-    Route::get('/', [HomeController::class, 'index'])->name('index');
     // Route::get('contact', [ContactController::class, 'index'])->name('contact');
     // Route::post('contact/send', [ContactController::class, 'send'])->name('contact.send');
 
@@ -40,7 +39,8 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');
     Route::get('auth', [AccountController::class, 'getAuth'])->name('auth.get');
 
+    Route::get('/', [HomeController::class, 'index'])->name('index');
     Route::get('{any}', function () {
         return view('frontend.app');
-    });
+    })->where('any', '.*');
 });

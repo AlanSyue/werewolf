@@ -12,7 +12,6 @@ export default {
     },
     watch: {},
     created() {
-        this.$store.dispatch("fetchAuth");
     },
     methods: {
         fetchAuth() {

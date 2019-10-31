@@ -9,7 +9,7 @@ let actions = {
                 commit("UPDATE_GAME_USERS", res.data.data.gameUsers);
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             });
     },
     fetchAuth({ commit }) {
@@ -19,7 +19,7 @@ let actions = {
                 commit("FETCH_AUTH", res.data);
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             });
     },
     updateRoomSeats({ commit }, seats) {
@@ -32,7 +32,7 @@ let actions = {
                 commit("UPDATE_GAME_USERS", res.data);
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             });
     },
     createRoom({ commit }, room_data) {
@@ -58,14 +58,12 @@ let actions = {
         let post_data = {
             pin_code: pin_code
         };
-        axios
+        return axios
             .post("/room/join", post_data)
             .then(function(res) {
                 commit("FETCH_ROOM", res.data);
+                return res;
             })
-            .catch(err => {
-                console.log(err);
-            });
     }
 };
 

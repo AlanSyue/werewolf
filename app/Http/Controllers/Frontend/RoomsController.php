@@ -101,7 +101,7 @@ class RoomsController extends Controller
 
         $room = $model->find($roomId);
         if (!$room) {
-            return back()->withInput();
+            return  response('尚未加入房間', 400);
         }
         try { } catch (Exception $e) {
             Log::error('Exception while joining a chat room', [
@@ -125,6 +125,9 @@ class RoomsController extends Controller
             abort(403);
         }
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        if (!isset($roomUser)) {
+            return  response('尚未加入房間', 400);
+        }
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
         return new RoomResource($roomRelationData);
     }
