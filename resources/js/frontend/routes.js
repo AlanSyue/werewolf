@@ -5,6 +5,7 @@ import Home from "./pages/Home.vue";
 import Room from "./pages/Room.vue";
 import RoomCreate from "./pages/RoomCreate.vue";
 import RoomJoin from "./pages/RoomJoin.vue";
+import Game from "./pages/Game.vue";
 
 const routes = [
     {
@@ -41,6 +42,11 @@ const routes = [
         path: "/room/join",
         component: RoomJoin,
         meta: { title: "加入房間" }
+    },
+    {
+        path: "/game",
+        component: Game,
+        meta: { title: "遊戲中" }
     }
 ];
 

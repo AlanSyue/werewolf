@@ -12,22 +12,22 @@
         </el-row>
         <el-row class="role-description" type="flex">
             <el-col :span="4"><span>神職</span></el-col>
-            <el-col :span="4"><el-tag v-bind:type="game.prophet_amount > 0 ? 'primary' : 'info' " >預言家</el-tag></el-col>
+            <el-col :span="4"><el-tag v-bind:type="game.prophet_amount > 0 ? 'primary' : 'info' " >預言</el-tag></el-col>
             <el-col :span="4"><el-tag v-bind:type="game.witch_amount > 0 ? 'primary' : 'info' " >女巫</el-tag></el-col>
             <el-col :span="4"><el-tag v-bind:type="game.knight_amount > 0 ? 'primary' : 'info' " >騎士</el-tag></el-col>
             <el-col :span="4"><el-tag v-bind:type="game.hunter_amount > 0 ? 'primary' : 'info' " >獵人</el-tag></el-col>
-            <el-col :span="4"><el-button type="text" @click="godDescriptionDialogVisible = true">查看</el-button></el-col>
+            <el-col :span="4"><el-button @click="godDescriptionDialogVisible = true">查看</el-button></el-col>
         </el-row>
         <el-row class="role-description" type="flex">
             <el-col :span="4"><span>狼人</span></el-col>
             <el-col :span="4"><el-tag v-bind:type="game.kingwolf_amount > 0 ? '：' : 'info' " >狼王</el-tag></el-col>
             <el-col :span="12"><el-tag type="primary" >狼人: {{game.werewolf_amount}}</el-tag></el-col>
-            <el-col :span="4"><el-button type="text" @click="werewolfDescriptionDialogVisible = true">查看</el-button></el-col>
+            <el-col :span="4"><el-button @click="werewolfDescriptionDialogVisible = true">查看</el-button></el-col>
         </el-row>
         <el-row class="role-description" type="flex">
             <el-col :span="4"><span>其他</span></el-col>
             <el-col :span="16"><el-tag type="primary" >平民: {{game.civilian_amount}}</el-tag></el-col>
-            <el-col :span="4"><el-button type="text" @click="civilianDescriptionDialogVisible = true">查看</el-button></el-col>
+            <el-col :span="4"><el-button @click="civilianDescriptionDialogVisible = true">查看</el-button></el-col>
         </el-row>
         
         <el-footer class="bg-gray">

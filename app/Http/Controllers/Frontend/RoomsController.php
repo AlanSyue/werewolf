@@ -126,7 +126,7 @@ class RoomsController extends Controller
         }
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         if (!isset($roomUser)) {
-            return  response('尚未加入房間', 400);
+            return  response('尚未加入房間', ＠);
         }
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
         return new RoomResource($roomRelationData);

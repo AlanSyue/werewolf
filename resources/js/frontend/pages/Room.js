@@ -1,7 +1,7 @@
 
 
 export default {
-    name: "Game",
+    name: "Room",
     data: function() {
         return {
             loading: false,
@@ -128,8 +128,8 @@ export default {
                     this.$store.state.gameUsers = data;
                 })
                 .listen("Frontend\\GameStarted", e => {
-                    this.$alert("開始遊戲囉", {
-                        confirmButtonText: "確認"
+                    this.$router.push({
+                        path: "/game"
                     });
                 });
         }
