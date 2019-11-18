@@ -1,19 +1,16 @@
 <?php
 
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\RoomsController;
 use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Frontend\MessagesController;
 use App\Http\Controllers\Frontend\User\AccountController;
 use App\Http\Controllers\Frontend\User\ProfileController;
-use App\Http\Controllers\Frontend\RoomsController;
-use App\Http\Controllers\Frontend\MessagesController;
-
-use App\Http\Controllers\Backend\DashboardController;
-
 
 Route::get('admin/login', [DashboardController::class, 'login'])->name('admin.login');
 
 Route::group(['middleware' => ['auth', 'password_expires']], function () {
-
     // Route::get('contact', [ContactController::class, 'index'])->name('contact');
     // Route::post('contact/send', [ContactController::class, 'send'])->name('contact.send');
 
@@ -34,7 +31,6 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     Route::group(['prefix' => 'game'], function () {
         Route::post('start', [RoomsController::class, 'startGame'])->name('game.start');
     });
-
 
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');
     Route::get('auth', [AccountController::class, 'getAuth'])->name('auth.get');

@@ -11,17 +11,16 @@ use App\Models\Room\Room;
 trait RoomUserRelationship
 {
     /**
-     * The roomUser that belongs to the user
+     * The roomUser that belongs to the user.
      */
     public function user()
     {
-
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     /**
-     * Define roomUser relationship
-     * 
+     * Define roomUser relationship.
+     *
      * @return mixed
      */
     public function room()

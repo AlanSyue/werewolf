@@ -10,8 +10,8 @@ use App\Models\Auth\User;
 trait RoomMethod
 {
     /**
-     * Leave a chat room
-     * 
+     * Leave a chat room.
+     *
      * @param \App\Models\Auth\User $user
      */
     public function leave(User $user)

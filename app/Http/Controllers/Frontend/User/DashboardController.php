@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Frontend\User;
 
+use Auth;
+use App\Models\Auth\User;
 use App\Http\Controllers\Controller;
 use App\Events\Frontend\AnalysisDataCreated;
-use App\Models\Auth\User;
-use Auth;
 
 /**
  * Class DashboardController.

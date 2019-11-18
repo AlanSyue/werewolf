@@ -131,6 +131,6 @@ return [
         'room_index' => [
             'create_room' => '建立遊戲房',
             'join_room' => '進入遊戲',
-        ]
+        ],
     ],
 ];

@@ -6,8 +6,8 @@ use Exception;
 use App\Models\Auth\User;
 use App\Models\Game\Game;
 use App\Models\Room\Room;
-use App\Models\Room\RoomUser;
 use App\Models\Game\GameUser;
+use App\Models\Room\RoomUser;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\BaseRepository;
 
@@ -36,6 +36,7 @@ class RoomRepository extends BaseRepository
     public function createGameRoom($roomInsertData, $gameInsertData)
     {
         DB::beginTransaction();
+
         try {
             $room = $this->model->create($roomInsertData);
             $game = new $this->gameModel;
@@ -45,6 +46,7 @@ class RoomRepository extends BaseRepository
             throw $e;
         }
         DB::commit();
+
         return $room;
     }
 
@@ -76,10 +78,11 @@ class RoomRepository extends BaseRepository
     {
         $roomUser = $this->roomUserModel
             ->updateOrCreate([
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ], [
-                'room_id' => $room->id
+                'room_id' => $room->id,
             ]);
+
         return $roomUser ? true : false;
     }
 
@@ -94,7 +97,7 @@ class RoomRepository extends BaseRepository
                 'games.gameUsers',
                 'roomUsers.user' => function ($query) {
                     $query->select('id', 'first_name');
-                }
+                },
             ])
             ->first();
     }
@@ -105,6 +108,7 @@ class RoomRepository extends BaseRepository
         $insertData = $this->getGameUserInsertDataWithRandomRoleType($game, $seats);
         $bool = $this->gameUserModel
             ->insert($insertData);
+
         return $bool;
     }
 
@@ -142,15 +146,17 @@ class RoomRepository extends BaseRepository
             array_push($roleTypes, $roleTypeTable['hunter']);
         }
         \Log::info($gameUsers);
+
         return collect($gameUsers)->map(function ($gameUser) use ($game, $roleTypes) {
             $randIndex = rand(0, count($roleTypes) - 1);
             $roleType = $roleTypes[$randIndex];
             unset($roleTypes[$randIndex]);
+
             return [
                 'game_id' => $game->id,
                 'seat_index' => $gameUser['seat_index'],
                 'user_id' => $gameUser['user_id'],
-                'role_type' => $roleType
+                'role_type' => $roleType,
             ];
         })->toArray();
     }

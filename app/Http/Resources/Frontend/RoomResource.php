@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Frontend;
 
-
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoomResource extends JsonResource
@@ -29,6 +27,7 @@ class RoomResource extends JsonResource
             'hunterAmount' => $game->hunter_amount,
         ];
         $totalGameUser = array_sum($gameUserAmount);
+
         if (count($game->gameUsers) == $totalGameUser) {
             $gameUsers = $game->gameUsers;
             unset($gameData['gameUsers']);
@@ -52,7 +51,7 @@ class RoomResource extends JsonResource
             'users' => $this->roomUsers->map(function ($roomUser) {
                 return $roomUser->user;
             }),
-            'gameUsers' => $gameUsers
+            'gameUsers' => $gameUsers,
         ];
     }
 }

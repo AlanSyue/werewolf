@@ -3,14 +3,13 @@
 namespace App\Models\Game;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Game\Traits\Relationship\GameRelationship;
 use App\Models\Game\Traits\Method\GameMethod;
+use App\Models\Game\Traits\Relationship\GameRelationship;
 
 class Game extends Model
 {
     use GameRelationship,
         GameMethod;
-
 
     protected $fillable = [
         'room_id',
@@ -21,6 +20,6 @@ class Game extends Model
         'hunter_amount',
         'werewolf_amount',
         'snowwolf_amount',
-        'kingwolf_amount'
+        'kingwolf_amount',
     ];
 }

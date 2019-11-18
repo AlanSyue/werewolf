@@ -2,10 +2,10 @@
 
 namespace App\Models\Auth\Traits\Relationship;
 
+use App\Models\Room\Message;
+use App\Models\Room\RoomUser;
 use App\Models\Auth\SocialAccount;
 use App\Models\Auth\PasswordHistory;
-use App\Models\Room\RoomUser;
-use App\Models\Room\Message;
 
 /**
  * Class UserRelationship.
@@ -29,7 +29,7 @@ trait UserRelationship
     }
 
     /**
-     * The rooms that this user belongs to
+     * The rooms that this user belongs to.
      */
     public function room()
     {
@@ -37,8 +37,8 @@ trait UserRelationship
     }
 
     /**
-     * Define messages relation
-     * 
+     * Define messages relation.
+     *
      * @return mixed
      */
     public function messages()

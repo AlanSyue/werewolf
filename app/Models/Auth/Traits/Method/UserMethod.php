@@ -20,7 +20,7 @@ trait UserMethod
      */
     public function canChangePassword()
     {
-        return !app('session')->has(config('access.socialite_session_name'));
+        return ! app('session')->has(config('access.socialite_session_name'));
     }
 
     /**
@@ -33,14 +33,14 @@ trait UserMethod
     {
         switch ($this->avatar_type) {
             case 'gravatar':
-                if (!$size) {
+                if (! $size) {
                     $size = config('gravatar.default.size');
                 }
 
                 return gravatar()->get($this->email, ['size' => $size]);
 
             case 'storage':
-                return url('storage/' . $this->avatar_location);
+                return url('storage/'.$this->avatar_location);
         }
 
         $social_avatar = $this->providers()->where('provider', $this->avatar_type)->first();
@@ -97,14 +97,14 @@ trait UserMethod
      */
     public function isPending()
     {
-        return config('access.users.requires_approval') && !$this->confirmed;
+        return config('access.users.requires_approval') && ! $this->confirmed;
     }
 
     /**
-     * Check if user has joined room
-     * 
+     * Check if user has joined room.
+     *
      * @param mixed $roomId
-     * 
+     *
      * @return bool
      */
     public function hasJoined($roomId)

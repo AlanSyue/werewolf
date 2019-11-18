@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Models\Room\Room;
 use App\Models\Room\Message;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Events\Frontend\MessageCreated;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Events\Frontend\MessageCreated;
 
 class MessagesController extends Controller
 {
@@ -24,7 +23,7 @@ class MessagesController extends Controller
             $message = Message::create([
                 'body' => $request->get('body'),
                 'user_id' => $request->user()->id,
-                'room_id' => $request->get('room_id')
+                'room_id' => $request->get('room_id'),
             ]);
 
             broadcast(new MessageCreated($message->load('user')))->toOthers();
@@ -41,7 +40,7 @@ class MessagesController extends Controller
         }
 
         return response()->json([
-            'msg' => 'Message created'
+            'msg' => 'Message created',
         ], Response::HTTP_CREATED);
     }
 }

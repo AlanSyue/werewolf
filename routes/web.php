@@ -10,7 +10,6 @@ use App\Http\Controllers\LanguageController;
 // Switch between the included languages
 Route::get('lang/{lang}', [LanguageController::class, 'swap']);
 
-
 /*
  * Backend Routes
  * Namespaces indicate folder structure
@@ -24,7 +23,7 @@ Route::group(['namespace' => 'Backend', 'prefix' => 'admin', 'as' => 'admin.', '
      * Note: Administrator has all permissions so you do not have to specify the administrator role everywhere.
      * These routes can not be hit if the password is expired
      */
-    include_route_files(__DIR__ . '/backend/');
+    include_route_files(__DIR__.'/backend/');
 });
 
 /*
@@ -32,5 +31,5 @@ Route::group(['namespace' => 'Backend', 'prefix' => 'admin', 'as' => 'admin.', '
  * Namespaces indicate folder structure
  */
 Route::group(['namespace' => 'Frontend', 'as' => 'frontend.'], function () {
-    include_route_files(__DIR__ . '/frontend/');
+    include_route_files(__DIR__.'/frontend/');
 });

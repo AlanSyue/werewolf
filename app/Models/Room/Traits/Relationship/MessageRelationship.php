@@ -11,8 +11,8 @@ use App\Models\Room\Room;
 trait MessageRelationship
 {
     /**
-     * Define user relationship
-     * 
+     * Define user relationship.
+     *
      * @return mixed
      */
     public function user()
@@ -21,8 +21,8 @@ trait MessageRelationship
     }
 
     /**
-     * Define room relationship
-     * 
+     * Define room relationship.
+     *
      * @return mixed
      */
     public function room()

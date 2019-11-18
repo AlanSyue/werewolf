@@ -3,10 +3,8 @@
 namespace App\Models\Room;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Room\Traits\Relationship\RoomRelationship;
 use App\Models\Room\Traits\Method\RoomMethod;
-
-
+use App\Models\Room\Traits\Relationship\RoomRelationship;
 
 class Room extends Model
 {
@@ -19,6 +17,6 @@ class Room extends Model
      * @return array
      */
     protected $fillable = [
-        'user_id'
+        'user_id',
     ];
 }

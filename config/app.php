@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Is In Read Only Mode
@@ -23,7 +22,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel ' . app()->version() . ' Boilerplate'),
+    'name' => env('APP_NAME', 'Laravel '.app()->version().' Boilerplate'),
 
     /*
     |--------------------------------------------------------------------------

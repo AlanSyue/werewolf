@@ -2,11 +2,9 @@
 
 namespace App\Http\Resources\Frontend;
 
-
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RoomResource extends JsonResource
+class RoomRelation extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,7 +22,7 @@ class RoomResource extends JsonResource
             'game' => $this->games->first(),
             'users' => $this->roomUsers->map(function ($roomUser) {
                 return $roomUser->user;
-            })
+            }),
         ];
     }
 }

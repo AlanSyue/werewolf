@@ -24,9 +24,10 @@ Broadcast::channel('room.{roomId}', function ($user, $roomId) {
         return [
             'id' => $user->id,
             'full_name' => $user->full_name,
-            'first_name' => $user->first_name
+            'first_name' => $user->first_name,
         ];
     }
+
     return true;
 });
 

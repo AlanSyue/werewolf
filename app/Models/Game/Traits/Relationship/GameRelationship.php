@@ -12,7 +12,7 @@ use App\Models\Game\GameUser;
 trait GameRelationship
 {
     /**
-     * The rooms that belongs to the user
+     * The rooms that belongs to the user.
      */
     public function room()
     {
@@ -20,8 +20,8 @@ trait GameRelationship
     }
 
     /**
-     * Define room relationship
-     * 
+     * Define room relationship.
+     *
      * @return mixed
      */
     public function gameUsers()

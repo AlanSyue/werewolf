@@ -2,14 +2,10 @@
 
 namespace App\Events\Frontend;
 
-use App\Models\Room\Room;
 use App\Models\Auth\User;
-use Illuminate\Broadcasting\Channel;
+use App\Models\Room\Room;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class RoomJoined implements ShouldBroadcast
@@ -17,19 +13,17 @@ class RoomJoined implements ShouldBroadcast
     use SerializesModels;
 
     /**
-     * The user that joined the room
+     * The user that joined the room.
      */
     public $user;
 
     /**
-     * The room the user joined
+     * The room the user joined.
      */
     public $room;
 
     /**
      * Create a new event instance.
-     *
-     * @return void
      */
     public function __construct(User $user, Room $room)
     {
@@ -44,12 +38,12 @@ class RoomJoined implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('room.' . $this->room->id);
+        return new PresenceChannel('room.'.$this->room->id);
     }
 
     /**
-     * The event's broadcast name
-     * 
+     * The event's broadcast name.
+     *
      * @return string
      */
     public function broadcastAs()

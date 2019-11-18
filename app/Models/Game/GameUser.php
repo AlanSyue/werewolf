@@ -3,8 +3,8 @@
 namespace App\Models\Game;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Game\Traits\Relationship\GameUserRelationship;
 use App\Models\Game\Traits\Method\GameUserMethod;
+use App\Models\Game\Traits\Relationship\GameUserRelationship;
 
 class GameUser extends Model
 {
@@ -12,6 +12,6 @@ class GameUser extends Model
         GameUserMethod;
 
     protected $guard = [
-        'id'
+        'id',
     ];
 }

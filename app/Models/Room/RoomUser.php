@@ -10,6 +10,7 @@ class RoomUser extends Model
     use RoomUserRelationship;
 
     protected $table = 'room_user';
+
     /**
      * The attributes that are mass assigned.
      *
@@ -17,6 +18,6 @@ class RoomUser extends Model
      */
     protected $fillable = [
         'user_id',
-        'room_id'
+        'room_id',
     ];
 }

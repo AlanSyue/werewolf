@@ -4,21 +4,18 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Models\Room\Room;
 use App\Events\Frontend\RoomJoined;
-use App\Events\Frontend\GameUserUpdated;
-use App\Events\Frontend\GameStarted;
 use Illuminate\Support\Facades\Log;
+use App\Events\Frontend\GameStarted;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Request;
-use App\Repositories\Frontend\Game\GameRepository;
-use App\Repositories\Frontend\Room\RoomRepository;
 use App\Services\Frontend\RoomService;
+use App\Events\Frontend\GameUserUpdated;
 use App\Http\Resources\Frontend\RoomResource;
-
+use Symfony\Component\HttpFoundation\Request;
+use App\Repositories\Frontend\Room\RoomRepository;
 
 class RoomsController extends Controller
 {
-
     /**
      * RoomsController constructor.
      *
@@ -47,13 +44,13 @@ class RoomsController extends Controller
             'hunter_amount' => 'required',
             'werewolf_amount' => 'required',
             // 'snowwolf_amount' => 'required',
-            'kingwolf_amount' => 'required'
+            'kingwolf_amount' => 'required',
         ]);
 
         try {
             $user = Auth::user();
             $roomInsertData = [
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ];
             $gameInsertData = [
                 'civilian_amount' => $request->input('civilian_amount', 0),
@@ -63,7 +60,7 @@ class RoomsController extends Controller
                 'hunter_amount' => $request->input('hunter_amount', 0),
                 'werewolf_amount' => $request->input('werewolf_amount', 0),
                 'snowwolf_amount' => $request->input('snowwolf_amount', 0),
-                'kingwolf_amount' => $request->input('kingwolf_amount', 0)
+                'kingwolf_amount' => $request->input('kingwolf_amount', 0),
             ];
             $room = $this->roomRepository->createGameRoom($roomInsertData, $gameInsertData);
             $this->roomRepository->updateRoomUser($user, $room);
@@ -73,6 +70,7 @@ class RoomsController extends Controller
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),
             ]);
+
             return back()->withInput();
         }
 
@@ -80,13 +78,13 @@ class RoomsController extends Controller
 
         return response()->json([
             'id' => $room->id,
-            'encodeRoomId' => $encodeRoomId
+            'encodeRoomId' => $encodeRoomId,
         ]);
     }
 
     /**
-     * Allow user to join chat room
-     * 
+     * Allow user to join chat room.
+     *
      * @param Room $room
      * @param \Illuminate\Http\Request $request
      */
@@ -100,15 +98,19 @@ class RoomsController extends Controller
         $roomId = base64_decode($encodeRoomId);
 
         $room = $model->find($roomId);
-        if (!$room) {
+
+        if (! $room) {
             return  response('尚未加入房間', 400);
         }
-        try { } catch (Exception $e) {
+
+        try {
+        } catch (Exception $e) {
             Log::error('Exception while joining a chat room', [
                 'file' => $e->getFile(),
                 'code' => $e->getCode(),
                 'message' => $e->getMessage(),
             ]);
+
             return back();
         }
 
@@ -121,31 +123,36 @@ class RoomsController extends Controller
     public function roomData(Request $request)
     {
         $user = Auth::user();
-        if (!$user) {
+
+        if (! $user) {
             abort(403);
         }
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
-        if (!isset($roomUser)) {
+
+        if (! isset($roomUser)) {
             return  response('尚未加入房間', ＠);
         }
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
+
         return new RoomResource($roomRelationData);
     }
 
     public function upadteRoomSeats(Request $request)
     {
         $this->validate($request, [
-            'seats' => 'required'
+            'seats' => 'required',
         ]);
         $seats = $request->input('seats');
         $user = Auth::user();
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
         $isSuccess = $this->roomRepository->createOrUpdateGameUser($game, $seats);
+
         if ($isSuccess) {
             $gameUsers = $this->roomRepository->getGameUsers($game->id);
         }
         event(new GameUserUpdated($gameUsers->toArray(), $game));
+
         return $gameUsers;
     }
 
