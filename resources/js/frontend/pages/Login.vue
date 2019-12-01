@@ -6,7 +6,7 @@
                     <span for="userName">暱稱：</span>
                 </el-col>
                 <el-col :span="18" class="align-item-center">
-                    <el-input id="userName" v-model="userName" :min="1" :max="10" label="普通狼人"></el-input>
+                    <el-input id="userName" v-model="userName" :min="1" :max="10" label="暱稱"></el-input>
                 </el-col>
             </el-row>
             <el-row type="flex" class="form-content" align="center" >
