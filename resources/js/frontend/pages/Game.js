@@ -33,8 +33,15 @@ export default {
             return object;
         }
     },
-    created() {},
-    mounted() {},
+    created() {
+        let self = this;
+        this.$store.dispatch("fetchAuth");
+        this.$store.dispatch("fetchGameData").then(function(){
+            self.handleEventService(self.room.id);
+        });;
+    },
+    mounted() {
+    },
     methods: {
         playsSound(fileName) {
             return new Promise(function(resolve, reject) {
@@ -60,6 +67,32 @@ export default {
             this.playSound1().then(
                 () => this.playSound2()
             );
+        },
+        handleEventService: function joinedRoom(roomId) {
+            console.log(window.Echo);
+            window.Echo.join(`room.${roomId}`)
+                .here(users => {
+                    this.$store.state.users = users;
+                })
+                .joining(newUser => {
+                    let users = this.$store.state.users.filter(function(
+                        originUser
+                    ) {
+                        return originUser.id != newUser.id;
+                    });
+                    users.push(newUser);
+                    this.$store.state.users = users;
+                })
+                .leaving(user => {
+                    this.$store.state.users = this.$store.state.users.filter(
+                        function(originUser) {
+                            return originUser.id != user.id;
+                        }
+                    );
+                })
+                .listen("Frontend\\NightComing", e => {
+                    this.isNightMode = true;
+                })
         }
     }
 };

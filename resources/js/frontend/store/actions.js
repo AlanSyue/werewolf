@@ -1,16 +1,20 @@
 let actions = {
     fetchGameData({ commit }) {
-        axios
-            .get("/room/data")
-            .then(res => {
-                commit("FETCH_GAME", res.data.data.game);
-                commit("FETCH_ROOM", res.data.data.room);
-                commit("FETCH_ROOM_USERS", res.data.data.users);
-                commit("UPDATE_GAME_USERS", res.data.data.gameUsers);
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        return new Promise((resolve, reject) => {
+            axios
+                .get("/room/data")
+                .then(res => {
+                    commit("FETCH_GAME", res.data.data.game);
+                    commit("FETCH_ROOM", res.data.data.room);
+                    commit("FETCH_ROOM_USERS", res.data.data.users);
+                    commit("UPDATE_GAME_USERS", res.data.data.gameUsers);
+                    resolve(res);
+                })
+                .catch(err => {
+                    console.error(err);
+                    reject(err);
+                });  
+        })
     },
     fetchAuth({ commit }) {
         axios
