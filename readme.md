@@ -18,5 +18,22 @@
 - mysql
 - redis
 
+## Install
+1. 確定已安裝 npm、composer
+2. 確定 redis 及 mysql 已經完成架設
+3. 確定註冊 pusher 帳號及拿取到 key
+
+## Get Start
+
+
+
+```
+npm install && npm run prod
+composer install
+cp .env.example .env
+fill in mysql-connection-setting into .env
+fill in pusher-setting into .env
+```
+
 ### 如果有興趣協作開發，歡迎聯絡
 - 信箱：b10303008@gmail.com
