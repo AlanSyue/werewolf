@@ -4,7 +4,7 @@
 
 ![wireframe](./public/docs/wireframe.png)
 
-### [Flow](https://drive.google.com/file/d/1PPYfuUqZHvPN8MbPxmKuEjYqoFRcVxcM/view?usp=sharing)
+### [Flow](https://www.draw.io/#G1PPYfuUqZHvPN8MbPxmKuEjYqoFRcVxcM)
 - 建立房間/選擇遊戲人員配置
 - 以房間密碼快速加入房間
 - 遊戲流程實作（天黑、天亮）
