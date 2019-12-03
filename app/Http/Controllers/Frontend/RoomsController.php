@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Illuminate\Support\Facades\Redis;
 use App\Models\Room\Room;
 use App\Events\Frontend\RoomJoined;
 use Illuminate\Support\Facades\Log;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Frontend\RoomService;
 use App\Events\Frontend\GameUserUpdated;
+use App\Events\Frontend\RoomUserReady;
 use App\Http\Resources\Frontend\RoomResource;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repositories\Frontend\Room\RoomRepository;
@@ -154,6 +156,17 @@ class RoomsController extends Controller
         event(new GameUserUpdated($gameUsers->toArray(), $game));
 
         return $gameUsers;
+    }
+
+    public function getReady(Request $request)
+    {
+        $user = Auth::user();
+        $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
+        Redis::rpush($roomUser->room_id.'.'.$game->id, $user->id);
+        // event(new RoomUserReady($roomUser));
+
+
     }
 
     public function startGame()

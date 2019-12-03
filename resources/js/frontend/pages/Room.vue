@@ -38,6 +38,9 @@
                 <el-col :span="6" class="justify-center">
                     <span>人數：{{roomUsers.length}}</span>
                 </el-col>
+                <el-col :span="12" v-if="room.mayor_user_id != auth.id">
+                    <el-button :loading="loading" @click="getReady" type="success" plain>準備開始</el-button>
+                </el-col>
                 <el-col :span="6" v-if="room.mayor_user_id == auth.id">
                     <el-button :loading="loading" @click="seatSelectorDialogVisible = true">選擇座位</el-button>
                 </el-col>

@@ -80,6 +80,20 @@ export default {
         changeSeat() {
             this.isSavedGameUsers = false;
         },
+        getReady() {
+            this.loading = true;
+            axios
+                .post("/game/ready")
+                .then(res => {
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
         startGame() {
             this.loading = true;
             axios
