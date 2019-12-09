@@ -163,10 +163,12 @@ class RoomsController extends Controller
         $user = Auth::user();
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
-        Redis::rpush($roomUser->room_id.'.'.$game->id, $user->id);
-        // event(new RoomUserReady($roomUser));
+        
+        $readyUsers = Redis::lrange($roomUser->room_id.'.'.$game->id, 0, -1);
 
-
+        if ( !in_array($user->id, $readyUsers) ) {
+            event(new RoomUserReady($game, $roomUser, $user));
+        }
     }
 
     public function startGame()
