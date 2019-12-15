@@ -20,6 +20,7 @@
         "lab404/laravel-impersonate": "^1.4",
         "langleyfoxall/laravel-nist-password-rules": "^4.0",
         "laravel/framework": "^6.0",
+        "laravel/horizon": "^3.4",
         "laravel/socialite": "^4.1",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "^4.0",
