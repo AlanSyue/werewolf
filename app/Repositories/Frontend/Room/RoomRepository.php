@@ -145,20 +145,17 @@ class RoomRepository extends BaseRepository
         for ($i = 0; $i < $game->hunter_amount; $i++) {
             array_push($roleTypes, $roleTypeTable['hunter']);
         }
-        \Log::info($gameUsers);
 
-        return collect($gameUsers)->map(function ($gameUser) use ($game, $roleTypes) {
-            $randIndex = rand(0, count($roleTypes) - 1);
-            $roleType = $roleTypes[$randIndex];
-            unset($roleTypes[$randIndex]);
-
-            return [
-                'game_id' => $game->id,
-                'seat_index' => $gameUser['seat_index'],
-                'user_id' => $gameUser['user_id'],
-                'role_type' => $roleType,
-            ];
-        })->toArray();
+        return collect($gameUsers)->shuffle()
+            ->map(function ($gameUser, $key) use ($game, $roleTypes) {
+                $roleType = $roleTypes[$key];
+                return [
+                    'game_id' => $game->id,
+                    'seat_index' => $gameUser['seat_index'],
+                    'user_id' => $gameUser['user_id'],
+                    'role_type' => $roleType,
+                ];
+            })->toArray();
     }
 
     protected function getRoleTypeTable()
