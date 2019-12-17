@@ -121,7 +121,10 @@ export default {
                     let seats = data.map(function(gameUser) {
                         return {
                             id: gameUser.seat_index,
-                            user_id: gameUser.user_id
+                            user_id: gameUser.user_id,
+                            is_live: gameUser.is_live,
+                            role_type: gameUser.role_type,
+                            skill_use_status: gameUser.skill_use_status
                         };
                     });
                     this.$store.state.seats = seats;

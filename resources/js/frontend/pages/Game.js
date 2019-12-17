@@ -1,3 +1,6 @@
+import { ROLE_KEY_MAP } from "./module/constant";
+import playSound from "./module/soundMechine";
+
 export default {
     name: "Game",
     data: function() {
@@ -17,56 +20,48 @@ export default {
             return this.$store.state.game;
         },
         roomUsers() {
-            return this.$store.state.users;
-        },
-        gameUsers() {
-            return this.$store.state.gameUsers;
-        },
-        auth() {
-            return this.$store.state.auth;
-        },
-        roomUserObject() {
+            let users = this.$store.state.users;
             let object = {};
-            _.forEach(this.roomUsers, function(user, key) {
+            _.forEach(users, function(user) {
                 object[user.id] = user;
             });
             return object;
+        },
+        gameUsers() {
+            let users = this.$store.state.gameUsers;
+            let object = {};
+            _.forEach(users, function(user) {
+                user.role = ROLE_KEY_MAP[user.role_type];
+                object[user.user_id] = user;
+            });
+            return object;
+        },
+        auth() {
+            return this.$store.state.auth;
         }
     },
     created() {
         let self = this;
         this.$store.dispatch("fetchAuth");
-        this.$store.dispatch("fetchGameData").then(function(){
+        this.$store.dispatch("fetchGameData").then(function() {
             self.handleEventService(self.room.id);
-        });;
+        });
     },
-    mounted() {
-    },
+    mounted() {},
     methods: {
-        playsSound(fileName) {
-            return new Promise(function(resolve, reject) {
-                // return a promise
-                var audio = new Audio(); // create audio wo/ src
-                audio.preload = "auto"; // intend to play through
-                audio.autoplay = true; // autoplay when loaded
-                audio.onerror = reject; // on error, reject
-                audio.onended = resolve; // when done, resolve
-
-                audio.src = fileName;
-            });
-        },
-        playSound1() {
+        playSound1: function() {
             this.isNightMode = true;
-            return this.playsSound("sounds/天黑請閉眼.mp3");
+            return playSound("天黑請閉眼");
         },
-        playSound2() {
+        playSound2: function() {
             this.isNightMode = false;
-            return this.playsSound("sounds/天亮請睜眼.mp3");
+            return playSound("天亮請睜眼");
         },
-        playSound12() {
-            this.playSound1().then(
-                () => this.playSound2()
-            );
+        playSound12: function() {
+            let self = this;
+            this.playSound1().then(function() {
+                self.playSound2();
+            });
         },
         handleEventService: function joinedRoom(roomId) {
             console.log(window.Echo);
@@ -92,7 +87,7 @@ export default {
                 })
                 .listen("Frontend\\NightComing", e => {
                     this.isNightMode = true;
-                })
+                });
         }
     }
 };
