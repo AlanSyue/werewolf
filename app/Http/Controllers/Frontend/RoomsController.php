@@ -151,7 +151,7 @@ class RoomsController extends Controller
         if ($isSuccess) {
             $gameUsers = $this->roomRepository->getGameUsers($game->id);
         }
-        event(new GameUserUpdated($gameUsers->toArray(), $game));
+        event(new GameUserUpdated($gameUsers->toArray(), $game, $roomUser));
 
         return $gameUsers;
     }
