@@ -42,7 +42,7 @@ class GameUserUpdated implements ShouldBroadcast
     public function broadcastWith()
     {
         return  [
-            'readyUser' => Redis::hgetall($roomUser->room_id.'.'.$game->id)
+            'readyUser' => Redis::hgetall($this->roomUser->room_id.'.'.$this->game->id)
         ];
     }
 
