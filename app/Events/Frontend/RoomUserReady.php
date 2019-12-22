@@ -10,28 +10,27 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class GameUserUpdated implements ShouldBroadcast
+class RoomUserReady implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels, InteractsWithSockets;
 
     /**
      * The message to be broadcasted.
      */
-    public $gameUsers;
-
-    protected $game;
-
+    public $game;
+    public $user;
     public $roomUser;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(array $gameUsers, Game $game, $roomUser)
+    public function __construct(Game $game, $roomUser, $user)
     {
-        $this->gameUsers = $gameUsers;
         $this->game = $game;
+        $this->user = $user;
         $this->roomUser = $roomUser;
-        $this->setReadyUser($this->gameUsers, $this->roomUser, $this->game);
+        $this->changeReadyStatus();
+
     }
 
     public function broadcastOn()
@@ -46,15 +45,15 @@ class GameUserUpdated implements ShouldBroadcast
         ];
     }
 
-    public function setReadyUser($gameUsers, $roomUser, $game)
+    public function changeReadyStatus()
     {
-        foreach ($gameUsers as $key => $value) {
-            // exclude the room creator
-            if ( $roomUser->user_id == $value['user_id'] ) {
-                continue;
-            }
+        $readyUserStatus = Redis::hgetall($this->roomUser->room_id.'.'.$this->game->id);
+        $originStatus = $readyUserStatus[$this->user->id];
+        $readyUserStatus[$this->user->id] = $originStatus ? 0 : 1;
 
-            Redis::hset($roomUser->room_id.'.'.$game->id, $value['user_id'] , 0 );
-        }
+        foreach ($readyUserStatus as $userId => $readyStatus) {
+            Redis::hset($this->roomUser->room_id.'.'.$this->game->id, $userId , $readyStatus );
+        }  
     }
+
 }

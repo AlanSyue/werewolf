@@ -6,6 +6,7 @@ use App\Models\Room\Room;
 use App\Events\Frontend\RoomJoined;
 use Illuminate\Support\Facades\Log;
 use App\Events\Frontend\GameStarted;
+use App\Events\Frontend\RoomUserReady;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Frontend\RoomService;
@@ -154,6 +155,15 @@ class RoomsController extends Controller
         event(new GameUserUpdated($gameUsers->toArray(), $game, $roomUser));
 
         return $gameUsers;
+    }
+
+    public function readyGame()
+    {
+        $user = Auth::user();
+        $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
+
+        event(new RoomUserReady($game, $roomUser, $user));
     }
 
     public function startGame()
