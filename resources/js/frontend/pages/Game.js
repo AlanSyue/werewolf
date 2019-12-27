@@ -10,7 +10,11 @@ export default {
             loading: false,
             roleDialogVisible: false,
             werewolfSkillDialogVisible: false,
+            prophetSkillDialogVisible: false,
             werewolfKillUserId: null,
+            isScanedTonight: false,
+            scanUserId: null,
+            scanResultUserIds: [],
             gameRecordDialogVisible: false
         };
     },
@@ -81,12 +85,15 @@ export default {
                     type: "warning"
                 });
             }
-            if(this.user.isCivilian || this.user.isSkillAllowed == false){
+            if(this.user.isCivilian){
+            // if(this.user.isCivilian || this.user.isSkillAllowed == false){
                 this.$message({
                     message: "沒有技能可使用哦"
                 });
             }else if(this.user.isWereworlf){
                 this.werewolfSkillDialogVisible = true;
+            }else if(this.user.isProphet){
+                this.prophetSkillDialogVisible = true;
             }else{
                 this.$message({
                     message: "沒有技能可使用哦!"
@@ -109,7 +116,7 @@ export default {
                     this.loading = false;
                 });
         },
-        useWerelfSkill(){
+        useWerewolfSkill(){
             if(!Boolean(this.werewolfKillUserId)){
                 this.$message({
                     message: "請先選擇殺人對象",
@@ -133,6 +140,53 @@ export default {
                     this.loading = false;
                 });
         },
+        useProphetSkill(){
+            if(!Boolean(this.scanUserId)){
+                this.$message({
+                    message: "請先選擇查驗對象",
+                    type: "warning"
+                });
+            } 
+            axios
+                .post("/game/skill/prophet",{
+                    gameId: this.game.id,
+                    targetUserId:  this.scanUserId
+                })
+                .then(res => {
+                    this.scanResultUserIds.push(this.scanUserId);
+                    this.isScanedTonight = true;
+                    console.log(res);
+                    // this.prophetSkillDialogVisible = false;
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        closeProphetSkillDialog(){
+            this.prophetSkillDialogVisible = false
+            if(this.isScanedTonight){
+                axios
+                    .post("/game/skill/prophet_end",{
+                        gameId: this.game.id,
+                        targetUserId:  this.werewolfKillUserId
+                    })
+                    .then(res => {
+                        this.scanResultUserIds.push(this.scanUserId);
+                        this.isScanedTonight = true;
+                        console.log(res);
+                        // this.prophetSkillDialogVisible = false;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            }
+        },
         changeStage(data){
             console.log(data);
             let { game, gameUsers, soundData} = data;
@@ -142,48 +196,6 @@ export default {
                 soundMechine.playByData(soundData);
             }
         },
-        // changeToNight() {
-        //     this.isNightMode = true;
-        //     if (this.user.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("天黑請閉眼")
-        //             .delay(3)
-        //             .addSound("狼人現身請睜眼，狼人請殺人")
-        //             .play();
-        //     }
-        // },
-        // changeToMorning() {
-        //     this.isNightMode = false;
-        //     if (this.user.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("預言家請閉眼")
-        //             .delay(3)
-        //             .addSound("天亮請睜眼")
-        //             .delay(1)
-        //             .addSound("昨晚被淘汰的是這些玩家")
-        //             .play();
-        //     }
-        // },
-        // changeProphetMode() {
-        //     if (this.user.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("女巫請閉眼")
-        //             .delay(3)
-        //             .addSound("預言家請睜眼，你要查驗的對象是")
-        //             .play();
-        //     }
-        // },
-        // changeWitchfMode() {
-        //     if (this.user.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("狼人請閉眼")
-        //             .delay(3)
-        //             .addSound(
-        //                 "女巫請睜眼，他被殺死了，你要救他嗎，你要使用毒藥嗎"
-        //             )
-        //             .play();
-        //     }
-        // },
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
                 .here(users => {

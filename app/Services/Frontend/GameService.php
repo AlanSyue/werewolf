@@ -28,6 +28,17 @@ class GameService
         return $this->repository->killUser($gameId, $targetUserId);
     }
 
+    public function prophetUseSkill(User $user, $gameId, $targetUserId)
+    {
+        /** TODO: fill record to DB. let prophet skill to be used*/
+        return true;
+    }
+
+    public function isProphet($user, $gameId){
+        /** TODO: fill record */
+        return true;
+    }
+
     public function changeStage(User $user, $gameId, $stageName)
     {
         $isSuccess = false;
@@ -48,9 +59,23 @@ class GameService
                 break;
             case 'werewolfEnd':
                 $stage = 'morning';
-                $skillAllowedTarget = ['knight'];
+                $skillAllowedTarget = ['prophet'];
                 $soundData=[
                     ['method'=>'addSound', 'param'=>'狼人請閉眼'],
+                    ['method'=>'delay', 'param'=>3],
+                    ['method'=>'addSound', 'param'=>'預言家請睜眼，你要查驗的對象是']
+                ];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'prophetEnd':
+                $stage = 'morning';
+                $skillAllowedTarget = ['knight'];
+                $soundData=[
+                    ['method'=>'addSound', 'param'=>'預言家請閉眼'],
                     ['method'=>'delay', 'param'=>3],
                     ['method'=>'addSound', 'param'=>'天亮請睜眼'],
                     ['method'=>'delay', 'param'=>1],
@@ -61,7 +86,6 @@ class GameService
                     $stage,
                     $skillAllowedTarget
                 );
-                break;
             default:
                 // code...
                 break;

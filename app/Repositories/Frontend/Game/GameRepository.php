@@ -84,8 +84,15 @@ class GameRepository extends BaseRepository
                     $result[] = 2002;
                     $result[] = 2003;
                     break;
+                case 'prophet':
+                    $result[] = 3001;
+                    break;
+                case 'witch':
+                    $result[] = 3002;
+                    break;
                 case 'knight':
                     $result[] = 3003;
+                    break;
                 default:
                     break;
             }

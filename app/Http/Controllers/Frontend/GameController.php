@@ -57,4 +57,42 @@ class GameController extends Controller
             abort(400, '伺服器忙碌中');
         }
     }
+
+    public function useSkillProphet(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required',
+            'targetUserId' => 'required',
+        ]);
+        $gameId = $request->input('gameId');
+        $targetUserId = $request->input('targetUserId');
+        $user = Auth::user();
+        try {
+            $isSuccess = $this->service->prophetUseSkill($user, $gameId, $targetUserId);
+            if (! $isSuccess) {
+                throw new \Exception('更新錯誤');
+            }
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
+
+    public function useSkillProphetEnd(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required'
+        ]);
+        $gameId = $request->input('gameId');
+        $user = Auth::user();
+        try {
+            $isProphet = $this->service->isProphet($user, $gameId);
+            $this->service->changeStage($user, $gameId, 'prophetEnd');
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
 }
