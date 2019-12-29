@@ -17,32 +17,29 @@ class RoomUserReady implements ShouldBroadcast
     /**
      * The message to be broadcasted.
      */
+    public $gameUsers;
     public $game;
     public $user;
     public $roomUser;
+    public $readyUsers;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Game $game, $roomUser, $user)
+    public function __construct(array $gameUsers, Game $game, $roomUser, $user)
     {
+        $this->gameUsers = $gameUsers;
         $this->game = $game;
         $this->user = $user;
         $this->roomUser = $roomUser;
         $this->changeReadyStatus();
+        $this->readyUsers = Redis::hgetall($roomUser->room_id.'.'.$game->id);
 
     }
 
     public function broadcastOn()
     {
         return new PresenceChannel('room.'.$this->game->room_id);
-    }
-
-    public function broadcastWith()
-    {
-        return  [
-            'readyUsers' => Redis::hgetall($this->roomUser->room_id.'.'.$this->game->id)
-        ];
     }
 
     public function changeReadyStatus()

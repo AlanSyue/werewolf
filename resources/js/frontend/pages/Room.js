@@ -28,6 +28,9 @@ export default {
         auth() {
             return this.$store.state.auth;
         },
+        readyUsers() {
+            return this.$store.state.readyUsers;
+        },
         isUserDuplicatedInSeats() {
             let gameUsers = this.gameUsers;
             let isConatinsUnSelectedSeat =
@@ -42,8 +45,29 @@ export default {
             let seatUniqueUserCount = _.uniq(seatUserIds).length;
             return !(seatCount == seatUniqueUserCount);
         },
+        isUserAllReady() {
+            let readyUsers = this.readyUsers;
+            let isDisabled = false;
+            Object.keys(readyUsers).map((key, index) => {
+                let status = readyUsers[key]
+                if ( status == '0') {
+                    isDisabled = true
+                }
+            })
+            return isDisabled;
+        },
         isInvalidSeatSetting() {
-            return this.isUserDuplicatedInSeats || !this.isSavedGameUsers;
+            return (this.isUserDuplicatedInSeats || !this.isSavedGameUsers) || this.isUserAllReady;
+        },
+        isSeatReady() {
+            let readyUsers = this.readyUsers;
+            let isDisabled = true;
+            Object.keys(readyUsers).map((key, index) => {
+                if (key) {
+                    isDisabled = false;
+                }
+            })
+            return isDisabled;
         },
         roomUserObject() {
             let object = {};
@@ -141,8 +165,17 @@ export default {
                             skill_use_status: gameUser.skill_use_status
                         };
                     });
+                    let readyUsers = e.readyUsers;
                     this.$store.state.seats = seats;
                     this.$store.state.gameUsers = data;
+                    this.$store.state.readyUsers = readyUsers;
+                })
+                .listen("Frontend\\RoomUserReady", e => {
+                    console.log(e);
+                    let data = e.gameUsers;
+                    let readyUsers = e.readyUsers;
+                    this.$store.state.gameUsers = data;
+                    this.$store.state.readyUsers = readyUsers;
                 })
                 .listen("Frontend\\GameStarted", e => {
                     this.$router.push({

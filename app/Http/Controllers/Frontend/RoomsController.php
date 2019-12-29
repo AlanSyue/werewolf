@@ -162,8 +162,8 @@ class RoomsController extends Controller
         $user = Auth::user();
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
-
-        event(new RoomUserReady($game, $roomUser, $user));
+        $gameUsers = $this->roomRepository->getGameUsers($game->id);
+        event(new RoomUserReady($gameUsers->toArray(), $game, $roomUser, $user));
     }
 
     public function startGame()

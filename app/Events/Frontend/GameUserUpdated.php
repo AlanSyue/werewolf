@@ -23,6 +23,8 @@ class GameUserUpdated implements ShouldBroadcast
 
     public $roomUser;
 
+    public $readyUsers;
+
     /**
      * Create a new event instance.
      */
@@ -32,18 +34,12 @@ class GameUserUpdated implements ShouldBroadcast
         $this->game = $game;
         $this->roomUser = $roomUser;
         $this->setReadyUser($this->gameUsers, $this->roomUser, $this->game);
+        $this->readyUsers = Redis::hgetall($this->roomUser->room_id.'.'.$this->game->id);
     }
 
     public function broadcastOn()
     {
         return new PresenceChannel('room.'.$this->game->room_id);
-    }
-
-    public function broadcastWith()
-    {
-        return  [
-            'readyUsers' => Redis::hgetall($this->roomUser->room_id.'.'.$this->game->id)
-        ];
     }
 
     public function setReadyUser($gameUsers, $roomUser, $game)
