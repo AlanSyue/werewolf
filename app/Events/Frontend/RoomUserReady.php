@@ -17,9 +17,9 @@ class RoomUserReady implements ShouldBroadcast
     /**
      * The message to be broadcasted.
      */
-    public $gameUsers;
-    public $game;
-    public $user;
+    private $gameUsers;
+    private $game;
+    private $user;
     public $roomUser;
     public $readyUsers;
 
@@ -47,10 +47,7 @@ class RoomUserReady implements ShouldBroadcast
         $readyUserStatus = Redis::hgetall($this->roomUser->room_id.'.'.$this->game->id);
         $originStatus = $readyUserStatus[$this->user->id];
         $readyUserStatus[$this->user->id] = $originStatus ? 0 : 1;
-
-        foreach ($readyUserStatus as $userId => $readyStatus) {
-            Redis::hset($this->roomUser->room_id.'.'.$this->game->id, $userId , $readyStatus );
-        }  
+        Redis::hMset($this->roomUser->room_id.'.'.$this->game->id, $readyUserStatus); 
     }
 
 }

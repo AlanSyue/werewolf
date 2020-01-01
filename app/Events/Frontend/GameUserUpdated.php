@@ -44,13 +44,14 @@ class GameUserUpdated implements ShouldBroadcast
 
     public function setReadyUser($gameUsers, $roomUser, $game)
     {
+        $readyStatus = [];
         foreach ($gameUsers as $key => $value) {
             // exclude the room creator
             if ( $roomUser->user_id == $value['user_id'] ) {
                 continue;
             }
-
-            Redis::hset($roomUser->room_id.'.'.$game->id, $value['user_id'] , 0 );
+            $readyStatus[$value['user_id']] = 0;
         }
+        Redis::hMset($roomUser->room_id.'.'.$game->id, $readyStatus);
     }
 }

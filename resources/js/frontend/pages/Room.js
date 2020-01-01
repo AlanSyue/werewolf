@@ -47,16 +47,20 @@ export default {
         },
         isUserAllReady() {
             let readyUsers = this.readyUsers;
-            let isDisabled = false;
-            Object.keys(readyUsers).map((key, index) => {
-                let status = readyUsers[key]
-                if ( status == '0') {
-                    isDisabled = true
-                }
-            })
+            let roomUsers = this.roomUsers;
+            let isDisabled = true;
+            const allRoomUserIds = Object.values(roomUsers).map(user => user.id);
+            // check if all ready user num equal room user num
+            if ( allRoomUserIds.length == ( Object.keys(readyUsers).length + 1) ) {
+                // check if all ready user status equal '1'
+                if ( Object.values(readyUsers).every( (val, i, arr) => val === '1') ) {
+                    isDisabled = false;
+                }          
+            }
+
             return isDisabled;
         },
-        isInvalidSeatSetting() {
+        isAbleStartGame() {
             return (this.isUserDuplicatedInSeats || !this.isSavedGameUsers) || this.isUserAllReady;
         },
         isSeatReady() {
@@ -172,9 +176,9 @@ export default {
                 })
                 .listen("Frontend\\RoomUserReady", e => {
                     console.log(e);
-                    let data = e.gameUsers;
+                    let data = e.roomUsers;
                     let readyUsers = e.readyUsers;
-                    this.$store.state.gameUsers = data;
+                    this.$store.state.roomUsers = data;
                     this.$store.state.readyUsers = readyUsers;
                 })
                 .listen("Frontend\\GameStarted", e => {

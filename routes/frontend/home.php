@@ -29,8 +29,8 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         Route::post('seats', [RoomsController::class, 'upadteRoomSeats'])->name('rooms.seats');
     });
     Route::group(['prefix' => 'game'], function () {
-        Route::post('ready', [RoomsController::class, 'readyGame'])->name('game.ready');
-        Route::post('start', [RoomsController::class, 'startGame'])->name('game.start');
+        Route::post('ready', [RoomsController::class, 'readyGame']);
+        Route::post('start', [RoomsController::class, 'startGame']);
     });
 
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');
