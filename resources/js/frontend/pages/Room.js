@@ -80,10 +80,10 @@ export default {
         changeSeat() {
             this.isSavedGameUsers = false;
         },
-        startGame() {
+        toGameView() {
             this.loading = true;
             axios
-                .post("/game/start")
+                .post("/room/toGameView")
                 .then(res => {
                     console.log(res);
                 })
@@ -130,7 +130,7 @@ export default {
                     this.$store.state.seats = seats;
                     this.$store.state.gameUsers = data;
                 })
-                .listen("Frontend\\GameStarted", e => {
+                .listen("Frontend\\ToGameView", e => {
                     this.$router.push({
                         path: "/game"
                     });

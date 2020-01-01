@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Models\Room\Room;
-use App\Events\Frontend\RoomJoined;
-use Illuminate\Support\Facades\Log;
-use App\Events\Frontend\GameStarted;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Services\Frontend\RoomService;
-use App\Events\Frontend\GameUserUpdated;
-use App\Http\Resources\Frontend\RoomResource;
 use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\Frontend\RoomResource;
+use App\Events\Frontend\RoomJoined;
+use App\Events\Frontend\ToGameView;
+use App\Events\Frontend\GameUserUpdated;
+use App\Services\Frontend\RoomService;
 use App\Repositories\Frontend\Room\RoomRepository;
+use App\Models\Room\Room;
 
 class RoomsController extends Controller
 {
@@ -156,11 +156,11 @@ class RoomsController extends Controller
         return $gameUsers;
     }
 
-    public function startGame()
+    public function toGameView()
     {
         $user = Auth::user();
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
-        event(new GameStarted($game));
+        event(new ToGameView($game));
     }
 }

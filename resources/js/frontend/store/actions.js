@@ -68,7 +68,7 @@ let actions = {
                 commit("FETCH_ROOM", res.data);
                 return res;
             })
-    }
+    },
 };
 
 export default actions;
