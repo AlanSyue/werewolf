@@ -14,7 +14,7 @@ export default {
             werewolfKillUserId: null,
             isScanedTonight: false,
             scanUserId: null,
-            scanResultUserIds: [],
+            scanResultBackupUserIds: [], // 在預言家查驗時先呈現給使用者看，不必再等 game_log 更新，但寫法需要再思考
             gameRecordDialogVisible: false
         };
     },
@@ -24,6 +24,16 @@ export default {
         },
         game() {
             return this.$store.state.game;
+        },
+        gameLogs() {
+            return this.$store.state.gameLogs;
+        },
+        prophetScanedUserIds() {
+            let logs = this.$store.state.gameLogs;
+            if(!Boolean(logs)){
+                return [];
+            }
+            return logs.filter(row => row.skill === 'prophet').map( row => row.target_user_id);
         },
         auth() {
             return this.$store.state.auth;
@@ -77,6 +87,7 @@ export default {
         ...mapMutations({
             updateGame: 'FETCH_GAME',
             updateGameUsers: 'UPDATE_GAME_USERS',
+            updateGameLogs: 'FETCH_GAME_LOGS'
         }),
         showSkillDialog() {
             if (!Boolean(this.user)) {
@@ -85,8 +96,7 @@ export default {
                     type: "warning"
                 });
             }
-            if(this.user.isCivilian){
-            // if(this.user.isCivilian || this.user.isSkillAllowed == false){
+            if(this.user.isCivilian || this.user.isSkillAllowed == false){
                 this.$message({
                     message: "沒有技能可使用哦"
                 });
@@ -153,10 +163,9 @@ export default {
                     targetUserId:  this.scanUserId
                 })
                 .then(res => {
-                    this.scanResultUserIds.push(this.scanUserId);
+                    this.scanResultBackupUserIds.push(this.scanUserId);
                     this.isScanedTonight = true;
                     console.log(res);
-                    // this.prophetSkillDialogVisible = false;
                 })
                 .catch(err => {
                     console.log(err);
@@ -174,10 +183,9 @@ export default {
                         targetUserId:  this.werewolfKillUserId
                     })
                     .then(res => {
-                        this.scanResultUserIds.push(this.scanUserId);
+                        this.scanResultBackupUserIds.push(this.scanUserId);
                         this.isScanedTonight = true;
-                        console.log(res);
-                        // this.prophetSkillDialogVisible = false;
+                        this.prophetSkillDialogVisible = false;
                     })
                     .catch(err => {
                         console.log(err);
@@ -189,8 +197,14 @@ export default {
         },
         changeStage(data){
             console.log(data);
-            let { game, gameUsers, soundData} = data;
+            let {
+                game,
+                gameUsers,
+                gameLogs,
+                soundData
+            } = data;
             this.updateGame(game);
+            this.updateGameLogs(gameLogs);
             this.updateGameUsers(gameUsers);
             if (this.user.isRoomMajor) {
                 soundMechine.playByData(soundData);

@@ -16,6 +16,9 @@ let mutations = {
     },
     FETCH_AUTH(state, auth) {
         return (state.auth = auth);
+    },
+    FETCH_GAME_LOGS(state, gameLogs){
+        return (state.gameLogs = gameLogs);
     }
 };
 export default mutations;

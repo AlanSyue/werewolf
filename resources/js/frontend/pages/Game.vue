@@ -100,9 +100,28 @@
             <p>選擇查驗對象</p>
             <div class="seat-area">
                 <el-col :xs="6" :sm="6" :md="4" :lg="3" v-for="gameUser in GameUsers" :key="gameUser.seat_index" class="justify-center square">
-                    <el-radio class="scan-radio-btn" :disabled="isScanedTonight || !(gameUser.is_live) || (scanResultUserIds.indexOf(gameUser.user_id) > -1) || (gameUser.user_id == user.user_id)" v-model="scanUserId" :label="gameUser.user_id" border>
+                    <el-radio
+                        class="scan-radio-btn"
+                        :disabled="
+                            isScanedTonight ||
+                            (gameUser.user_id == user.user_id) ||
+                            !(gameUser.is_live) ||
+                            (prophetScanedUserIds.indexOf(gameUser.user_id) > -1 ) ||
+                            (scanResultBackupUserIds.indexOf(gameUser.user_id) > -1)
+                        "
+                        v-model="scanUserId"
+                        :label="gameUser.user_id"
+                        border
+                    >
                         <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
-                            {{((scanResultUserIds.indexOf(gameUser.user_id) > -1) || gameUser.user_id == user.user_id)? gameUser.role.name : gameUser.seat_index}}
+                            {{gameUser.seat_index}}
+                            {{
+                                (
+                                    (scanResultBackupUserIds.indexOf(gameUser.user_id) > -1) ||
+                                    (prophetScanedUserIds.indexOf(gameUser.user_id) > -1 )||
+                                    gameUser.user_id == user.user_id
+                                ) ? gameUser.role.name : ''
+                            }}
                         </span>
                         <span>{{
                             gameUser.is_live ?
