@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\GameController;
 use App\Http\Controllers\Frontend\RoomsController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Backend\DashboardController;
@@ -27,10 +28,14 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         Route::get('data', [RoomsController::class, 'roomData'])->name('rooms.roomData');
         // Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
         Route::post('seats', [RoomsController::class, 'upadteRoomSeats'])->name('rooms.seats');
+        Route::post('toGameView', [RoomsController::class, 'toGameView']);
     });
     Route::group(['prefix' => 'game'], function () {
         Route::post('ready', [RoomsController::class, 'readyGame']);
-        Route::post('start', [RoomsController::class, 'startGame']);
+        Route::post('start', [GameController::class, 'startGame']);
+        Route::group(['prefix' => 'skill'], function () {
+            Route::post('werewolf', [GameController::class, 'useSkillWerewolf']);
+        });
     });
 
     Route::post('messages/store', [MessagesController::class, 'store'])->name('messages.store');

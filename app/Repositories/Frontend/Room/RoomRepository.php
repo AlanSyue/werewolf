@@ -52,7 +52,7 @@ class RoomRepository extends BaseRepository
 
     public function getRoomByUserId($roomId)
     {
-        return $this->roomModel->find($roomId);
+        return $this->model->getByUserId($roomId);
     }
 
     public function getGameByRoomId($roomId)

@@ -122,10 +122,10 @@ export default {
                     this.loading = false;
                 });
         },
-        startGame() {
+        toGameView() {
             this.loading = true;
             axios
-                .post("/game/start")
+                .post("/room/toGameView")
                 .then(res => {
                     console.log(res);
                 })
@@ -181,7 +181,7 @@ export default {
                     this.$store.state.roomUsers = data;
                     this.$store.state.readyUsers = readyUsers;
                 })
-                .listen("Frontend\\GameStarted", e => {
+                .listen("Frontend\\ToGameView", e => {
                     this.$router.push({
                         path: "/game"
                     });

@@ -3,19 +3,48 @@
     &.night-mode{
         background-color: #000;
     }
+    .kill-radio-btn{
+        position: relative;
+        .index{
+            position: absolute;
+            top:0;
+            left:0;
+            padding: 0 4px;
+            background-color: #DEDEDE;
+            &.werewolf{
+                background-color: #FF9999;
+            }
+        }
+        .el-radio__inner{
+            display: none;
+        }
+    }
     .seat-area{
-        padding: 2em;
         .el-col{
             display: inline-flex;
             float: none;
-        }
-        .el-tag{
-            width: 4em;
-            height: 4em;
-            padding: 0 5px;
-            white-space: normal;
-            text-align: center;
-            line-height: 4em;
+            .el-tag{
+                position: relative;
+                width: 4em;
+                height: 4em;
+                padding: 0 5px;
+                white-space: normal;
+                text-align: center;
+                line-height: 4em;
+                overflow: hidden;
+                .index{
+                    position: absolute;
+                    top:0;
+                    left:0;
+                    padding: 2px;
+                    font-size: 1em;
+                    line-height: 1em;
+                    border-radius: 4px;
+                    color: #999999;
+                    text-align: center;
+                    background-color: #DEDEDE;
+                }
+            }
         }
     }
     .role-description{

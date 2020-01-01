@@ -1,8 +1,22 @@
 <template>
-    <section id="game" :class="{ 'night-mode': isNightMode }">
-        <el-button @click="playSound1">天黑</el-button>
-        <el-button @click="playSound2">天亮</el-button>
-        <el-button @click="playSound12">天黑天亮</el-button>
+    <section id="game" :class="{ 'night-mode': game.stage == 'night' || false }">
+        <div class="main">
+            <div class="seat-area">
+                <el-col :span="6" v-for="gameUser in GameUsers" :key="gameUser.seat_index" class="justify-center square">
+                    <el-tag :type="(gameUser.is_live) ? '' : 'danger' ">
+                        <span class="index">{{gameUser.seat_index}}</span>
+                        <span>{{
+                            gameUser.is_live ?
+                            roomUserMap[gameUser.user_id].first_name :
+                            '死亡'
+                        }}</span>
+                    </el-tag>
+                </el-col>
+            </div>
+            <div v-if="user.isRoomMajor && isGameStarted == false">
+                <el-button :loading="loading" @click="startGame" type="success" plain>開始遊戲</el-button>
+            </div>
+        </div>
         <el-footer class="bg-gray">
             <el-row type="flex">
                 <el-col :span="8">
@@ -15,7 +29,7 @@
                 <el-col :span="8">
                     <el-button
                         :loading="loading"
-                        @click="skillDialogVisible = true"
+                        @click="showSkillDialog"
                         >使用技能</el-button
                     >
                 </el-col>
@@ -35,20 +49,8 @@
             width="90%"
             center
         >
-            <h3>
-                {{
-                    auth && gameUsers[auth.id]
-                        ? gameUsers[auth.id].role.name
-                        : ""
-                }}
-            </h3>
-            <p>
-                {{
-                    auth && gameUsers[auth.id]
-                        ? gameUsers[auth.id].role.introducation
-                        : ""
-                }}
-            </p>
+            <h3>{{ (auth && user) ? user.role.name : ""}} </h3>
+            <p>{{ (auth && user) ? user.role.introducation : "" }}</p>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="roleDialogVisible = false"
                     >知道了</el-button
@@ -57,14 +59,33 @@
         </el-dialog>
         <el-dialog
             title="技能使用"
-            :visible.sync="skillDialogVisible"
+            :visible.sync="werewolfSkillDialogVisible"
             width="90%"
             center
         >
-            <h3>平民</h3>
-            <p>你沒有技能</p>
+            <h3>狼人陣營</h3>
+            <p>選擇·對象</p>
+            <div class="seat-area">
+                <el-col :xs="6" :sm="6" :md="4" :lg="3" v-for="gameUser in GameUsers" :key="gameUser.seat_index" class="justify-center square">
+                    <el-radio class="kill-radio-btn" :disabled="!(gameUser.is_live)" v-model="werewolfKillUserId" :label="gameUser.user_id" border>
+                        <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
+                            {{(gameUser.isWereworlf)? '狼人' : gameUser.seat_index}}
+                        </span>
+                        <span>{{
+                            gameUser.is_live ?
+                            roomUserMap[gameUser.user_id].first_name :
+                            '死亡'
+                        }}</span>
+                    </el-radio>
+                </el-col>
+            </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="skillDialogVisible = false"
+                <el-button type="primary"
+                    :loading="loading"
+                    @click="useWerelfSkill"
+                    >確認</el-button
+                >
+                <el-button type="primary" @click="werewolfSkillDialogVisible = false"
                     >關閉</el-button
                 >
             </span>
