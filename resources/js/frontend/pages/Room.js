@@ -49,19 +49,14 @@ export default {
             let readyUsers = this.readyUsers;
             let roomUsers = this.roomUsers;
             let isDisabled = true;
-            const allRoomUserIds = Object.values(roomUsers).map(user => user.id);
-            // check if all ready user num equal room user num
-            if ( allRoomUserIds.length == ( Object.keys(readyUsers).length + 1) ) {
-                // check if all ready user status equal '1'
-                if ( Object.values(readyUsers).every( (val, i, arr) => val === '1') ) {
-                    isDisabled = false;
-                }          
-            }
-
+            // check if all ready user status equal '1'
+            if ( Object.values(readyUsers).every( (val, i, arr) => val === '1') ) {
+                isDisabled = false;
+            }          
             return isDisabled;
         },
         isAbleStartGame() {
-            return (this.isUserDuplicatedInSeats || !this.isSavedGameUsers) || this.isUserAllReady;
+            return this.isUserDuplicatedInSeats || this.isUserAllReady;
         },
         isSeatReady() {
             let readyUsers = this.readyUsers;
@@ -69,6 +64,9 @@ export default {
             Object.keys(readyUsers).map((key, index) => {
                 if (key) {
                     isDisabled = false;
+                }
+                if (readyUsers[this.auth.id] == '1') {
+                    isDisabled = true;
                 }
             })
             return isDisabled;
@@ -114,13 +112,12 @@ export default {
                 .post("/game/ready")
                 .then(res => {
                     console.log(res);
+                    this.loading = false;
+
                 })
                 .catch(err => {
                     console.log(err);
                 })
-                .finally(() => {
-                    this.loading = false;
-                });
         },
         toGameView() {
             this.loading = true;
@@ -176,9 +173,7 @@ export default {
                 })
                 .listen("Frontend\\RoomUserReady", e => {
                     console.log(e);
-                    let data = e.roomUsers;
                     let readyUsers = e.readyUsers;
-                    this.$store.state.roomUsers = data;
                     this.$store.state.readyUsers = readyUsers;
                 })
                 .listen("Frontend\\ToGameView", e => {

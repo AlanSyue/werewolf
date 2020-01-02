@@ -16,6 +16,9 @@ let mutations = {
     },
     FETCH_AUTH(state, auth) {
         return (state.auth = auth);
+    },
+    FETCH_READY_USERS(state, readyUsers) {
+        return (state.readyUsers = readyUsers);
     }
 };
 export default mutations;

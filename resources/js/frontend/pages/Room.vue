@@ -45,7 +45,7 @@
                     <el-button :loading="loading" :disabled='isSeatReady' @click="readyGame" type="success" plain>準備開始</el-button>
                 </el-col>
                 <el-col :span="6" v-if="room.mayor_user_id == auth.id">
-                    <el-button :loading="loading" :disabled="isAbleStartGame" @click="startGame" type="success" plain>開始遊戲</el-button>
+                    <el-button :loading="loading" :disabled="isAbleStartGame" @click="toGameView" type="success" plain>開始遊戲</el-button>
                 </el-col>
             </el-row>
         </el-footer>

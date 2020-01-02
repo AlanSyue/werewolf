@@ -134,7 +134,7 @@ class RoomsController extends Controller
             return  response('尚未加入房間', ＠);
         }
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
-
+        
         return new RoomResource($roomRelationData);
     }
 

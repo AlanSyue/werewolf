@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Resources\Frontend;
-
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoomResource extends JsonResource
@@ -41,6 +41,8 @@ class RoomResource extends JsonResource
             });
         }
 
+        $readyUsers = Redis::hgetall($this->id.'.'.$game->id);
+
         return [
             'room' => [
                 'id' => $this->id,
@@ -52,6 +54,7 @@ class RoomResource extends JsonResource
                 return $roomUser->user;
             }),
             'gameUsers' => $gameUsers,
+            'readyUsers' => (object)$readyUsers,
         ];
     }
 }
