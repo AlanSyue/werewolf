@@ -13,15 +13,17 @@ class StageChanged implements ShouldBroadcast
 {
     use SerializesModels;
 
-    public $room;
+    private $room;
     public $game;
     public $gameUsers;
+    public $gameLogs;
     public $soundData;
-    public function __construct(Room $room, Game $game, $gameUsers, $soundData)
+    public function __construct(Room $room, Game $game, $gameUsers, $gameLogs, $soundData)
     {
         $this->room = $room;
         $this->game = $game;
         $this->gameUsers = $gameUsers;
+        $this->gameLogs = $gameLogs;
         $this->soundData = $soundData;
     }
     

@@ -47,6 +47,13 @@
             }
         }
     }
+    .select-area{
+        display: flex;
+        flex-wrap: wrap;
+        .el-radio{
+            margin: 4px 8px;
+        }
+    }
     .role-description{
         padding-top: 0.8em;
         padding-bottom: 0.8em;
