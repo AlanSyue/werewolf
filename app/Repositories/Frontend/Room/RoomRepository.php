@@ -10,6 +10,7 @@ use App\Models\Game\GameUser;
 use App\Models\Room\RoomUser;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * Class GameRepository.
@@ -170,5 +171,15 @@ class RoomRepository extends BaseRepository
             'knight' => 3003,
             'hunter' => 3004,
         ];
+    }
+
+    /**
+     * @param $roomId int room_id
+     * @param $gameId int game_id
+     * @return array
+     */
+    public function getReadyUsersArray($roomId, $gameId)
+    {   
+        return Redis::hgetall($roomId . '.' . $gameId);
     }
 }
