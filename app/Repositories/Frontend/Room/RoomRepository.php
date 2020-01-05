@@ -95,6 +95,7 @@ class RoomRepository extends BaseRepository
                     $query->where('status', true)->first();
                 },
                 'games.gameUsers',
+                'games.gameLogs',
                 'roomUsers.user' => function ($query) {
                     $query->select('id', 'first_name');
                 },
@@ -119,7 +120,7 @@ class RoomRepository extends BaseRepository
 
     public function getGameUserInsertDataWithRandomRoleType(Game $game, array $gameUsers)
     {
-        $roleTypeTable = $this->getRoleTypeTable();
+        $roleTypeTable = \Config::get('constants.role_type');
         $roleTypes = [];
         for ($i = 0; $i < $game->civilian_amount; $i++) {
             array_push($roleTypes, $roleTypeTable['civilian']);
@@ -156,19 +157,5 @@ class RoomRepository extends BaseRepository
                     'role_type' => $roleType,
                 ];
             })->toArray();
-    }
-
-    protected function getRoleTypeTable()
-    {
-        return [
-            'civilian' => 1001,
-            'werewolf' => 2001,
-            'snowwolf' => 2002,
-            'kingwolf' => 2003,
-            'prophet' => 3001,
-            'witch' => 3002,
-            'knight' => 3003,
-            'hunter' => 3004,
-        ];
     }
 }

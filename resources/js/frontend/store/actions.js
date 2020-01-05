@@ -8,6 +8,7 @@ let actions = {
                     commit("FETCH_ROOM", res.data.data.room);
                     commit("FETCH_ROOM_USERS", res.data.data.users);
                     commit("UPDATE_GAME_USERS", res.data.data.gameUsers);
+                    commit("FETCH_GAME_LOGS", res.data.data.gameLogs);
                     resolve(res);
                 })
                 .catch(err => {
