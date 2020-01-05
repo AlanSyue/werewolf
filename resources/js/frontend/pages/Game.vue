@@ -65,27 +65,84 @@
         >
             <h3>狼人陣營</h3>
             <p>選擇·對象</p>
-            <div class="seat-area">
-                <el-col :xs="6" :sm="6" :md="4" :lg="3" v-for="gameUser in GameUsers" :key="gameUser.seat_index" class="justify-center square">
-                    <el-radio class="kill-radio-btn" :disabled="!(gameUser.is_live)" v-model="werewolfKillUserId" :label="gameUser.user_id" border>
-                        <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
-                            {{(gameUser.isWereworlf)? '狼人' : gameUser.seat_index}}
-                        </span>
-                        <span>{{
-                            gameUser.is_live ?
-                            roomUserMap[gameUser.user_id].first_name :
-                            '死亡'
-                        }}</span>
-                    </el-radio>
-                </el-col>
+            <div class="select-area">
+                <el-radio
+                    v-for="gameUser in GameUsers" :key="gameUser.seat_index"
+                    class="kill-radio-btn"
+                    :disabled="!(gameUser.is_live)"
+                    v-model="werewolfKillUserId"
+                    :label="gameUser.user_id"
+                    border
+                >
+                    <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
+                        {{(gameUser.isWereworlf)? '狼人' : gameUser.seat_index}}
+                    </span>
+                    <span>{{
+                        gameUser.is_live ?
+                        roomUserMap[gameUser.user_id].first_name :
+                        '死亡'
+                    }}</span>
+                </el-radio>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary"
                     :loading="loading"
-                    @click="useWerelfSkill"
+                    @click="useWerewolfSkill"
                     >確認</el-button
                 >
                 <el-button type="primary" @click="werewolfSkillDialogVisible = false"
+                    >關閉</el-button
+                >
+            </span>
+        </el-dialog>
+        <el-dialog
+            title="技能使用"
+            :visible.sync="prophetSkillDialogVisible"
+            width="90%"
+            center
+        >
+            <h3>好人陣營</h3>
+            <p>選擇查驗對象</p>
+            <div class="select-area">
+                <el-radio
+                    v-for="gameUser in GameUsers"
+                    :key="gameUser.seat_index"
+                    class="scan-radio-btn"
+                    :disabled="
+                        isScanedTonight ||
+                        (gameUser.user_id == user.user_id) ||
+                        !(gameUser.is_live) ||
+                        (prophetScanedUserIds.indexOf(gameUser.user_id) > -1 ) ||
+                        (scanResultBackupUserIds.indexOf(gameUser.user_id) > -1)
+                    "
+                    v-model="scanUserId"
+                    :label="gameUser.user_id"
+                    border
+                >
+                    <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
+                        {{gameUser.seat_index}}
+                        {{
+                            (
+                                (scanResultBackupUserIds.indexOf(gameUser.user_id) > -1) ||
+                                (prophetScanedUserIds.indexOf(gameUser.user_id) > -1 )||
+                                gameUser.user_id == user.user_id
+                            ) ? gameUser.role.name : ''
+                        }}
+                    </span>
+                    <span>{{
+                        gameUser.is_live ?
+                        roomUserMap[gameUser.user_id].first_name :
+                        '死亡'
+                    }}</span>
+                </el-radio>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary"
+                    :loading="loading"
+                    @click="useProphetSkill"
+                    >確認</el-button
+                >
+                <el-button type="primary" @click="closeProphetSkillDialog"
                     >關閉</el-button
                 >
             </span>

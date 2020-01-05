@@ -19,6 +19,9 @@ let mutations = {
     },
     FETCH_READY_USERS(state, readyUsers) {
         return (state.readyUsers = readyUsers);
+    },
+    FETCH_GAME_LOGS(state, gameLogs){
+        return (state.gameLogs = gameLogs);
     }
 };
 export default mutations;
