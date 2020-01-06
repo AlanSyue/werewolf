@@ -17,6 +17,9 @@ let mutations = {
     FETCH_AUTH(state, auth) {
         return (state.auth = auth);
     },
+    FETCH_READY_USERS(state, readyUsers) {
+        return (state.readyUsers = readyUsers);
+    },
     FETCH_GAME_LOGS(state, gameLogs){
         return (state.gameLogs = gameLogs);
     }

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Resources\Frontend;
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoomResource extends JsonResource
@@ -16,6 +15,7 @@ class RoomResource extends JsonResource
     {
         $game = $this->games->first();
         $gameData = $game->toArray();
+
         $gameUserAmount = [
             'civilianAmount' => $game->civilian_amount,
             'werewolfAmount' => $game->werewolf_amount,
@@ -55,6 +55,7 @@ class RoomResource extends JsonResource
                 return $roomUser->user;
             }),
             'gameUsers' => $gameUsers,
+            'readyUsers' => (object)$this->readyUsers,
             'gameLogs' => $gameLogs,
         ];
     }

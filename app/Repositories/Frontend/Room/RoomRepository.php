@@ -10,6 +10,7 @@ use App\Models\Game\GameUser;
 use App\Models\Room\RoomUser;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * Class GameRepository.
@@ -157,5 +158,29 @@ class RoomRepository extends BaseRepository
                     'role_type' => $roleType,
                 ];
             })->toArray();
+    }
+    
+    protected function getRoleTypeTable()
+    {
+        return [
+            'civilian' => 1001,
+            'werewolf' => 2001,
+            'snowwolf' => 2002,
+            'kingwolf' => 2003,
+            'prophet' => 3001,
+            'witch' => 3002,
+            'knight' => 3003,
+            'hunter' => 3004,
+        ];
+    }
+
+    /**
+     * @param $roomId int room_id
+     * @param $gameId int game_id
+     * @return array
+     */
+    public function getReadyUsersArray($roomId, $gameId)
+    {   
+        return Redis::hgetall($roomId . '.' . $gameId);
     }
 }

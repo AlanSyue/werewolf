@@ -28,6 +28,9 @@ export default {
         auth() {
             return this.$store.state.auth;
         },
+        readyUsers() {
+            return this.$store.state.readyUsers;
+        },
         isUserDuplicatedInSeats() {
             let gameUsers = this.gameUsers;
             let isConatinsUnSelectedSeat =
@@ -42,8 +45,31 @@ export default {
             let seatUniqueUserCount = _.uniq(seatUserIds).length;
             return !(seatCount == seatUniqueUserCount);
         },
-        isInvalidSeatSetting() {
-            return this.isUserDuplicatedInSeats || !this.isSavedGameUsers;
+        isUserAllReady() {
+            let readyUsers = this.readyUsers;
+            let roomUsers = this.roomUsers;
+            let isDisabled = true;
+            // check if all ready user status equal '1'
+            if ( Object.values(readyUsers).every( (val, i, arr) => val === '1') ) {
+                isDisabled = false;
+            }          
+            return isDisabled;
+        },
+        isAbleStartGame() {
+            return this.isUserDuplicatedInSeats || this.isUserAllReady;
+        },
+        isSeatReady() {
+            let readyUsers = this.readyUsers;
+            let isDisabled = true;
+            Object.keys(readyUsers).map((key, index) => {
+                if (key) {
+                    isDisabled = false;
+                }
+                if (readyUsers[this.auth.id] == '1') {
+                    isDisabled = true;
+                }
+            })
+            return isDisabled;
         },
         roomUserObject() {
             let object = {};
@@ -79,6 +105,19 @@ export default {
         },
         changeSeat() {
             this.isSavedGameUsers = false;
+        },
+        readyGame() {
+            this.loading = true;
+            axios
+                .post("/game/ready")
+                .then(res => {
+                    console.log(res);
+                    this.loading = false;
+
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         },
         toGameView() {
             this.loading = true;
@@ -127,8 +166,15 @@ export default {
                             skill_use_status: gameUser.skill_use_status
                         };
                     });
+                    let readyUsers = e.readyUsers;
                     this.$store.state.seats = seats;
                     this.$store.state.gameUsers = data;
+                    this.$store.state.readyUsers = readyUsers;
+                })
+                .listen("Frontend\\RoomUserReady", e => {
+                    console.log(e);
+                    let readyUsers = e.readyUsers;
+                    this.$store.state.readyUsers = readyUsers;
                 })
                 .listen("Frontend\\ToGameView", e => {
                     this.$router.push({
