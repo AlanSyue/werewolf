@@ -148,6 +148,41 @@
             </span>
         </el-dialog>
         <el-dialog
+            title="技能使用"
+            :visible.sync="knightSkillDialogVisible"
+            width="90%"
+            center
+        >
+            <h3>好人陣營</h3>
+            <p>選擇查驗對象</p>
+            <div class="select-area">
+                <el-radio
+                    v-for="gameUser in GameUsers"
+                    :key="gameUser.seat_index"
+                    class="scan-radio-btn"
+                    v-model="scanUserId"
+                    :label="gameUser.user_id"
+                    border
+                >
+                    <span>{{
+                        gameUser.is_live ?
+                        roomUserMap[gameUser.user_id].first_name :
+                        '死亡'
+                    }}</span>
+                </el-radio>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary"
+                    :loading="loading"
+                    @click="useKnightSkill"
+                    >確認</el-button
+                >
+                <el-button type="primary" @click="knightSkillDialogVisible = false"
+                    >關閉</el-button
+                >
+            </span>
+        </el-dialog>
+        <el-dialog
             title="遊戲過程"
             :visible.sync="gameRecordDialogVisible"
             width="90%"

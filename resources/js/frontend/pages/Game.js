@@ -11,6 +11,7 @@ export default {
             roleDialogVisible: false,
             werewolfSkillDialogVisible: false,
             prophetSkillDialogVisible: false,
+            knightSkillDialogVisible: false,
             werewolfKillUserId: null,
             isScanedTonight: false,
             scanUserId: null,
@@ -104,6 +105,8 @@ export default {
                 this.werewolfSkillDialogVisible = true;
             }else if(this.user.isProphet){
                 this.prophetSkillDialogVisible = true;
+            }else if(this.user.isKnight){
+                this.knightSkillDialogVisible = true;
             }else{
                 this.$message({
                     message: "沒有技能可使用哦!"
