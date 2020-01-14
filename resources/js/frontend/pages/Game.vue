@@ -160,7 +160,7 @@
                     v-for="gameUser in GameUsers"
                     :key="gameUser.seat_index"
                     class="scan-radio-btn"
-                    v-model="scanUserId"
+                    v-model="knightKillUserId"
                     :label="gameUser.user_id"
                     border
                 >

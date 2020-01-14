@@ -16,7 +16,8 @@ export default {
             isScanedTonight: false,
             scanUserId: null,
             scanResultBackupUserIds: [], // 在預言家查驗時先呈現給使用者看，不必再等 game_log 更新，但寫法需要再思考
-            gameRecordDialogVisible: false
+            gameRecordDialogVisible: false,
+            knightKillUserId: null
         };
     },
     computed: {
@@ -197,6 +198,28 @@ export default {
                         this.loading = false;
                     });
             }
+        },
+        useKnightSkill(){
+            if(!Boolean(this.knightKillUserId)){
+                this.$message({
+                    message: "請先選擇查驗對象",
+                    type: "warning"
+                });
+            } 
+            axios
+                .post("/game/skill/knight",{
+                    gameId: this.game.id,
+                    targetUserId:  this.knightKillUserId
+                })
+                .then(res => {
+                    this.knightSkillDialogVisible = false;
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         },
         changeStage(data){
             console.log(data);
