@@ -67,6 +67,16 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
+    public function isKnight($gameId, $userId)
+    {
+        $ROLE_TYPE = \Config::get('constants.role_type');
+        return $this->gameUserModel->where([
+            ['game_id', $gameId],
+            ['user_id', $userId],
+            ['role_type', $ROLE_TYPE['knight']]
+        ])->exists();
+    }
+
     public function isWerewolfAndAlive($gameId, $userId)
     {
         return $this->gameUserModel->where([
@@ -116,6 +126,18 @@ class GameRepository extends BaseRepository
             'stage' => $game->stage,
             'day' => $game->day,
             'skill' => 'prophet',
+            'user_id' => $user->id,
+            'target_user_id' => $targetUserId
+        ]);
+    }
+
+    public function createCheckUserLog(Game $game, User $user, $targetUserId)
+    {
+        return $this->logModel->create([
+            'game_id' => $game->id,
+            'stage' => $game->stage,
+            'day' => $game->day,
+            'skill' => 'knight',
             'user_id' => $user->id,
             'target_user_id' => $targetUserId
         ]);

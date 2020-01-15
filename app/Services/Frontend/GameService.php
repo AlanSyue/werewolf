@@ -43,6 +43,19 @@ class GameService
         return $this->repository->createScenUserLog($game, $user, $targetUserId);
     }
 
+    public function knightUseSkill(User $user, $gameId, $targetUserId)
+    {
+        $isKnight = $this->repository->isKnight($gameId, $user->id);
+
+        if (! $isKnight) {
+            throw new \Exception('No Auth');
+        }
+
+        $game = $this->repository->getById($gameId);
+
+        return $this->repository->createCheckUserLog($game, $user, $targetUserId);
+    }
+
     public function changeStage(User $user, $gameId, $stageName)
     {
         $isSuccess = false;
@@ -97,6 +110,8 @@ class GameService
                     $skillAllowedTarget
                 );
                 $this->commitNightResult($gameId);
+            case 'knightEnd':
+
             default:
                 // code...
                 break;

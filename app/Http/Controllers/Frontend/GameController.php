@@ -95,4 +95,28 @@ class GameController extends Controller
             abort(400, '伺服器忙碌中');
         }
     }
+
+    public function useSkillKnight(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required',
+            'targetUserId' => 'required',
+        ]);
+        $gameId = $request->input('gameId');
+        $targetUserId = $request->input('targetUserId');
+
+        $user = Auth::user();
+        try {
+            $isSuccess = $this->service->knightUseSkill($user, $gameId, $targetUserId);
+
+            if (! $isSuccess) {
+                throw new \Exception('更新錯誤');
+            }
+            $this->service->changeStage($user, $gameId, 'knightEnd');
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
 }
