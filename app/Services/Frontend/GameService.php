@@ -51,9 +51,16 @@ class GameService
             throw new \Exception('No Auth');
         }
 
+        $isWerewolf = $this->repository->isWerewolf($gameId, $targetUserId);
         $game = $this->repository->getById($gameId);
 
-        return $this->repository->createCheckUserLog($game, $user, $targetUserId);
+        if (! $isWerewolf) {
+            $this->repository->killUsers($gameId, $user->id);
+            return $this->repository->createKillUserLog($game, $user->id, $user->id);
+        } else {
+            $this->repository->killUsers($gameId, $targetUserId);
+            return $this->repository->createKillUserLog($game, $user->id, $targetUserId);
+        }
     }
 
     public function changeStage(User $user, $gameId, $stageName)

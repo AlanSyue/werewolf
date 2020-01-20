@@ -160,6 +160,7 @@
                     v-for="gameUser in GameUsers"
                     :key="gameUser.seat_index"
                     class="scan-radio-btn"
+                    :disabled="!gameUser.is_live"
                     v-model="knightKillUserId"
                     :label="gameUser.user_id"
                     border
