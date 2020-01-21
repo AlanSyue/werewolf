@@ -106,17 +106,12 @@ class GameController extends Controller
         $targetUserId = $request->input('targetUserId');
 
         $user = Auth::user();
-        try {
-            $isSuccess = $this->service->knightUseSkill($user, $gameId, $targetUserId);
+        $isSuccess = $this->service->knightUseSkill($user, $gameId, $targetUserId);
 
-            if (! $isSuccess) {
-                throw new \Exception('更新錯誤');
-            }
-            $this->service->changeStage($user, $gameId, 'knightEnd');
-            return 'ok';
-        } catch (\Exception $e) {
-            \Log::error($e);
-            abort(400, '伺服器忙碌中');
+        if (! $isSuccess) {
+            $this->service->changeStage($user, $gameId, 'nightComing');
         }
+        $this->service->changeStage($user, $gameId, 'knightEnd');
+        return 'ok';
     }
 }

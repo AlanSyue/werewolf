@@ -46,20 +46,23 @@ class GameService
     public function knightUseSkill(User $user, $gameId, $targetUserId)
     {
         $isKnight = $this->repository->isKnight($gameId, $user->id);
-
+ 
         if (! $isKnight) {
             throw new \Exception('No Auth');
         }
 
         $isWerewolf = $this->repository->isWerewolf($gameId, $targetUserId);
+
         $game = $this->repository->getById($gameId);
 
         if (! $isWerewolf) {
-            $this->repository->killUsers($gameId, $user->id);
-            return $this->repository->createKillUserLog($game, $user->id, $user->id);
+            $this->repository->killUsers($gameId, [$user->id]);
+            $this->repository->createCheckUserLog($game, $user, $user->id);
+            return false;
         } else {
-            $this->repository->killUsers($gameId, $targetUserId);
-            return $this->repository->createKillUserLog($game, $user->id, $targetUserId);
+            $this->repository->killUsers($gameId, [$targetUserId]);
+            $this->repository->createCheckUserLog($game, $user, $targetUserId);
+            return true;
         }
     }
 
@@ -118,7 +121,7 @@ class GameService
                 );
                 $this->commitNightResult($gameId);
             case 'knightEnd':
-
+                $isSuccess = true;
             default:
                 // code...
                 break;
