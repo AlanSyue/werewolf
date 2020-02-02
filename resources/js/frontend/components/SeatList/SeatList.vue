@@ -7,8 +7,8 @@
 </template>
 
 <style lang="scss">
-@import "../../../sass/_defines";
-@import "../../../sass/frontend/_variables";
+@import "../../../../sass/_defines";
+@import "../../../../sass/frontend/_variables";
 
 ul.c-seat-list {
     @include flexable(row, flex-start, flex-start);

@@ -10,8 +10,8 @@
 </template>
 
 <style lang="scss">
-@import "../../../sass/_defines";
-@import "../../../sass/frontend/_variables";
+@import "../../../../sass/_defines";
+@import "../../../../sass/frontend/_variables";
 
 .c-seat {
     position: relative;

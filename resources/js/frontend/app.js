@@ -18,7 +18,7 @@ Vue.use(ElementUI);
 
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
-Vue.component('page-header', require('./components/PageHeader.vue').default);
+Vue.component('page-header', require('./components/PageHeader/PageHeader.vue').default);
 
 window.axios = axios;
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";

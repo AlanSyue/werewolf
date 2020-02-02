@@ -1,5 +1,5 @@
 module.exports = {
-  stories: ['../resources/js/components/**/*.stories.js'],
+  stories: ['../resources/js/frontend/components/**/*.stories.js'],
   addons: ['@storybook/addon-actions', '@storybook/addon-links'],
   webpackFinal: async (config, { configType }) => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
