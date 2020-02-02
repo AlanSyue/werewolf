@@ -51,6 +51,7 @@
     "sass": "^1.21.0",
     "sass-loader": "^7.1.0",
     "scss-loader": "0.0.1",
+    "storybook-vue-router": "^1.0.7",
     "sweetalert2": "^8.13.0",
     "vue": "^2.6.11",
     "vue-jest": "^3.0.4",

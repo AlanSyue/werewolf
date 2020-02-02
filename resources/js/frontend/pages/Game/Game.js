@@ -1,5 +1,5 @@
-import soundMechine from "./module/soundMechine";
-import GameUser from "./module/GameUser";
+import soundMechine from "../module/soundMechine";
+import GameUser from "../module/GameUser";
 import { mapMutations } from 'vuex'
 
 export default {

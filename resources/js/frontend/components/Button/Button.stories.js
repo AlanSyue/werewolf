@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions';
-import { withKnobs, text, boolean } from '@storybook/addon-knobs';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
 import Button from "./Button";
 
 const paddedDecorator = () => {
