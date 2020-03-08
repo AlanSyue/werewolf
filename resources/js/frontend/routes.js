@@ -26,7 +26,12 @@ const routes = [
     {
         path: "/room",
         component: Room,
-        meta: { title: "遊戲室" }
+        meta: {
+            title: "遊戲室",
+            pageHeader: {
+                hidden: true
+            }
+        }
     },
     {
         path: "/login",

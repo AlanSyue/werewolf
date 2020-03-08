@@ -1,8 +1,9 @@
 import Button from '../../components/Button/Button.vue'
-
+import ContentWrapper from '../../components/ContentWrapper/ContentWrapper.vue'
 export default {
     components: {
-        Button
+        Button,
+        ContentWrapper
     },
     data: function() {
         return {
