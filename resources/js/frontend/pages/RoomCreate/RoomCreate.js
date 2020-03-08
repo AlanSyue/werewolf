@@ -1,13 +1,18 @@
+import Button from '../../components/Button/Button.vue'
+
 export default {
+    components: {
+        Button
+    },
     data: function() {
         return {
-            prophet_active: false,
-            witch_active: false,
-            knight_active: false,
-            hunter_active: false,
-            kingwolf_active: false,
+            activeGodRoles: [],
+            kingwolf_active: 0,
+            snowwolf_active: 0,
             civilian_amount: 1,
-            werewolf_amount: 1
+            werewolf_amount: 1,
+            rule_witch_save_myself: false,
+            rule_witch_double_use_in_one_night: false,
         };
     },
     computed: {
@@ -18,19 +23,7 @@ export default {
             return this.$store.state.auth;
         },
         player_count() {
-            let count = this.civilian_amount + this.werewolf_amount;
-            if (this.prophet_active) {
-                count++;
-            }
-            if (this.witch_active) {
-                count++;
-            }
-            if (this.knight_active) {
-                count++;
-            }
-            if (this.hunter_active) {
-                count++;
-            }
+            let count = this.civilian_amount + this.werewolf_amount + this.activeGodRoles.length;
             if (this.kingwolf_active) {
                 count++;
             }
@@ -43,14 +36,23 @@ export default {
     },
     mounted() {},
     methods: {
+        goBackPage(){
+            try{
+                window.history.length > 1
+                    ? this.$router.go(-1)
+                    : this.$router.push("/");
+            } catch(e){
+                console.error(e)
+            }
+        },
         createRoom(){
             let room_data = {
                 civilian_amount: this.civilian_amount,
                 werewolf_amount: this.werewolf_amount,
-                prophet_amount: this.prophet_active,
-                witch_amount: this.witch_active,
-                knight_amount: this.knight_active,
-                hunter_amount: this.hunter_active,
+                prophet_amount: this.activeGodRoles.includes('預言家'),
+                witch_amount: this.activeGodRoles.includes('女巫'),
+                knight_amount: this.activeGodRoles.includes('騎士'),
+                hunter_amount: this.activeGodRoles.includes('獵人'),
                 kingwolf_amount: this.kingwolf_active
             };
             this.loading = true;

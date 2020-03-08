@@ -19,8 +19,14 @@ export default {
 
 const ButtonTemplate = `
     <div>
-        <Button @onClick="onClick" :isDisabled="isDisabled">Main</Button>
-        <Button class="sub" @onClick="onClick" :isDisabled="isDisabled">Secondary</Button>
+        <div>
+            <Button type="primary" @onClick="onClick" :isDisabled="isDisabled">Primary</Button>
+            <Button type="secondary" @onClick="onClick" :isDisabled="isDisabled">Secondary</Button>
+        </div>
+        <div>
+            <Button @onClick="onClick" size="medium" :isDisabled="isDisabled">medium</Button>
+            <Button @onClick="onClick" size="small" :isDisabled="isDisabled">small</Button>
+        </div>
     </div>
 `;
 

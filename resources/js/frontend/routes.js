@@ -16,7 +16,12 @@ const routes = [
     {
         path: "/",
         component: Home,
-        meta: { title: "狼人面紗" }
+        meta: {
+            title: "狼人面紗",
+            pageHeader: {
+                hidden: true
+            }
+        }
     },
     {
         path: "/room",
@@ -36,7 +41,12 @@ const routes = [
     {
         path: "/room/create",
         component: RoomCreate,
-        meta: { title: "建立遊戲" }
+        meta: {
+            title: "建立遊戲",
+            pageHeader: {
+                hidden: true
+            }
+        }
     },
     {
         path: "/room/join",

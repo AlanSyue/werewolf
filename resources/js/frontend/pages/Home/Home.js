@@ -1,6 +1,11 @@
+import Button from '../../components/Button/Button.vue'
+
 export default {
     data: function() {
         return {};
+    },
+    components: {
+        Button
     },
     computed: {
         game() {

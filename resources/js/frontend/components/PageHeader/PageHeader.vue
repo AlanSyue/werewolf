@@ -57,7 +57,11 @@ export default {
             }
         },
         hidden: function(){
-            return false
+            try{
+                return this.$route.meta.pageHeader.hidden;
+            } catch {
+                return false;
+            }
         }
     },
     methods: {

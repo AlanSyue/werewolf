@@ -1,6 +1,85 @@
-#room_create{
-    .el-footer{
+#app > #room_create {
+    padding-top: 24px;
+}
+
+#room_create {
+    .c-modal {
+        width: 100%;
+        max-width: 310px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        border: 1px solid $color-sub2;
+        border-radius: 8px;
+        padding: 10px;
+        background-image: linear-gradient(
+            329deg,
+            $color-purple 0%,
+            #ffffff 100%
+        );
         display: flex;
+        justify-content: center;
         align-items: center;
+    }
+    .inner-content {
+        width: 100%;
+        border: 2px solid $color-sub2;
+        border-radius: 8px;
+        background-color: #fff;
+        padding: 18px 16px;
+        .form-title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1.94px;
+            color: $color-main;
+            margin-bottom: 12px;
+        }
+        .form-arae {
+            padding-left: 12px;
+            margin-bottom: 14px;
+        }
+        .form-row {
+            align-items: center;
+            margin-bottom: 8px;
+            .form-col {
+                align-items: center;
+            }
+            label {
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 1.67px;
+                color: $color-main;
+                margin-bottom: 0;
+            }
+            .m-number-selector {
+                .el-input-number__decrease,
+                .el-input-number__increase {
+                    background-color: $color-main;
+                    color: #FFF;  
+                }
+                &.is-disabled .el-input-number__decrease,
+                &.is-disabled  .el-input-number__increase{
+                    background-color: #DCDFE6;
+                    color: $color-gray1;
+                }
+                
+                color: $color-main;
+            }
+            .end-radio-button {
+                margin-left: 16px;
+                border-color: $color-main;
+            }
+        }
+        .action-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            span{
+                font-size: 12px;
+                font-weight: 600;
+                letter-spacing: 0.39px;
+                color: $color-gray1;
+                cursor: pointer;
+            }
+        }
     }
 }
