@@ -1,37 +1,33 @@
 <template>
     <section id="room">
-        <div class="c-modal">
-            <div class="seat-area">
-                <el-col :span="6" v-for="gameUser in gameUsers" :key="gameUser.seat_index" class="justify-center square">
-                    <el-tag>{{(gameUser.user_id)? roomUserObject[gameUser.user_id].first_name: '未選擇'}}</el-tag>
-                </el-col>
+        <ContentWrapper
+            theme="border"
+            goBackBtnText=""
+            actionBtnText="確認"
+        >
+            <h3>{{room.pin_code}} 室</h3>
+            <SeatList :seats="seats"/>
+            <h4>角色配置</h4>
+            <div class="game">
+                <div class="game-row">
+                    <span class="game-row-name"><h5>神職</h5></span>
+                    <span class="game-row-content" @click="godDescriptionDialogVisible = true">
+                        <div v-if="game.prophet_amount" class="tag">預言</div>
+                        <div v-if="game.witch_amount" class="tag">女巫</div>
+                        <div v-if="game.knight_amount" class="tag">騎士</div>
+                        <div v-if="game.hunter_amount" class="tag">獵人</div>
+                    </span>
+                </div>
+                <div class="game-row" @click="werewolfDescriptionDialogVisible = true">
+                    <span class="game-row-name"><h5>狼人</h5></span>
+                    <span class="game-row-content">{{game.werewolf_amount}} 位</span>
+                </div>
+                <div class="game-row" @click="civilianDescriptionDialogVisible = true">
+                    <span class="game-row-name"><h5>平民</h5></span>
+                    <span class="game-row-content">{{game.civilian_amount}} 位</span>
+                </div>
             </div>
-            <el-row type="flex">
-                <el-col :span="6">
-                    <span>角色配置</span>
-                </el-col>
-            </el-row>
-            <el-row class="role-description" type="flex">
-                <el-col :span="4"><span>神職</span></el-col>
-                <el-col :span="4"><el-tag v-bind:type="game.prophet_amount > 0 ? 'primary' : 'info' " >預言</el-tag></el-col>
-                <el-col :span="4"><el-tag v-bind:type="game.witch_amount > 0 ? 'primary' : 'info' " >女巫</el-tag></el-col>
-                <el-col :span="4"><el-tag v-bind:type="game.knight_amount > 0 ? 'primary' : 'info' " >騎士</el-tag></el-col>
-                <el-col :span="4"><el-tag v-bind:type="game.hunter_amount > 0 ? 'primary' : 'info' " >獵人</el-tag></el-col>
-                <el-col :span="4"><el-button @click="godDescriptionDialogVisible = true">查看</el-button></el-col>
-            </el-row>
-            <el-row class="role-description" type="flex">
-                <el-col :span="4"><span>狼人</span></el-col>
-                <el-col :span="4"><el-tag v-bind:type="game.kingwolf_amount > 0 ? '：' : 'info' " >狼王</el-tag></el-col>
-                <el-col :span="12"><el-tag type="primary" >狼人: {{game.werewolf_amount}}</el-tag></el-col>
-                <el-col :span="4"><el-button @click="werewolfDescriptionDialogVisible = true">查看</el-button></el-col>
-            </el-row>
-            <el-row class="role-description" type="flex">
-                <el-col :span="4"><span>其他</span></el-col>
-                <el-col :span="16"><el-tag type="primary" >平民: {{game.civilian_amount}}</el-tag></el-col>
-                <el-col :span="4"><el-button @click="civilianDescriptionDialogVisible = true">查看</el-button></el-col>
-            </el-row>
-            
-        </div>
+        </ContentWrapper>
         
         <el-footer class="bg-gray">
             <el-row type="flex">

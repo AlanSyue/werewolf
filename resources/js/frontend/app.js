@@ -6,7 +6,6 @@
  */
 
 import '../bootstrap';
-import '../plugins';
 import Vue from 'vue';
 import ElementUI from "element-ui";
 import "../../thirdParty/element-ui/theme/index.css";

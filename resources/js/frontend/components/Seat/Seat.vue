@@ -24,7 +24,13 @@
     @include pseudoPaddingHeight(100%);
     > .content{
         @include abs-center;
+        width: calc(100% - 4px);
         font-size: 12px;
+        overflow: hidden;
+        > p{
+            margin: 0;
+            text-align: center;
+        }
     }
     .index {
         position: absolute;

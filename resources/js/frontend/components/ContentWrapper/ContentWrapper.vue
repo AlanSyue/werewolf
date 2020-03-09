@@ -28,8 +28,7 @@
     background-color: #fff;
     > .inner-content {
         position: relative;
-        min-height: 480px;
-        padding-bottom: 32px;
+        padding-bottom: 48px;
         .action-area {
             position: absolute;
             width: 100%;
@@ -65,6 +64,7 @@
             border-radius: 8px;
             background-color: #fff;
             padding: 18px 16px;
+            padding-bottom: 68px;
             .action-area{
                 bottom: 18px;
                 left: 16px;

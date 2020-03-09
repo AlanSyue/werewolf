@@ -1,7 +1,14 @@
-
+import Button from "../../components/Button/Button.vue";
+import SeatList from "../../components/SeatList/SeatList.vue";
+import ContentWrapper from "../../components/ContentWrapper/ContentWrapper.vue";
 
 export default {
     name: "Room",
+    components: {
+        Button,
+        ContentWrapper,
+        SeatList
+    },
     data: function() {
         return {
             loading: false,
@@ -21,6 +28,28 @@ export default {
         },
         roomUsers() {
             return this.$store.state.users;
+        },
+        seats() {
+            const { auth, gameUsers, users } = this.$store.state;
+            let userObject = {};
+            _.forEach(users, function(user) {
+                userObject[user.id] = user;
+            });
+
+            return gameUsers.map((gameUser, index) => {
+                let content = "未選擇";
+                let selfActive = false;
+                if (gameUser.user_id) {
+                    content = userObject[gameUser.user_id].first_name;
+                    selfActive = gameUser.user_id == auth.id;
+                }
+                return {
+                    number: index + 1,
+                    content: content,
+                    active: false,
+                    selfActive: selfActive
+                };
+            });
         },
         gameUsers() {
             return this.$store.state.gameUsers;
