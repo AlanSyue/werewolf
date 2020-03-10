@@ -3,6 +3,7 @@
         <ContentWrapper
             theme="border"
             goBackBtnText="< 進入房間"
+            :goBackBtnEvent="goBackPage"
             :actionBtnEvent="createRoom"
             :actionBtnText="`創建房間(${player_count}人局)`"
         >

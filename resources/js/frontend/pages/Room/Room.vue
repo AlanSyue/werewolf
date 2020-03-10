@@ -1,7 +1,6 @@
 <template>
     <section id="room">
         <ContentWrapper
-            theme="border"
             goBackBtnText=""
             actionBtnText="確認"
         >
@@ -31,9 +30,6 @@
         
         <el-footer class="bg-gray">
             <el-row type="flex">
-                <el-col :span="6" class="justify-center">
-                    <span>房號：{{room.pin_code}}</span>
-                </el-col>
                 <el-col :span="6" class="justify-center">
                     <span>人數：{{roomUsers.length}}</span>
                 </el-col>

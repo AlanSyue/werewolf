@@ -5,9 +5,28 @@
         <div class="inner-content">
             <slot></slot>
             <div class="action-area">
-                <span @click="goBackBtnEvent">{{goBackBtnText}}</span>
-                <Button type="secondary" size="small" @onClick="actionBtnEvent">{{actionBtnText}}</Button>
+                <div class="left">
+                    <span
+                        v-if="showGoBackBtn"
+                        @click="!goBackBtnDisabled && goBackBtnEvent"
+                    >
+                        {{goBackBtnText}}
+                    </span>
+                </div>
+                <div class="right">
+                    <Button
+                        type="secondary"
+                        :isDisabled="actionDisabled"
+                        size="small"
+                        @onClick="actionBtnEvent"
+                    >
+                        {{actionBtnText}}
+                    </Button>
+                </div>
             </div>
+        </div>
+        <div v-if="showCoverView" class="cover-view">
+            <span>{{coverViewText}}</span>
         </div>
     </div>
 </template>
@@ -17,6 +36,7 @@
 @import "../../../../sass/frontend/_variables";
 
 .c-content-wrapper {
+    position: relative;
     display: block;
     width: 100%;
     max-width: 310px;
@@ -26,6 +46,17 @@
     border-radius: 8px;
     padding: 16px 20px;
     background-color: #fff;
+    .cover-view{
+        position: absolute;
+        width: 100%;
+        bottom:0;
+        left:0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: $color-sub1;
+        min-height:52px;
+    }
     > .inner-content {
         position: relative;
         padding-bottom: 48px;
@@ -88,20 +119,32 @@ export default {
             type: String,
             default: ''
         },
+        showCoverView: {
+            type: Boolean,
+            default: false,
+        },
+        coverViewText: {
+            type: String,
+            default: '',
+        },
+        showGoBackBtn: {
+            type: Boolean,
+            default: true
+        },
+        goBackBtnDisabled: {
+            type: Boolean,
+            default: false
+        },
         goBackBtnEvent: {
             type: Function,
-            default: () => {
-                try{
-                    window.history.length > 1
-                        ? this.$router.go(-1)
-                        : this.$router.push("/");
-                } catch(e){
-                    console.error(e)
-                }
-            }
+            default: () => {}
         },
         goBackBtnText: {
             type: String
+        },
+        actionDisabled: {
+            type: Boolean,
+            default: false
         },
         actionBtnText: {
             type: String

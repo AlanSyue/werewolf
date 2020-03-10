@@ -3,7 +3,9 @@
         :class="['c-button', type, size]"
         :disabled="isDisabled"
         @click="$emit('onClick')"
-    ><slot></slot></button>
+    >
+        <slot></slot>
+    </button>
 </template>
 
 <style lang="scss">
@@ -18,37 +20,39 @@
     line-height: 1;
     border-radius: 18px;
     cursor: pointer;
-    &.medium{
+    &:disabled {
+        cursor: no-drop;
+    }
+    &.medium {
         padding: 8px 24px;
         font-size: 16px;
         letter-spacing: 2.22px;
     }
-    &.small{
+    &.small {
         padding: 8px 20px;
         font-size: 14px;
         letter-spacing: 1.94px;
-
     }
-    &.primary{
-        background-color: #FFFFFF;
+    &.primary {
+        background-color: #ffffff;
         color: $color-black;
-        &:active{
+        &:active {
             box-shadow: none;
         }
-        &:disabled{
+        &:disabled {
             box-shadow: none;
             opacity: 0.42;
             background-color: $color-main-dark;
-            color: #FFF;
+            color: #fff;
         }
     }
-    &.secondary{
+    &.secondary {
         background-color: $color-main-dark;
-        color: #FFF;
-        &.active{
+        color: #fff;
+        &.active {
             background-color: $color-main-light;
         }
-        &:disabled{
+        &:disabled {
             background-color: rgba(155, 155, 155, 0.6);
         }
     }
@@ -62,12 +66,12 @@ export default {
         type: {
             //primary、secondary
             type: String,
-            default: 'primary'
+            default: "primary"
         },
         size: {
             //small、large
             type: String,
-            default: 'small'
+            default: "small"
         },
         isDisabled: {
             type: Boolean,
