@@ -26,19 +26,14 @@
             }
         }
     }
-    .role-description {
-        padding-top: 0.8em;
-        padding-bottom: 0.8em;
-        border-bottom: 1px solid #dedede;
-        .el-button {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-    }
-    .el-footer {
-        > * {
-            height: 60px;
+    h4{
+        position: relative;
+        .backup-btn{
+            position: absolute;
+            top: 0;
+            right: 0;
+            cursor: pointer;
+            text-decoration: underline;
         }
     }
 }

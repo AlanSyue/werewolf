@@ -43,10 +43,9 @@ export default {
     mounted() {},
     methods: {
         goBackPage() {
+            console.log('ttt');
             try {
-                window.history.length > 1
-                    ? this.$router.go(-1)
-                    : this.$router.push("/");
+                this.$router.push("/")
             } catch (e) {
                 console.error(e);
             }

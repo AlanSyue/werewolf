@@ -12,7 +12,6 @@ export default {
     data: function() {
         return {
             loading: false,
-            isSavedGameUsers: false,
             seatSelectorDialogVisible: false,
             godDescriptionDialogVisible: false,
             werewolfDescriptionDialogVisible: false,
@@ -28,6 +27,40 @@ export default {
         },
         roomUsers() {
             return this.$store.state.users;
+        },
+        isSettledSeats() {
+            return this.gameUsers && this.gameUsers[0] && this.gameUsers[0]['user_id']
+        },
+        isRoomMayor() {
+            return this.room.mayor_user_id == this.auth.id
+        },
+        roomMayorWrapperConfig(){
+            if(this.isSettledSeats){
+                var actionBtnConfig = {
+                    actionBtnText: '開始遊戲',
+                    actionBtnEvent: this.toGameView
+                }
+            }else{
+                var actionBtnConfig = {
+                    actionBtnText: '選擇座位',
+                    actionBtnEvent: this.showSeatEditor
+                }
+            };
+            return {
+                showCoverView: false,
+                coverViewText: '',
+                ...actionBtnConfig            }
+        },
+        roommateWapperConfig() {
+            return {
+                showCoverView: true,
+                coverViewText: this.isSettledSeats? '等待其他玩家確認 …' : '等待室長選擇位置 …',
+                actionBtnText: '',
+                actionBtnEvent: () => {}
+            }
+        },
+        wapperConfig(){
+            return this.isRoomMayor? this.roomMayorWrapperConfig : this.roommateWapperConfig
         },
         seats() {
             const { auth, gameUsers, users } = this.$store.state;
@@ -70,16 +103,6 @@ export default {
             let seatUserIds = _.map(gameUsers, user => user.user_id);
             let seatUniqueUserCount = _.uniq(seatUserIds).length;
             return !(seatCount == seatUniqueUserCount);
-        },
-        isInvalidSeatSetting() {
-            return this.isUserDuplicatedInSeats || !this.isSavedGameUsers;
-        },
-        roomUserObject() {
-            let object = {};
-            _.forEach(this.roomUsers, function(user, key) {
-                object[user.id] = user;
-            });
-            return object;
         }
     },
     watch: {
@@ -96,18 +119,20 @@ export default {
     },
     mounted() {},
     methods: {
-        fetchGameData() {
-            this.$store.dispatch("fetchGameData");
-        },
         fetchAuth() {
             this.$store.dispatch("fetchAuth");
         },
+        fetchGameData() {
+            this.$store.dispatch("fetchGameData");
+        },
         updateRoomSeats() {
-            this.isSavedGameUsers = true;
             this.$store.dispatch("updateRoomSeats", this.gameUsers);
         },
-        changeSeat() {
-            this.isSavedGameUsers = false;
+        showSeatEditor(){
+            this.seatSelectorDialogVisible = true
+        },
+        goToHome() {
+            this.$router.push('/');
         },
         toGameView() {
             this.loading = true;

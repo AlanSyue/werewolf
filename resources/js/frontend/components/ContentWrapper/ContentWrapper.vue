@@ -8,7 +8,7 @@
                 <div class="left">
                     <span
                         v-if="showGoBackBtn"
-                        @click="!goBackBtnDisabled && goBackBtnEvent"
+                        @click="!goBackBtnDisabled && goBackBtnEvent()"
                     >
                         {{goBackBtnText}}
                     </span>

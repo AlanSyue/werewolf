@@ -1,119 +1,111 @@
 <template>
-    <section id="room">
-        <ContentWrapper
-            goBackBtnText=""
-            actionBtnText="確認"
-        >
-            <h3>{{room.pin_code}} 室</h3>
-            <SeatList :seats="seats"/>
-            <h4>角色配置</h4>
-            <div class="game">
-                <div class="game-row">
-                    <span class="game-row-name"><h5>神職</h5></span>
-                    <span class="game-row-content" @click="godDescriptionDialogVisible = true">
-                        <div v-if="game.prophet_amount" class="tag">預言</div>
-                        <div v-if="game.witch_amount" class="tag">女巫</div>
-                        <div v-if="game.knight_amount" class="tag">騎士</div>
-                        <div v-if="game.hunter_amount" class="tag">獵人</div>
-                    </span>
-                </div>
-                <div class="game-row" @click="werewolfDescriptionDialogVisible = true">
-                    <span class="game-row-name"><h5>狼人</h5></span>
-                    <span class="game-row-content">{{game.werewolf_amount}} 位</span>
-                </div>
-                <div class="game-row" @click="civilianDescriptionDialogVisible = true">
-                    <span class="game-row-name"><h5>平民</h5></span>
-                    <span class="game-row-content">{{game.civilian_amount}} 位</span>
-                </div>
-            </div>
-        </ContentWrapper>
-        
-        <el-footer class="bg-gray">
-            <el-row type="flex">
-                <el-col :span="6" class="justify-center">
-                    <span>人數：{{roomUsers.length}}</span>
-                </el-col>
-                <el-col :span="6" v-if="room.mayor_user_id == auth.id">
-                    <el-button :loading="loading" @click="seatSelectorDialogVisible = true">選擇座位</el-button>
-                </el-col>
-                <el-col :span="6" v-if="room.mayor_user_id == auth.id">
-                    <el-button :loading="loading" :disabled="isInvalidSeatSetting" @click="toGameView" type="success" plain>開始遊戲</el-button>
-                </el-col>
-            </el-row>
-        </el-footer>
-        <el-dialog
-            v-if="room.mayor_user_id == auth.id"
-            title="選擇座位"
-            :visible.sync="seatSelectorDialogVisible"
-            width="90%"
-            center>
-            <el-row type="flex" align="center" v-for="gameUser in gameUsers" :key="gameUser.seat_index" >
-                <el-col :span="8">
-                    <span>座位 {{gameUser.seat_index}} : </span>
-                </el-col>
-                <el-col :span="16">
-                    <el-select @change="changeSeat" v-model="gameUser.user_id" placeholder='未選擇'>
-                        <el-option
-                        v-for="user in roomUsers"
-                        :key="user.id"
-                        :label="user.first_name"
-                        :value="user.id">
-                        </el-option>
-                    </el-select>
-                </el-col>
-            </el-row>
-            <span slot="footer" class="dialog-footer">
-                <el-button v-loading="loading" :disabled="isUserDuplicatedInSeats" @click="seatSelectorDialogVisible=false;updateRoomSeats();" type="primary" plain>
-                    {{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}
-                </el-button>
-            </span>
-        </el-dialog>
-        <el-dialog
-            title="狼人角色"
-            :visible.sync="werewolfDescriptionDialogVisible"
-            width="90%"
-            center>
-            <p>狼王：除被女巫毒殺以外，在出局時可以選擇一民玩家一起出局</p>
-            <p>狼人：夜晚可以與其他狼隊友討論暗殺掉一名玩家</p>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="werewolfDescriptionDialogVisible = false">知道了</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog
-            title="神職角色"
-            :visible.sync="godDescriptionDialogVisible"
-            width="90%"
-            center>
-            <p>預言家：夜晚時可以查驗一名玩家身份，能知道此玩家是好人或壞人</p>
-            <p>女巫：夜晚時可使用解藥或毒藥、兩瓶藥都只能使用一次，且不能在同個夜晚同時使用</p>
-            <p>獵人：如果被狼人或白日投票出局，則可帶走一人</p>
-            <p>騎士：白天時可以啟動技能驗證一名玩家身份，如是狼人則擊殺，如是好人則以死謝罪</p>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="godDescriptionDialogVisible = false">知道了</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog
-            title="狼人角色"
-            :visible.sync="werewolfDescriptionDialogVisible"
-            width="90%"
-            center>
-            <p>狼王：除被女巫毒殺以外，在出局時可以選擇一民玩家一起出局</p>
-            <p>狼人：夜晚可以與其他狼隊友討論暗殺掉一名玩家</p>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="werewolfDescriptionDialogVisible = false">知道了</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog
-            title="神職角色"
-            :visible.sync="civilianDescriptionDialogVisible"
-            width="90%"
-            center>
-            <p>人民：無任何技能</p>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="civilianDescriptionDialogVisible = false">知道了</el-button>
-            </span>
-        </el-dialog>
-    </section>
+  <section id="room">
+    <ContentWrapper
+      :goBackBtnEvent="goToHome"
+      :showCoverView="wapperConfig.showCoverView"
+      :coverViewText="wapperConfig.coverViewText"
+      :actionBtnText="wapperConfig.actionBtnText"
+      :actionBtnEvent="wapperConfig.actionBtnEvent"
+    >
+      <h3>{{room.pin_code}} 室</h3>
+      <SeatList :seats="seats" />
+      <h4>
+          角色配置
+          <span class="font-h5 backup-btn" v-if="isSettledSeats" @click="showSeatEditor">配置</span>
+      </h4>
+      <div class="game">
+        <div class="game-row">
+          <span class="game-row-name">
+            <h5>神職</h5>
+          </span>
+          <span class="game-row-content" @click="godDescriptionDialogVisible = true">
+            <div v-if="game.prophet_amount" class="tag">預言</div>
+            <div v-if="game.witch_amount" class="tag">女巫</div>
+            <div v-if="game.knight_amount" class="tag">騎士</div>
+            <div v-if="game.hunter_amount" class="tag">獵人</div>
+          </span>
+        </div>
+        <div class="game-row" @click="werewolfDescriptionDialogVisible = true">
+          <span class="game-row-name">
+            <h5>狼人</h5>
+          </span>
+          <span class="game-row-content">{{game.werewolf_amount}} 位</span>
+        </div>
+        <div class="game-row" @click="civilianDescriptionDialogVisible = true">
+          <span class="game-row-name">
+            <h5>平民</h5>
+          </span>
+          <span class="game-row-content">{{game.civilian_amount}} 位</span>
+        </div>
+      </div>
+    </ContentWrapper>
+
+    <el-dialog
+      v-if="room.mayor_user_id == auth.id"
+      title="選擇座位"
+      :visible.sync="seatSelectorDialogVisible"
+      width="90%"
+      center
+    >
+      <el-row type="flex" align="center" v-for="gameUser in gameUsers" :key="gameUser.seat_index">
+        <el-col :span="8">
+          <span>座位 {{gameUser.seat_index}} :</span>
+        </el-col>
+        <el-col :span="16">
+          <el-select v-model="gameUser.user_id" placeholder="未選擇">
+            <el-option
+              v-for="user in roomUsers"
+              :key="user.id"
+              :label="user.first_name"
+              :value="user.id"
+            ></el-option>
+          </el-select>
+        </el-col>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button
+          v-loading="loading"
+          :disabled="isUserDuplicatedInSeats"
+          @click="seatSelectorDialogVisible=false;updateRoomSeats();"
+          type="primary"
+          plain
+        >{{isUserDuplicatedInSeats? '玩家位置重複' : '確認座位'}}</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="狼人角色" :visible.sync="werewolfDescriptionDialogVisible" width="90%" center>
+      <p>狼王：除被女巫毒殺以外，在出局時可以選擇一民玩家一起出局</p>
+      <p>狼人：夜晚可以與其他狼隊友討論暗殺掉一名玩家</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="werewolfDescriptionDialogVisible = false">知道了</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="神職角色" :visible.sync="godDescriptionDialogVisible" width="90%" center>
+      <p>預言家：夜晚時可以查驗一名玩家身份，能知道此玩家是好人或壞人</p>
+      <p>女巫：夜晚時可使用解藥或毒藥、兩瓶藥都只能使用一次，且不能在同個夜晚同時使用</p>
+      <p>獵人：如果被狼人或白日投票出局，則可帶走一人</p>
+      <p>騎士：白天時可以啟動技能驗證一名玩家身份，如是狼人則擊殺，如是好人則以死謝罪</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="godDescriptionDialogVisible = false">知道了</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="狼人角色" :visible.sync="werewolfDescriptionDialogVisible" width="90%" center>
+      <p>狼王：除被女巫毒殺以外，在出局時可以選擇一民玩家一起出局</p>
+      <p>狼人：夜晚可以與其他狼隊友討論暗殺掉一名玩家</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="werewolfDescriptionDialogVisible = false">知道了</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog title="神職角色" :visible.sync="civilianDescriptionDialogVisible" width="90%" center>
+      <p>人民：無任何技能</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="civilianDescriptionDialogVisible = false">知道了</el-button>
+      </span>
+    </el-dialog>
+  </section>
 </template>
 
 <script src="./Room.js"></script>
