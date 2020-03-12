@@ -26,7 +26,7 @@
                         <el-input-number
                             id="werewolf-amount-input"
                             class="m-number-selector"
-                            v-model="werewolf_amount"
+                            v-model="werewolfAmount"
                             :min="1"
                             :max="10"
                             size="mini"
@@ -42,7 +42,7 @@
                         <el-input-number
                             id="snowwolf-amount-input"
                             class="m-number-selector"
-                            v-model="snowwolf_active"
+                            v-model="snowwolfAmount"
                             :min="0"
                             :max="1"
                             size="mini"
@@ -59,7 +59,7 @@
                         <el-input-number
                             id="kingwolf-amount-input"
                             class="m-number-selector"
-                            v-model="kingwolf_active"
+                            v-model="kingwolfAmount"
                             :min="0"
                             :max="1"
                             size="mini"
@@ -79,7 +79,7 @@
                         <el-input-number
                             id="werewolf-amount-input"
                             class="m-number-selector"
-                            v-model="civilian_amount"
+                            v-model="civilianAmount"
                             :min="1"
                             :max="10"
                             size="mini"
@@ -96,7 +96,7 @@
                         class="end-radio-button"
                         id="rule-witch-save-myself"
                         :disabled="true"
-                        v-model="rule_witch_save_myself"
+                        v-model="ruleSetting.witchSaveSelf"
                     />
                 </el-row>
                 <el-row type="flex" class="form-row">
@@ -105,7 +105,7 @@
                         class="end-radio-button"
                         id="rule-witch-double-use-in-one-night"
                         :disabled="true"
-                        v-model="rule_witch_double_use_in_one_night"
+                        v-model="ruleSetting.witchDoubleUseSkillInOneNight"
                     />
                 </el-row>
             </div>

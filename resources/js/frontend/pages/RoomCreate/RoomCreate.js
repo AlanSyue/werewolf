@@ -10,12 +10,14 @@ export default {
     data: function() {
         return {
             activeGodRoles: [],
-            kingwolf_active: 0,
-            snowwolf_active: 0,
-            civilian_amount: 1,
-            werewolf_amount: 1,
-            rule_witch_save_myself: false,
-            rule_witch_double_use_in_one_night: false
+            kingwolfAmount: 0,
+            snowwolfAmount: 0,
+            civilianAmount: 1,
+            werewolfAmount: 1,
+            ruleSetting: {
+                witchSaveSelf: false,
+                witchDoubleUseSkillInOneNight: false
+            }
         };
     },
     computed: {
@@ -26,14 +28,11 @@ export default {
             return this.$store.state.auth;
         },
         player_count() {
-            let count =
-                this.civilian_amount +
-                this.werewolf_amount +
+            return this.civilianAmount +
+                this.werewolfAmount +
+                this.kingwolfAmount +
+                this.snowwolfAmount +
                 this.activeGodRoles.length;
-            if (this.kingwolf_active) {
-                count++;
-            }
-            return count;
         }
     },
     watch: {},
@@ -43,7 +42,6 @@ export default {
     mounted() {},
     methods: {
         goBackPage() {
-            console.log('ttt');
             try {
                 this.$router.push("/")
             } catch (e) {
@@ -51,18 +49,18 @@ export default {
             }
         },
         createRoom() {
-            let room_data = {
-                civilian_amount: this.civilian_amount,
-                werewolf_amount: this.werewolf_amount,
-                prophet_amount: this.activeGodRoles.includes("預言家"),
-                witch_amount: this.activeGodRoles.includes("女巫"),
-                knight_amount: this.activeGodRoles.includes("騎士"),
-                hunter_amount: this.activeGodRoles.includes("獵人"),
-                kingwolf_amount: this.kingwolf_active
+            let roomData = {
+                civilianAmount: this.civilianAmount,
+                werewolfAmount: this.werewolfAmount,
+                prophetAmount: this.activeGodRoles.includes("預言家"),
+                witchAmount: this.activeGodRoles.includes("女巫"),
+                knightAmount: this.activeGodRoles.includes("騎士"),
+                hunterAmount: this.activeGodRoles.includes("獵人"),
+                kingwolfAmount: this.kingwolfAmount
             };
             this.loading = true;
             this.$store
-                .dispatch("createRoom", room_data)
+                .dispatch("createRoom", roomData)
                 .then(() => this.$router.push("/room"));
         }
     }

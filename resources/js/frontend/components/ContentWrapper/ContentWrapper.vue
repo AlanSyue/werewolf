@@ -18,7 +18,7 @@
                         type="secondary"
                         :isDisabled="actionDisabled"
                         size="small"
-                        @onClick="actionBtnEvent"
+                        @onClick="!actionDisabled && actionBtnEvent()"
                     >
                         {{actionBtnText}}
                     </Button>

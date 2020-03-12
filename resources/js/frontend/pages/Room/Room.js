@@ -1,9 +1,11 @@
-import Button from "../../components/Button/Button.vue";
-import SeatList from "../../components/SeatList/SeatList.vue";
-import ContentWrapper from "../../components/ContentWrapper/ContentWrapper.vue";
+import { mapMutations, mapState } from 'vuex';
+
+import Button from '../../components/Button/Button.vue';
+import SeatList from '../../components/SeatList/SeatList.vue';
+import ContentWrapper from '../../components/ContentWrapper/ContentWrapper.vue';
 
 export default {
-    name: "Room",
+    name: 'Room',
     components: {
         Button,
         ContentWrapper,
@@ -11,6 +13,7 @@ export default {
     },
     data: function() {
         return {
+            seatEditor: [],
             loading: false,
             seatSelectorDialogVisible: false,
             godDescriptionDialogVisible: false,
@@ -19,88 +22,85 @@ export default {
         };
     },
     computed: {
-        room: function() {
-            return this.$store.state.room;
-        },
-        game() {
-            return this.$store.state.game;
-        },
-        roomUsers() {
-            return this.$store.state.users;
-        },
+        ...mapState(['room', 'game', 'users', 'gameUsers']),
         isSettledSeats() {
-            return this.gameUsers && this.gameUsers[0] && this.gameUsers[0]['user_id']
+            let { gameUsers } = this.$store.state;
+            return gameUsers && gameUsers[0] && gameUsers[0]['userId'];
         },
-        isRoomMayor() {
-            return this.room.mayor_user_id == this.auth.id
+        isRoomManger() {
+            const { auth } = this.$store.state;
+            const { room } = this.$store.state;
+            return room.mangerUserId == auth.id;
         },
-        roomMayorWrapperConfig(){
-            if(this.isSettledSeats){
+        roomMangerWrapperConfig() {
+            if (this.isSettledSeats) {
                 var actionBtnConfig = {
                     actionBtnText: '開始遊戲',
                     actionBtnEvent: this.toGameView
-                }
-            }else{
+                };
+            } else {
                 var actionBtnConfig = {
                     actionBtnText: '選擇座位',
                     actionBtnEvent: this.showSeatEditor
-                }
-            };
+                };
+            }
             return {
+                showGoBackBtn: !!this.isSettledSeats,
+                goBackBtnText: '重選座位',
+                goBackBtnEvent: () => {
+                    this.showSeatEditor();
+                },
                 showCoverView: false,
                 coverViewText: '',
-                ...actionBtnConfig            }
+                ...actionBtnConfig
+            };
         },
-        roommateWapperConfig() {
+        roomUserWapperConfig() {
             return {
+                showGoBackBtn: false,
+                goBackBtnText: '',
+                goBackBtnEvent: () => {},
                 showCoverView: true,
-                coverViewText: this.isSettledSeats? '等待其他玩家確認 …' : '等待室長選擇位置 …',
+                coverViewText: this.isSettledSeats
+                    ? '等待其他玩家確認 …'
+                    : '等待室長選擇位置 …',
                 actionBtnText: '',
                 actionBtnEvent: () => {}
-            }
+            };
         },
-        wapperConfig(){
-            return this.isRoomMayor? this.roomMayorWrapperConfig : this.roommateWapperConfig
+        wapperConfig() {
+            return this.isRoomManger
+                ? this.roomMangerWrapperConfig
+                : this.roomUserWapperConfig;
         },
         seats() {
-            const { auth, gameUsers, users } = this.$store.state;
-            let userObject = {};
-            _.forEach(users, function(user) {
-                userObject[user.id] = user;
-            });
-
-            return gameUsers.map((gameUser, index) => {
-                let content = "未選擇";
+            const { auth, gameUsers, userMap } = this.$store.state;
+            return gameUsers.map(gameUser => {
+                let content = '未選擇';
                 let selfActive = false;
-                if (gameUser.user_id) {
-                    content = userObject[gameUser.user_id].first_name;
-                    selfActive = gameUser.user_id == auth.id;
+                if (!!gameUser.userId) {
+                    content = userMap[gameUser.userId].firstName;
+                    selfActive = gameUser.userId == auth.id;
                 }
                 return {
-                    number: index + 1,
+                    number: gameUser.seatIndex,
                     content: content,
                     active: false,
                     selfActive: selfActive
                 };
             });
         },
-        gameUsers() {
-            return this.$store.state.gameUsers;
-        },
-        auth() {
-            return this.$store.state.auth;
-        },
         isUserDuplicatedInSeats() {
-            let gameUsers = this.gameUsers;
-            let isConatinsUnSelectedSeat =
-                gameUsers.filter(function(user) {
-                    return !user.user_id;
+            let seatEditor = this.seatEditor;
+            let isNoAllSelected =
+                seatEditor.filter(function(user) {
+                    return !user.userId;
                 }).length > 0;
-            if (isConatinsUnSelectedSeat) {
+            if (isNoAllSelected) {
                 return true;
             }
-            let seatCount = gameUsers.length;
-            let seatUserIds = _.map(gameUsers, user => user.user_id);
+            let seatCount = seatEditor.length;
+            let seatUserIds = _.map(seatEditor, user => user.userId);
             let seatUniqueUserCount = _.uniq(seatUserIds).length;
             return !(seatCount == seatUniqueUserCount);
         }
@@ -114,22 +114,37 @@ export default {
         }
     },
     created() {
-        this.$store.dispatch("fetchAuth");
-        this.$store.dispatch("fetchGameData");
+        this.$store.dispatch('fetchAuth');
+        this.$store.dispatch('fetchGameData');
     },
     mounted() {},
     methods: {
+        ...mapMutations([
+            'FETCH_ROOM_USERS',
+            'UPDATE_ROOM_USERS',
+            'UPDATE_GAME_USERS'
+        ]),
         fetchAuth() {
-            this.$store.dispatch("fetchAuth");
+            this.$store.dispatch('fetchAuth');
         },
         fetchGameData() {
-            this.$store.dispatch("fetchGameData");
+            this.$store.dispatch('fetchGameData');
         },
         updateRoomSeats() {
-            this.$store.dispatch("updateRoomSeats", this.gameUsers);
+            this.$store.dispatch('updateRoomSeats', this.seatEditor);
         },
-        showSeatEditor(){
-            this.seatSelectorDialogVisible = true
+        showSeatEditor() {
+            const { gameUsers } = this.$store.state;
+            this.seatEditor = gameUsers.map(gameUser => {
+                return {
+                    userId: gameUser.userId,
+                    index: gameUser.seatIndex
+                };
+            });
+            this.seatSelectorDialogVisible = true;
+        },
+        hideSeatEditor() {
+            this.seatSelectorDialogVisible = false;
         },
         goToHome() {
             this.$router.push('/');
@@ -137,7 +152,7 @@ export default {
         toGameView() {
             this.loading = true;
             axios
-                .post("/room/toGameView")
+                .post('/room/toGameView')
                 .then(res => {
                     console.log(res);
                 })
@@ -151,42 +166,36 @@ export default {
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
                 .here(users => {
-                    this.$store.state.users = users;
+                    this.FETCH_ROOM_USERS(users);
                 })
                 .joining(newUser => {
-                    let users = this.$store.state.users.filter(function(
+                    let newUsers = this.$store.state.users.filter(function(
                         originUser
                     ) {
                         return originUser.id != newUser.id;
                     });
-                    users.push(newUser);
-                    this.$store.state.users = users;
+                    newUsers.push({
+                        id: newUser.id,
+                        firstName: newUser.first_name,
+                        fullName: newUser.full_name
+                    });
+                    this.UPDATE_ROOM_USERS(users);
                 })
                 .leaving(user => {
-                    this.$store.state.users = this.$store.state.users.filter(
-                        function(originUser) {
-                            return originUser.id != user.id;
-                        }
-                    );
-                })
-                .listen("Frontend\\GameUserUpdated", e => {
-                    console.log(e);
-                    let data = e.gameUsers;
-                    let seats = data.map(function(gameUser) {
-                        return {
-                            id: gameUser.seat_index,
-                            user_id: gameUser.user_id,
-                            is_live: gameUser.is_live,
-                            role_type: gameUser.role_type,
-                            skill_use_status: gameUser.skill_use_status
-                        };
+                    let newUsers = his.$store.state.users.filter(function(
+                        originUser
+                    ) {
+                        return originUser.id != user.id;
                     });
-                    this.$store.state.seats = seats;
-                    this.$store.state.gameUsers = data;
+                    this.FETCH_ROOM_USERS(newUsers);
                 })
-                .listen("Frontend\\ToGameView", e => {
+                .listen('Frontend\\GameUserUpdated', e => {
+                    let gameUsers = e.gameUsers;
+                    this.UPDATE_GAME_USERS(gameUsers);
+                })
+                .listen('Frontend\\ToGameView', e => {
                     this.$router.push({
-                        path: "/game"
+                        path: '/game'
                     });
                 });
         }
