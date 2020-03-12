@@ -2,18 +2,18 @@
     <section id="game" :class="{ 'night-mode': game.stage == 'night' || false }">
         <div class="main">
             <div class="seat-area">
-                <el-col :span="6" v-for="gameUser in GameUsers" :key="gameUser.seat_index" class="justify-center square">
-                    <el-tag :type="(gameUser.is_live) ? '' : 'danger' ">
-                        <span class="index">{{gameUser.seat_index}}</span>
+                <el-col :span="6" v-for="gameUser in GameUsers" :key="gameUser.seatIndex" class="justify-center square">
+                    <el-tag :type="(gameUser.isLive) ? '' : 'danger' ">
+                        <span class="index">{{gameUser.seatIndex}}</span>
                         <span>{{
-                            gameUser.is_live ?
-                            roomUserMap[gameUser.user_id].first_name :
+                            gameUser.isLive ?
+                            userMap[gameUser.userId].firstName :
                             '死亡'
                         }}</span>
                     </el-tag>
                 </el-col>
             </div>
-            <div v-if="user.isRoomMajor && isGameStarted == false">
+            <div v-if="Me.isRoomManager && isGameStarted == false">
                 <el-button :loading="loading" @click="startGame" type="success" plain>開始遊戲</el-button>
             </div>
         </div>
@@ -49,8 +49,8 @@
             width="90%"
             center
         >
-            <h3>{{ (auth && user) ? user.role.name : ""}} </h3>
-            <p>{{ (auth && user) ? user.role.introducation : "" }}</p>
+            <h3>{{ (auth && Me) ? Me.role.name : ""}} </h3>
+            <p>{{ (auth && Me) ? Me.role.introducation : "" }}</p>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="roleDialogVisible = false"
                     >知道了</el-button
@@ -66,14 +66,14 @@
             <h3>狼人陣營</h3>
             <p>選擇·對象</p>
             <div class="seat-area">
-                <el-col :xs="6" :sm="6" :md="4" :lg="3" v-for="gameUser in GameUsers" :key="gameUser.seat_index" class="justify-center square">
-                    <el-radio class="kill-radio-btn" :disabled="!(gameUser.is_live)" v-model="werewolfKillUserId" :label="gameUser.user_id" border>
+                <el-col :xs="6" :sm="6" :md="4" :lg="3" v-for="gameUser in GameUsers" :key="gameUser.seatIndex" class="justify-center square">
+                    <el-radio class="kill-radio-btn" :disabled="!(gameUser.isLive)" v-model="werewolfKillUserId" :label="gameUser.userId" border>
                         <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
-                            {{(gameUser.isWereworlf)? '狼人' : gameUser.seat_index}}
+                            {{(gameUser.isWereworlf)? '狼人' : gameUser.seatIndex}}
                         </span>
                         <span>{{
-                            gameUser.is_live ?
-                            roomUserMap[gameUser.user_id].first_name :
+                            gameUser.isLive ?
+                            userMap[gameUser.userId].firstName :
                             '死亡'
                         }}</span>
                     </el-radio>

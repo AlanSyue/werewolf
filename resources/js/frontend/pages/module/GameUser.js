@@ -3,23 +3,23 @@ import { ROLE_KEY_MAP } from "./constant";
 class GameUser{
     constructor(data, room) {
         const {
-            game_id,
-            is_live,
-            seat_index,
-            is_skill_allowed,
+            gameId,
+            isLive,
+            seatIndex,
+            isSkillAllowed,
             skill_use_status,
-            role_type,
-            user_id
+            roleType,
+            userId
         } = data;
-        this.user_id = user_id;
-        this.game_id = game_id;
-        this.is_live = is_live;
-        this.seat_index = seat_index;
+        this.userId = userId;
+        this.gameId = gameId;
+        this.isLive = isLive;
+        this.seatIndex = seatIndex;
         this.isSkillUsed = Boolean(skill_use_status);
-        this.isSkillAllowed = Boolean(is_skill_allowed);
-        this.role_type = role_type;
-        this.role = ROLE_KEY_MAP[role_type];
-        this.isRoomMajor = user_id == room.mayor_user_id;
+        this.isSkillAllowed = Boolean(isSkillAllowed);
+        this.roleType = roleType;
+        this.role = ROLE_KEY_MAP[roleType];
+        this.isRoomManager = userId == room.managerUserId;
         this.isWereworlf = this.isWerewolf(this.role);
         this.isProphet = this.role.enName == 'prophet';
         this.isWitch = this.role.enName == 'witch';

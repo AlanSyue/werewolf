@@ -1,6 +1,6 @@
 import soundMechine from "../module/soundMechine";
 import GameUser from "../module/GameUser";
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
     name: "Game",
@@ -15,33 +15,19 @@ export default {
         };
     },
     computed: {
-        room() {
-            return this.$store.state.room;
-        },
-        game() {
-            return this.$store.state.game;
-        },
-        auth() {
-            return this.$store.state.auth;
-        },
-        roomUserMap() {
-            let users = this.$store.state.users;
-            let object = {};
-            _.forEach(users, function(user) {
-                object[user.id] = user;
-            });
-            return object;
-        },
+        ...mapState([
+            'room',
+            'game',
+            'auth',
+            'userMap'
+        ]),
         GameUsers() {
             if (!Boolean(this.room)) {
                 return null;
             }
-            let users = this.$store.state.gameUsers;
-            users.sort((a,b)=>{
-                return a.seat_index - b.seat_index;
-            });
-            return users.map(data => {
-                return new GameUser(data, this.room);
+            const gameUsers = this.$store.state.gameUsers;
+            return gameUsers.map(gameUser => {
+                return new GameUser(gameUser, this.room);
             })
         },
         GameUserMap() {
@@ -50,11 +36,11 @@ export default {
             }
             let object = {};
             _.forEach(this.GameUsers, function(user) {
-                object[user.user_id] = user;
+                object[user.userId] = user;
             });
             return object;
         },
-        user() {
+        Me() {
             if (!Boolean(this.GameUserMap) || !this.auth) {
                 return null;
             }
@@ -75,17 +61,17 @@ export default {
             updateGameUsers: 'UPDATE_GAME_USERS',
         }),
         showSkillDialog() {
-            if (!Boolean(this.user)) {
+            if (!Boolean(this.Me)) {
                 this.$message({
                     message: "伺服器忙碌中",
                     type: "warning"
                 });
             }
-            if(this.user.isCivilian || this.user.isSkillAllowed == false){
+            if(this.Me.isCivilian || this.Me.isSkillAllowed == false){
                 this.$message({
                     message: "沒有技能可使用哦"
                 });
-            }else if(this.user.isWereworlf){
+            }else if(this.Me.isWereworlf){
                 this.werewolfSkillDialogVisible = true;
             }else{
                 this.$message({
@@ -138,13 +124,13 @@ export default {
             let { game, gameUsers, soundData} = data;
             this.updateGame(game);
             this.updateGameUsers(gameUsers);
-            if (this.user.isRoomMajor) {
+            if (this.Me.isRoomMajor) {
                 soundMechine.playByData(soundData);
             }
         },
         // changeToNight() {
         //     this.isNightMode = true;
-        //     if (this.user.isRoomMayor == true) {
+        //     if (this.Me.isRoomMayor == true) {
         //         soundMechine
         //             .addSound("天黑請閉眼")
         //             .delay(3)
@@ -154,7 +140,7 @@ export default {
         // },
         // changeToMorning() {
         //     this.isNightMode = false;
-        //     if (this.user.isRoomMayor == true) {
+        //     if (this.Me.isRoomMayor == true) {
         //         soundMechine
         //             .addSound("預言家請閉眼")
         //             .delay(3)
@@ -165,7 +151,7 @@ export default {
         //     }
         // },
         // changeProphetMode() {
-        //     if (this.user.isRoomMayor == true) {
+        //     if (this.Me.isRoomMayor == true) {
         //         soundMechine
         //             .addSound("女巫請閉眼")
         //             .delay(3)
@@ -174,7 +160,7 @@ export default {
         //     }
         // },
         // changeWitchfMode() {
-        //     if (this.user.isRoomMayor == true) {
+        //     if (this.Me.isRoomMayor == true) {
         //         soundMechine
         //             .addSound("狼人請閉眼")
         //             .delay(3)
@@ -187,6 +173,7 @@ export default {
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
                 .here(users => {
+                    
                     this.$store.state.users = users;
                 })
                 .joining(newUser => {

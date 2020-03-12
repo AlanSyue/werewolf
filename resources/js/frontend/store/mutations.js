@@ -20,10 +20,18 @@ let mutations = {
     UPDATE_ROOM(state, room) {
         const transformRoom = {
             id: room.id,
-            mangerUserId: room.mayor_user_id,
+            managerUserId: room.mayor_user_id,
             pinCode: room.pin_code,
         };
         return (state.room = transformRoom);
+    },
+    UPDATE_ROOM_USERS(state, users) {
+        let userMap = {};
+        _.forEach(users, function(user) {
+            userMap[user.id] = user;
+        });
+        state.users = users;
+        state.userMap = userMap;
     },
     FETCH_ROOM_USERS(state, users) {
         const transformUsers = users.map(user => {

@@ -1,4 +1,4 @@
-import { mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 import Button from '../../components/Button/Button.vue';
 import SeatList from '../../components/SeatList/SeatList.vue';
@@ -30,7 +30,7 @@ export default {
         isRoomManger() {
             const { auth } = this.$store.state;
             const { room } = this.$store.state;
-            return room.mangerUserId == auth.id;
+            return room.managerUserId == auth.id;
         },
         roomMangerWrapperConfig() {
             if (this.isSettledSeats) {
@@ -79,7 +79,9 @@ export default {
                 let content = '未選擇';
                 let selfActive = false;
                 if (!!gameUser.userId) {
-                    content = userMap[gameUser.userId].firstName;
+                    if(userMap[gameUser.userId]){
+                        content = userMap[gameUser.userId].firstName;
+                    }
                     selfActive = gameUser.userId == auth.id;
                 }
                 return {
@@ -124,15 +126,13 @@ export default {
             'UPDATE_ROOM_USERS',
             'UPDATE_GAME_USERS'
         ]),
-        fetchAuth() {
-            this.$store.dispatch('fetchAuth');
-        },
-        fetchGameData() {
-            this.$store.dispatch('fetchGameData');
-        },
-        updateRoomSeats() {
-            this.$store.dispatch('updateRoomSeats', this.seatEditor);
-        },
+        ...mapActions([
+            'fetchAuth',
+            'fetchGameData',
+            'updateRoomSeats',
+            'handleUserJoined',
+            'handleUserLeaving'
+        ]),
         showSeatEditor() {
             const { gameUsers } = this.$store.state;
             this.seatEditor = gameUsers.map(gameUser => {
@@ -165,33 +165,11 @@ export default {
         },
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
-                .here(users => {
-                    this.FETCH_ROOM_USERS(users);
-                })
-                .joining(newUser => {
-                    let newUsers = this.$store.state.users.filter(function(
-                        originUser
-                    ) {
-                        return originUser.id != newUser.id;
-                    });
-                    newUsers.push({
-                        id: newUser.id,
-                        firstName: newUser.first_name,
-                        fullName: newUser.full_name
-                    });
-                    this.UPDATE_ROOM_USERS(users);
-                })
-                .leaving(user => {
-                    let newUsers = his.$store.state.users.filter(function(
-                        originUser
-                    ) {
-                        return originUser.id != user.id;
-                    });
-                    this.FETCH_ROOM_USERS(newUsers);
-                })
+                .here(this.FETCH_ROOM_USERS)
+                .joining(this.handleUserJoined)
+                .leaving(this.handleUserLeaving)
                 .listen('Frontend\\GameUserUpdated', e => {
-                    let gameUsers = e.gameUsers;
-                    this.UPDATE_GAME_USERS(gameUsers);
+                    this.UPDATE_GAME_USERS(e.gameUsers);
                 })
                 .listen('Frontend\\ToGameView', e => {
                     this.$router.push({

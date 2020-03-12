@@ -75,6 +75,30 @@ let actions = {
                 return res;
             })
     },
+    handleUserJoined({ commit, state }, newUser){
+        let users = state.users;
+        users = users.filter(function(originUser) {
+            return originUser.id != newUser.id;
+        });
+        users.push({
+            id: newUser.id,
+            firstName: newUser.first_name,
+            fullName: newUser.full_name
+        });
+        commit("UPDATE_ROOM_USERS", users);
+    },
+    handleUserLeaving({ commit, state }, newUser){
+        let users = state.users;
+        users = users.filter(function(originUser) {
+            return originUser.id != newUser.id;
+        });
+        users.push({
+            id: newUser.id,
+            firstName: newUser.first_name,
+            fullName: newUser.full_name
+        });
+        commit("UPDATE_ROOM_USERS", users);
+    }
 };
 
 export default actions;

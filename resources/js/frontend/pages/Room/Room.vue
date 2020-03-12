@@ -86,10 +86,10 @@
                 <Button
                     type="secondary"
                     :isDisabled="isUserDuplicatedInSeats"
-                    @onClick="
+                    @onClick="() => {
                         hideSeatEditor();
-                        updateRoomSeats();
-                    "
+                        updateRoomSeats(this.seatEditor);
+                    }"
                     >{{
                         isUserDuplicatedInSeats ? "玩家位置重複" : "確認座位"
                     }}</Button
