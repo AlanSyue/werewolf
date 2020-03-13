@@ -1,6 +1,6 @@
 import soundMechine from "../module/soundMechine";
 import GameUser from "../module/GameUser";
-import { mapMutations, mapState } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
     name: "Game",
@@ -10,17 +10,30 @@ export default {
             loading: false,
             roleDialogVisible: false,
             werewolfSkillDialogVisible: false,
+            prophetSkillDialogVisible: false,
             werewolfKillUserId: null,
+            isScanedTonight: false,
+            scanUserId: null,
+            scanResultBackupUserIds: [], // 在預言家查驗時先呈現給使用者看，不必再等 game_log 更新，但寫法需要再思考
             gameRecordDialogVisible: false
         };
     },
     computed: {
         ...mapState([
+            'auth',
             'room',
             'game',
             'auth',
-            'userMap'
+            'userMap',
+            'gameLogs'
         ]),
+        prophetScanedUserIds() {
+            let logs = this.gameLogs;
+            if(!Boolean(logs)){
+                return [];
+            }
+            return logs.filter(row => row.skill === 'prophet').map( row => row.target_user_id);
+        },
         GameUsers() {
             if (!Boolean(this.room)) {
                 return null;
@@ -42,24 +55,32 @@ export default {
         },
         Me() {
             if (!Boolean(this.GameUserMap) || !this.auth) {
-                return null;
+                return {};
             }
             return this.GameUserMap[this.auth.id];
         }
     },
     created() {
         let self = this;
-        this.$store.dispatch("fetchAuth");
-        this.$store.dispatch("fetchGameData").then(function() {
+        this.fetchAuth();
+        this.fetchGameData().then(function() {
             self.handleEventService(self.room.id);
         });
     },
     mounted() {},
     methods: {
         ...mapMutations({
+            FETCH_ROOM_USERS: 'FETCH_ROOM_USERS',
             updateGame: 'FETCH_GAME',
             updateGameUsers: 'UPDATE_GAME_USERS',
+            updateGameLogs: 'FETCH_GAME_LOGS'
         }),
+        ...mapActions([
+            'fetchAuth',
+            'fetchGameData',
+            'handleUserJoined',
+            'handleUserLeaving'
+        ]),
         showSkillDialog() {
             if (!Boolean(this.Me)) {
                 this.$message({
@@ -73,6 +94,8 @@ export default {
                 });
             }else if(this.Me.isWereworlf){
                 this.werewolfSkillDialogVisible = true;
+            }else if(this.Me.isProphet){
+                this.prophetSkillDialogVisible = true;
             }else{
                 this.$message({
                     message: "沒有技能可使用哦!"
@@ -95,7 +118,7 @@ export default {
                     this.loading = false;
                 });
         },
-        useWerelfSkill(){
+        useWerewolfSkill(){
             if(!Boolean(this.werewolfKillUserId)){
                 this.$message({
                     message: "請先選擇殺人對象",
@@ -119,79 +142,71 @@ export default {
                     this.loading = false;
                 });
         },
+        useProphetSkill(){
+            if(!Boolean(this.scanUserId)){
+                this.$message({
+                    message: "請先選擇查驗對象",
+                    type: "warning"
+                });
+            } 
+            axios
+                .post("/game/skill/prophet",{
+                    gameId: this.game.id,
+                    targetUserId:  this.scanUserId
+                })
+                .then(res => {
+                    this.scanResultBackupUserIds.push(this.scanUserId);
+                    this.isScanedTonight = true;
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        closeProphetSkillDialog(){
+            this.prophetSkillDialogVisible = false
+            if(this.isScanedTonight){
+                axios
+                    .post("/game/skill/prophet_end",{
+                        gameId: this.game.id,
+                        targetUserId:  this.werewolfKillUserId
+                    })
+                    .then(res => {
+                        this.scanResultBackupUserIds.push(this.scanUserId);
+                        this.isScanedTonight = true;
+                        this.prophetSkillDialogVisible = false;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            }
+        },
         changeStage(data){
             console.log(data);
-            let { game, gameUsers, soundData} = data;
+            let {
+                game,
+                gameUsers,
+                gameLogs,
+                soundData
+            } = data;
             this.updateGame(game);
+            this.updateGameLogs(gameLogs);
             this.updateGameUsers(gameUsers);
             if (this.Me.isRoomMajor) {
                 soundMechine.playByData(soundData);
             }
         },
-        // changeToNight() {
-        //     this.isNightMode = true;
-        //     if (this.Me.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("天黑請閉眼")
-        //             .delay(3)
-        //             .addSound("狼人現身請睜眼，狼人請殺人")
-        //             .play();
-        //     }
-        // },
-        // changeToMorning() {
-        //     this.isNightMode = false;
-        //     if (this.Me.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("預言家請閉眼")
-        //             .delay(3)
-        //             .addSound("天亮請睜眼")
-        //             .delay(1)
-        //             .addSound("昨晚被淘汰的是這些玩家")
-        //             .play();
-        //     }
-        // },
-        // changeProphetMode() {
-        //     if (this.Me.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("女巫請閉眼")
-        //             .delay(3)
-        //             .addSound("預言家請睜眼，你要查驗的對象是")
-        //             .play();
-        //     }
-        // },
-        // changeWitchfMode() {
-        //     if (this.Me.isRoomMayor == true) {
-        //         soundMechine
-        //             .addSound("狼人請閉眼")
-        //             .delay(3)
-        //             .addSound(
-        //                 "女巫請睜眼，他被殺死了，你要救他嗎，你要使用毒藥嗎"
-        //             )
-        //             .play();
-        //     }
-        // },
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
-                .here(users => {
-                    
-                    this.$store.state.users = users;
-                })
-                .joining(newUser => {
-                    let users = this.$store.state.users.filter(function(
-                        originUser
-                    ) {
-                        return originUser.id != newUser.id;
-                    });
-                    users.push(newUser);
-                    this.$store.state.users = users;
-                })
-                .leaving(user => {
-                    this.$store.state.users = this.$store.state.users.filter(
-                        function(originUser) {
-                            return originUser.id != user.id;
-                        }
-                    );
-                })
+                .here(this.FETCH_ROOM_USERS)
+                .joining(this.handleUserJoined)
+                .leaving(this.handleUserLeaving)
                 .listen("Frontend\\StageChanged", this.changeStage)
         }
     }

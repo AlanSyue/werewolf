@@ -8,6 +8,7 @@ use App\Events\Frontend\ToGameView;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Events\Frontend\RoomUserReady;
 use App\Services\Frontend\RoomService;
 use App\Events\Frontend\GameUserUpdated;
 use App\Http\Resources\Frontend\RoomResource;
@@ -134,6 +135,9 @@ class RoomsController extends Controller
         }
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);
 
+        $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
+        $roomRelationData['readyUsers'] = $this->roomRepository->getReadyUsersArray($roomUser->room_id, $game->id);
+
         return new RoomResource($roomRelationData);
     }
 
@@ -151,9 +155,18 @@ class RoomsController extends Controller
         if ($isSuccess) {
             $gameUsers = $this->roomRepository->getGameUsers($game->id);
         }
-        event(new GameUserUpdated($gameUsers->toArray(), $game));
+        event(new GameUserUpdated($gameUsers->toArray(), $game, $roomUser));
 
         return $gameUsers;
+    }
+
+    public function readyGame()
+    {
+        $user = Auth::user();
+        $roomUser = $this->roomRepository->getRoomUserForUser($user);
+        $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
+        $gameUsers = $this->roomRepository->getGameUsers($game->id);
+        event(new RoomUserReady($gameUsers->toArray(), $game, $roomUser, $user));
     }
 
     public function toGameView()

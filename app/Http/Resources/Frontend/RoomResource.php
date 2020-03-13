@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Resources\Frontend;
-
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class RoomResource extends JsonResource
@@ -16,6 +15,7 @@ class RoomResource extends JsonResource
     {
         $game = $this->games->first();
         $gameData = $game->toArray();
+
         $gameUserAmount = [
             'civilianAmount' => $game->civilian_amount,
             'werewolfAmount' => $game->werewolf_amount,
@@ -28,9 +28,12 @@ class RoomResource extends JsonResource
         ];
         $totalGameUser = array_sum($gameUserAmount);
 
-        if (count($game->gameUsers) == $totalGameUser) {
-            $gameUsers = $game->gameUsers;
-            unset($gameData['gameUsers']);
+        $gameLogs = $gameData['game_logs'];
+        unset($gameData['game_logs']);
+        
+        $gameUsers = $gameData['game_users'];
+        if (count($gameUsers) == $totalGameUser) {
+            unset($gameData['game_users']);
         } else {
             $gameUsers = collect(range(1, $totalGameUser))->map(function ($seatIndex) {
                 return [
@@ -52,6 +55,8 @@ class RoomResource extends JsonResource
                 return $roomUser->user;
             }),
             'gameUsers' => $gameUsers,
+            'readyUsers' => (object)$this->readyUsers,
+            'gameLogs' => $gameLogs,
         ];
     }
 }

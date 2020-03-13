@@ -4,11 +4,13 @@ let actions = {
             axios
                 .get("/room/data")
                 .then(res => {
-                    const {game, room, users, gameUsers} = res.data.data;
+                    const {game, room, users, gameUsers, readyUsers, gameLogs} = res.data.data;
                     commit("FETCH_GAME", game);
                     commit("UPDATE_ROOM", room);
                     commit("FETCH_ROOM_USERS", users);
                     commit("UPDATE_GAME_USERS", gameUsers);
+                    commit("FETCH_READY_USERS", readyUsers);
+                    commit("FETCH_GAME_LOGS", gameLogs);
                     resolve(res);
                 })
                 .catch(err => {
@@ -65,11 +67,11 @@ let actions = {
             });
     },
     joinRoom({ commit }, pin_code) {
-        let post_data = {
+        let postData = {
             pin_code: pin_code
         };
         return axios
-            .post("/room/join", post_data)
+            .post("/room/join", postData)
             .then(function(res) {
                 commit("UPDATE_ROOM", res.data);
                 return res;

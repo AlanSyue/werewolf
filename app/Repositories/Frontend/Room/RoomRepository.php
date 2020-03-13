@@ -10,6 +10,7 @@ use App\Models\Game\GameUser;
 use App\Models\Room\RoomUser;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * Class GameRepository.
@@ -95,6 +96,7 @@ class RoomRepository extends BaseRepository
                     $query->where('status', true)->first();
                 },
                 'games.gameUsers',
+                'games.gameLogs',
                 'roomUsers.user' => function ($query) {
                     $query->select('id', 'first_name');
                 },
@@ -119,7 +121,7 @@ class RoomRepository extends BaseRepository
 
     public function getGameUserInsertDataWithRandomRoleType(Game $game, array $gameUsers)
     {
-        $roleTypeTable = $this->getRoleTypeTable();
+        $roleTypeTable = \Config::get('constants.role_type');
         $roleTypes = [];
         for ($i = 0; $i < $game->civilian_amount; $i++) {
             array_push($roleTypes, $roleTypeTable['civilian']);
@@ -157,7 +159,7 @@ class RoomRepository extends BaseRepository
                 ];
             })->toArray();
     }
-
+    
     protected function getRoleTypeTable()
     {
         return [
@@ -170,5 +172,15 @@ class RoomRepository extends BaseRepository
             'knight' => 3003,
             'hunter' => 3004,
         ];
+    }
+
+    /**
+     * @param $roomId int room_id
+     * @param $gameId int game_id
+     * @return array
+     */
+    public function getReadyUsersArray($roomId, $gameId)
+    {   
+        return Redis::hgetall($roomId . '.' . $gameId);
     }
 }

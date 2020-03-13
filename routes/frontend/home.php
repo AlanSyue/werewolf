@@ -31,9 +31,12 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         Route::post('toGameView', [RoomsController::class, 'toGameView']);
     });
     Route::group(['prefix' => 'game'], function () {
+        Route::post('ready', [RoomsController::class, 'readyGame']);
         Route::post('start', [GameController::class, 'startGame']);
         Route::group(['prefix' => 'skill'], function () {
             Route::post('werewolf', [GameController::class, 'useSkillWerewolf']);
+            Route::post('prophet', [GameController::class, 'useSkillProphet']);
+            Route::post('prophet_end', [GameController::class, 'useSkillProphetEnd']);
         });
     });
 
