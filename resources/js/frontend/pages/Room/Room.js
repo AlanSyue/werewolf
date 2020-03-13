@@ -22,25 +22,26 @@ export default {
         };
     },
     computed: {
-        ...mapState(['room', 'game', 'users', 'gameUsers']),
+        ...mapState(['auth', 'room', 'game', 'users', 'gameUsers', 'readyUsers', 'userMap']),
         isSettledSeats() {
             let { gameUsers } = this.$store.state;
             return gameUsers && gameUsers[0] && gameUsers[0]['userId'];
         },
         isRoomManger() {
-            const { auth } = this.$store.state;
-            const { room } = this.$store.state;
+            const { auth, room } = this.$store.state;
             return room.managerUserId == auth.id;
         },
         roomMangerWrapperConfig() {
             if (this.isSettledSeats) {
                 var actionBtnConfig = {
                     actionBtnText: '開始遊戲',
+                    actionDisabled: this.loading || !this.isAbleStartGame,
                     actionBtnEvent: this.toGameView
                 };
             } else {
                 var actionBtnConfig = {
                     actionBtnText: '選擇座位',
+                    actionDisabled: false,
                     actionBtnEvent: this.showSeatEditor
                 };
             }
@@ -60,12 +61,14 @@ export default {
                 showGoBackBtn: false,
                 goBackBtnText: '',
                 goBackBtnEvent: () => {},
-                showCoverView: true,
-                coverViewText: this.isSettledSeats
-                    ? '等待其他玩家確認 …'
-                    : '等待室長選擇位置 …',
-                actionBtnText: '',
-                actionBtnEvent: () => {}
+                showCoverView: (!this.isSettledSeats || this.isSeatReady),
+                coverViewText:
+                    (this.isSettledSeats && this.isSeatReady)
+                        ? '等待其他玩家確認 …'
+                        : '等待室長選擇位置 …',
+                actionBtnText: '確認',
+                actionDisabled: this.loading || this.isSeatReady,
+                actionBtnEvent: () => {this.readyGame()}
             };
         },
         wapperConfig() {
@@ -74,15 +77,14 @@ export default {
                 : this.roomUserWapperConfig;
         },
         seats() {
-            const { auth, gameUsers, userMap } = this.$store.state;
-            return gameUsers.map(gameUser => {
+            return this.gameUsers.map(gameUser => {
                 let content = '未選擇';
                 let selfActive = false;
                 if (!!gameUser.userId) {
-                    if(userMap[gameUser.userId]){
-                        content = userMap[gameUser.userId].firstName;
+                    if (this.userMap[gameUser.userId]) {
+                        content = this.userMap[gameUser.userId].firstName;
                     }
-                    selfActive = gameUser.userId == auth.id;
+                    selfActive = gameUser.userId == this.auth.id;
                 }
                 return {
                     number: gameUser.seatIndex,
@@ -105,6 +107,31 @@ export default {
             let seatUserIds = _.map(seatEditor, user => user.userId);
             let seatUniqueUserCount = _.uniq(seatUserIds).length;
             return !(seatCount == seatUniqueUserCount);
+        },
+        isAbleStartGame() {
+            return this.isUserAllReady;
+        },
+        isUserAllReady() {
+            let readyUsers = this.readyUsers;
+            let isReady = false;
+            if(Object.keys(readyUsers) == 0){
+                return false;
+            }
+            // check if all ready user status equal '1'
+            if (Object.values(readyUsers).every((val, i, arr) => val === '1')) {
+                isReady = true;
+            }
+            return isReady;
+        },
+        isSeatReady() {
+            let readyUsers = this.readyUsers;
+            let isReady = false;
+            Object.keys(readyUsers).map((key) => {
+                if (key == this.auth.id && readyUsers[key] == '1') {
+                    isReady = true;
+                }
+            });
+            return isReady;
         }
     },
     watch: {
@@ -116,8 +143,8 @@ export default {
         }
     },
     created() {
-        this.$store.dispatch('fetchAuth');
-        this.$store.dispatch('fetchGameData');
+        this.fetchAuth();
+        this.fetchGameData();
     },
     mounted() {},
     methods: {
@@ -149,6 +176,19 @@ export default {
         goToHome() {
             this.$router.push('/');
         },
+        readyGame() {
+            this.loading = true;
+            axios
+                .post('/game/ready')
+                .then(res => {
+                    console.log(res);
+                    this.loading = false;
+
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        },
         toGameView() {
             this.loading = true;
             axios
@@ -170,6 +210,11 @@ export default {
                 .leaving(this.handleUserLeaving)
                 .listen('Frontend\\GameUserUpdated', e => {
                     this.UPDATE_GAME_USERS(e.gameUsers);
+                })
+                .listen('Frontend\\RoomUserReady', e => {
+                    console.log(e);
+                    let readyUsers = e.readyUsers;
+                    this.$store.state.readyUsers = readyUsers;
                 })
                 .listen('Frontend\\ToGameView', e => {
                     this.$router.push({

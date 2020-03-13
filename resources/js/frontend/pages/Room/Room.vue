@@ -7,6 +7,7 @@
             :showCoverView="wapperConfig.showCoverView"
             :coverViewText="wapperConfig.coverViewText"
             :actionBtnText="wapperConfig.actionBtnText"
+            :actionDisabled="wapperConfig.actionDisabled"
             :actionBtnEvent="wapperConfig.actionBtnEvent"
         >
             <h3>{{ room.pinCode }} 室</h3>
