@@ -158,16 +158,16 @@
             <div class="select-area">
                 <el-radio
                     v-for="gameUser in GameUsers"
-                    :key="gameUser.seat_index"
+                    :key="gameUser.gameUser"
                     class="scan-radio-btn"
-                    :disabled="!gameUser.is_live"
+                    :disabled="!gameUser.isLive"
                     v-model="knightKillUserId"
-                    :label="gameUser.user_id"
+                    :label="gameUser.userId"
                     border
                 >
                     <span>{{
-                        gameUser.is_live ?
-                        roomUserMap[gameUser.user_id].first_name :
+                        gameUser.isLive ?
+                        userMap[gameUser.userId].firstName :
                         '死亡'
                     }}</span>
                 </el-radio>

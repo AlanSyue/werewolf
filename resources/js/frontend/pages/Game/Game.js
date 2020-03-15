@@ -56,10 +56,13 @@ export default {
             return object;
         },
         Me() {
-            if (!Boolean(this.GameUserMap) || !this.auth) {
-                return {};
+            let defaultMe = {
+                isRoomManager: false
             }
-            return this.GameUserMap[this.auth.id];
+            if (!Boolean(this.GameUserMap) || !this.auth) {
+                return defaultMe;
+            }
+            return this.GameUserMap[this.auth.id] || defaultMe;
         }
     },
     created() {
@@ -98,7 +101,7 @@ export default {
                 this.werewolfSkillDialogVisible = true;
             }else if(this.Me.isProphet){
                 this.prophetSkillDialogVisible = true;
-            }else if(this.user.isKnight){
+            }else if(this.Me.isKnight){
                 this.knightSkillDialogVisible = true;
             }else{
                 this.$message({
