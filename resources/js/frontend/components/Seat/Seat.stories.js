@@ -15,7 +15,7 @@ export default {
     decorators: [paddedDecorator]
 };
 
-const taskTemplate = `<Seat :active="active" :number="number" :content="content" :self-active="selfActive"/>`;
+const Template = `<Seat :active="active" :number="number" :content="content" :self-active="selfActive"/>`;
 
 // default task state
 export const SeatData = {
@@ -35,13 +35,13 @@ export const SeatData = {
 
 export const DeafultNoActive = () => ({
     components: { Seat },
-    template: taskTemplate,
+    template: Template,
     props: SeatData
 });
 
 export const DeafultActive = () => ({
     components: { Seat },
-    template: taskTemplate,
+    template: Template,
     props: {
         ...SeatData,
         active: {
@@ -52,7 +52,7 @@ export const DeafultActive = () => ({
 
 export const SelfNoActive = () => ({
     components: { Seat },
-    template: taskTemplate,
+    template: Template,
     props: {
         ...SeatData,
         selfActive: {
@@ -63,7 +63,7 @@ export const SelfNoActive = () => ({
 
 export const SelfActive = () => ({
     components: { Seat },
-    template: taskTemplate,
+    template: Template,
     props: {
         ...SeatData,
         active: {

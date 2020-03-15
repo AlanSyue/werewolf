@@ -1,6 +1,49 @@
-#room_create{
-    .el-footer{
-        display: flex;
+#app > #room_create {
+    padding-top: 24px;
+}
+
+#room_create {
+    .form-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1.94px;
+        color: $color-main;
+        margin-bottom: 12px;
+    }
+    .form-arae {
+        padding-left: 12px;
+        margin-bottom: 14px;
+    }
+    .form-row {
         align-items: center;
+        margin-bottom: 8px;
+        .form-col {
+            align-items: center;
+        }
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.67px;
+            color: $color-main;
+            margin-bottom: 0;
+        }
+        .m-number-selector {
+            .el-input-number__decrease,
+            .el-input-number__increase {
+                background-color: $color-main;
+                color: #FFF;  
+            }
+            &.is-disabled .el-input-number__decrease,
+            &.is-disabled  .el-input-number__increase{
+                background-color: #DCDFE6;
+                color: $color-gray1;
+            }
+            
+            color: $color-main;
+        }
+        .end-radio-button {
+            margin-left: 16px;
+            border-color: $color-main;
+        }
     }
 }

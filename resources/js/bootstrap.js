@@ -6,7 +6,6 @@ import _ from 'lodash'
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import 'popper.js'; // Required for BS4
-import 'bootstrap';
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support

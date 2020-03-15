@@ -1,6 +1,6 @@
 module.exports = {
-  stories: ['../resources/js/components/**/*.stories.js'],
-  addons: ['@storybook/addon-actions', '@storybook/addon-links'],
+  stories: ['../resources/js/frontend/components/**/*.stories.js'],
+  addons: ['@storybook/addon-actions', '@storybook/addon-knobs/register', '@storybook/addon-links'],
   webpackFinal: async (config, { configType }) => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
     // You can change the configuration based on that.
