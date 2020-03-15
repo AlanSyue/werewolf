@@ -94,11 +94,6 @@ let actions = {
         users = users.filter(function(originUser) {
             return originUser.id != newUser.id;
         });
-        users.push({
-            id: newUser.id,
-            firstName: newUser.first_name,
-            fullName: newUser.full_name
-        });
         commit("UPDATE_ROOM_USERS", users);
     }
 };

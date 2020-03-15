@@ -12,9 +12,12 @@
             &:first-child {
                 margin-top: 0;
             }
+            &-name {
+                width: 40px;
+            }
             &-content {
-                margin-left: 16px;
                 .tag {
+                    display: inline-block;
                     padding: 4px 6px;
                     margin-right: 12px;
                     border-radius: 4px;

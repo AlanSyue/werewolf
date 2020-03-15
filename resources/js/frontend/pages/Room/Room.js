@@ -81,6 +81,7 @@ export default {
                 let content = '未選擇';
                 let selfActive = false;
                 if (!!gameUser.userId) {
+                    content = '離線'
                     if (this.userMap[gameUser.userId]) {
                         content = this.userMap[gameUser.userId].firstName;
                     }

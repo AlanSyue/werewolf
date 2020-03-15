@@ -49,9 +49,6 @@ let mutations = {
         state.users = transformUsers;
         state.userMap = transformUserMap;
     },
-    UPDATE_ROOM_USERS(state, users) {
-        return (state.users = users);
-    },
     UPDATE_GAME_USERS(state, gameUsers) {
         const transformGameUsers = gameUsers.sort((u1, u2) => {
             return u1.seat_index - u2.seat_index;
