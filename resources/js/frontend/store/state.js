@@ -5,7 +5,7 @@ import defaultUser from "./stateDefault/users";
 import defaultUserMap from "./stateDefault/userMap";
 import defaultGameUsers from "./stateDefault/gameUsers";
 import defaultAuth from "./stateDefault/auth";
-import defaultReadyUsers from "./stateDefault/readyUsers";
+import defaultReadyUserIds from "./stateDefault/readyUserIds";
 
 let state = {
     room: defaultRoom,
@@ -15,7 +15,7 @@ let state = {
     userMap: defaultUserMap,
     gameUsers: defaultGameUsers,
     auth: defaultAuth,
-    readyUsers: defaultReadyUsers,
+    readyUserIds: defaultReadyUserIds
 };
 
 export default state;

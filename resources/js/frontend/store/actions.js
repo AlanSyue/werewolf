@@ -4,20 +4,27 @@ let actions = {
             axios
                 .get("/room/data")
                 .then(res => {
-                    const {game, room, users, gameUsers, readyUsers, gameLogs} = res.data.data;
+                    const {
+                        game,
+                        room,
+                        users,
+                        gameUsers,
+                        readyUsers,
+                        gameLogs
+                    } = res.data.data;
                     commit("FETCH_GAME", game);
                     commit("UPDATE_ROOM", room);
                     commit("FETCH_ROOM_USERS", users);
                     commit("UPDATE_GAME_USERS", gameUsers);
-                    commit("FETCH_READY_USERS", readyUsers);
+                    commit("UPDATE_READY_USERS", readyUsers);
                     commit("FETCH_GAME_LOGS", gameLogs);
                     resolve(res);
                 })
                 .catch(err => {
                     console.error(err);
                     reject(err);
-                });  
-        })
+                });
+        });
     },
     fetchAuth({ commit }) {
         axios
@@ -35,7 +42,7 @@ let actions = {
                 return {
                     user_id: seat.userId,
                     seat_index: seat.index
-                }
+                };
             })
         };
         axios
@@ -70,14 +77,12 @@ let actions = {
         let postData = {
             pin_code: pin_code
         };
-        return axios
-            .post("/room/join", postData)
-            .then(function(res) {
-                commit("UPDATE_ROOM", res.data);
-                return res;
-            })
+        return axios.post("/room/join", postData).then(function(res) {
+            commit("UPDATE_ROOM", res.data);
+            return res;
+        });
     },
-    handleUserJoined({ commit, state }, newUser){
+    handleUserJoined({ commit, state }, newUser) {
         let users = state.users;
         users = users.filter(function(originUser) {
             return originUser.id != newUser.id;
@@ -89,7 +94,7 @@ let actions = {
         });
         commit("UPDATE_ROOM_USERS", users);
     },
-    handleUserLeaving({ commit, state }, newUser){
+    handleUserLeaving({ commit, state }, newUser) {
         let users = state.users;
         users = users.filter(function(originUser) {
             return originUser.id != newUser.id;
