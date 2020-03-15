@@ -66,7 +66,7 @@ class GameService
         }
     }
 
-    public function changeStage(User $user, $gameId, $stageName)
+    public function changeStage(User $user, $gameId, $stageName, $targetUserId = null)
     {
         $isSuccess = false;
         $stage = 'morning';
@@ -120,6 +120,15 @@ class GameService
                     $skillAllowedTarget
                 );
                 $this->commitNightResult($gameId);
+            case 'knightUseResult':
+                $stage = 'morning';
+                $skillAllowedTarget = ['knight'];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
             case 'knightEnd':
                 $isSuccess = true;
             default:
@@ -132,7 +141,8 @@ class GameService
             $game = $this->roomRepository->getGameByRoomId($room->id);
             $gameUsers = $this->repository->getGameUsers($game->id);
             $gameLogs = $this->repository->getGameLogByGameId($game->id);
-            event(new StageChanged($room, $game, $gameUsers, $gameLogs, $soundData));
+            $targetUserId = ['targetUserId' => $targetUserId];
+            event(new StageChanged($room, $game, $gameUsers, $gameLogs, $soundData, $targetUserId));
         } else {
             throw new \Exception('無成功更新遊戲階段');
         }

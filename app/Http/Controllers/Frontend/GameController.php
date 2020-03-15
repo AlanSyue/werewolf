@@ -104,14 +104,37 @@ class GameController extends Controller
         ]);
         $gameId = $request->input('gameId');
         $targetUserId = $request->input('targetUserId');
-
+        
         $user = Auth::user();
-        $isSuccess = $this->service->knightUseSkill($user, $gameId, $targetUserId);
 
-        if (! $isSuccess) {
-            $this->service->changeStage($user, $gameId, 'nightComing');
+        try {
+            $this->service->knightUseSkill($user, $gameId, $targetUserId);
+            $this->service->changeStage($user, $gameId, 'knightUseResult', $targetUserId);
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
         }
-        $this->service->changeStage($user, $gameId, 'knightEnd');
-        return 'ok';
+    }
+
+    // 尚未完成
+    public function useSkillKnightEnd(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required'
+        ]);
+        $gameId = $request->input('gameId');
+        $user = Auth::user();
+        try {
+            $isKnight = $this->repository->isKnight($user, $gameId);
+            $gameLogs = $this->repository->getGameLogByGameId($gameId);
+            var_dump($gameLogs);
+            exit();
+            $this->service->changeStage($user, $gameId, 'knightEnd');
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
     }
 }
