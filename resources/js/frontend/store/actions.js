@@ -4,12 +4,13 @@ let actions = {
             axios
                 .get("/room/data")
                 .then(res => {
-                    commit("FETCH_GAME", res.data.data.game);
-                    commit("FETCH_ROOM", res.data.data.room);
-                    commit("FETCH_ROOM_USERS", res.data.data.users);
-                    commit("UPDATE_GAME_USERS", res.data.data.gameUsers);
-                    commit("FETCH_READY_USERS", res.data.data.readyUsers);
-                    commit("FETCH_GAME_LOGS", res.data.data.gameLogs);
+                    const {game, room, users, gameUsers, readyUsers, gameLogs} = res.data.data;
+                    commit("FETCH_GAME", game);
+                    commit("UPDATE_ROOM", room);
+                    commit("FETCH_ROOM_USERS", users);
+                    commit("UPDATE_GAME_USERS", gameUsers);
+                    commit("FETCH_READY_USERS", readyUsers);
+                    commit("FETCH_GAME_LOGS", gameLogs);
                     resolve(res);
                 })
                 .catch(err => {
@@ -30,7 +31,12 @@ let actions = {
     },
     updateRoomSeats({ commit }, seats) {
         let postData = {
-            seats: seats
+            seats: seats.map(seat => {
+                return {
+                    user_id: seat.userId,
+                    seat_index: seat.index
+                }
+            })
         };
         axios
             .post("/room/seats", postData)
@@ -41,36 +47,55 @@ let actions = {
                 console.error(err);
             });
     },
-    createRoom({ commit }, room_data) {
+    createRoom({ commit }, roomData) {
         let post_data = {
-            civilian_amount: room_data["civilian_amount"],
-            prophet_amount: room_data["prophet_amount"],
-            witch_amount: room_data["witch_amount"],
-            knight_amount: room_data["knight_amount"],
-            hunter_amount: room_data["hunter_amount"],
-            werewolf_amount: room_data["werewolf_amount"],
-            kingwolf_amount: room_data["kingwolf_amount"]
+            civilian_amount: roomData["civilianAmount"],
+            prophet_amount: roomData["prophetAmount"],
+            witch_amount: roomData["witchAmount"],
+            knight_amount: roomData["knightAmount"],
+            hunter_amount: roomData["hunterAmount"],
+            werewolf_amount: roomData["werewolfAmount"],
+            kingwolf_amount: roomData["kingwolfAmount"]
         };
         axios
             .post("/room/store", post_data)
             .then(function(res) {
-                commit("CREATE_ROOM", res.data);
+                commit("UPDATE_ROOM", res.data);
             })
             .catch(err => {
                 console.log(err);
             });
     },
     joinRoom({ commit }, pin_code) {
-        let post_data = {
+        let postData = {
             pin_code: pin_code
         };
         return axios
-            .post("/room/join", post_data)
+            .post("/room/join", postData)
             .then(function(res) {
-                commit("FETCH_ROOM", res.data);
+                commit("UPDATE_ROOM", res.data);
                 return res;
             })
     },
+    handleUserJoined({ commit, state }, newUser){
+        let users = state.users;
+        users = users.filter(function(originUser) {
+            return originUser.id != newUser.id;
+        });
+        users.push({
+            id: newUser.id,
+            firstName: newUser.first_name,
+            fullName: newUser.full_name
+        });
+        commit("UPDATE_ROOM_USERS", users);
+    },
+    handleUserLeaving({ commit, state }, newUser){
+        let users = state.users;
+        users = users.filter(function(originUser) {
+            return originUser.id != newUser.id;
+        });
+        commit("UPDATE_ROOM_USERS", users);
+    }
 };
 
 export default actions;

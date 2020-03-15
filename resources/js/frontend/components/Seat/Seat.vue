@@ -10,8 +10,8 @@
 </template>
 
 <style lang="scss">
-@import "../../../sass/_defines";
-@import "../../../sass/frontend/_variables";
+@import "../../../../sass/_defines";
+@import "../../../../sass/frontend/_variables";
 
 .c-seat {
     position: relative;
@@ -24,7 +24,13 @@
     @include pseudoPaddingHeight(100%);
     > .content{
         @include abs-center;
+        width: calc(100% - 4px);
         font-size: 12px;
+        overflow: hidden;
+        > p{
+            margin: 0;
+            text-align: center;
+        }
     }
     .index {
         position: absolute;

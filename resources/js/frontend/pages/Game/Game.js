@@ -1,6 +1,6 @@
-import soundMechine from "./module/soundMechine";
-import GameUser from "./module/GameUser";
-import { mapMutations } from 'vuex'
+import soundMechine from "../module/soundMechine";
+import GameUser from "../module/GameUser";
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
     name: "Game",
@@ -21,43 +21,28 @@ export default {
         };
     },
     computed: {
-        room() {
-            return this.$store.state.room;
-        },
-        game() {
-            return this.$store.state.game;
-        },
-        gameLogs() {
-            return this.$store.state.gameLogs;
-        },
+        ...mapState([
+            'auth',
+            'room',
+            'game',
+            'auth',
+            'userMap',
+            'gameLogs'
+        ]),
         prophetScanedUserIds() {
-            let logs = this.$store.state.gameLogs;
+            let logs = this.gameLogs;
             if(!Boolean(logs)){
                 return [];
             }
             return logs.filter(row => row.skill === 'prophet').map( row => row.target_user_id);
         },
-        auth() {
-            return this.$store.state.auth;
-        },
-        roomUserMap() {
-            let users = this.$store.state.users;
-            let object = {};
-            _.forEach(users, function(user) {
-                object[user.id] = user;
-            });
-            return object;
-        },
         GameUsers() {
             if (!Boolean(this.room)) {
                 return null;
             }
-            let users = this.$store.state.gameUsers;
-            users.sort((a,b)=>{
-                return a.seat_index - b.seat_index;
-            });
-            return users.map(data => {
-                return new GameUser(data, this.room);
+            const gameUsers = this.$store.state.gameUsers;
+            return gameUsers.map(gameUser => {
+                return new GameUser(gameUser, this.room);
             })
         },
         GameUserMap() {
@@ -66,47 +51,57 @@ export default {
             }
             let object = {};
             _.forEach(this.GameUsers, function(user) {
-                object[user.user_id] = user;
+                object[user.userId] = user;
             });
             return object;
         },
-        user() {
-            if (!Boolean(this.GameUserMap) || !this.auth) {
-                return null;
+        Me() {
+            let defaultMe = {
+                isRoomManager: false
             }
-            return this.GameUserMap[this.auth.id];
+            if (!Boolean(this.GameUserMap) || !this.auth) {
+                return defaultMe;
+            }
+            return this.GameUserMap[this.auth.id] || defaultMe;
         }
     },
     created() {
         let self = this;
-        this.$store.dispatch("fetchAuth");
-        this.$store.dispatch("fetchGameData").then(function() {
+        this.fetchAuth();
+        this.fetchGameData().then(function() {
             self.handleEventService(self.room.id);
         });
     },
     mounted() {},
     methods: {
         ...mapMutations({
+            FETCH_ROOM_USERS: 'FETCH_ROOM_USERS',
             updateGame: 'FETCH_GAME',
             updateGameUsers: 'UPDATE_GAME_USERS',
             updateGameLogs: 'FETCH_GAME_LOGS'
         }),
+        ...mapActions([
+            'fetchAuth',
+            'fetchGameData',
+            'handleUserJoined',
+            'handleUserLeaving'
+        ]),
         showSkillDialog() {
-            if (!Boolean(this.user)) {
+            if (!Boolean(this.Me)) {
                 this.$message({
                     message: "伺服器忙碌中",
                     type: "warning"
                 });
             }
-            if(this.user.isCivilian || this.user.isSkillAllowed == false){
+            if(this.Me.isCivilian || this.Me.isSkillAllowed == false){
                 this.$message({
                     message: "沒有技能可使用哦"
                 });
-            }else if(this.user.isWereworlf){
+            }else if(this.Me.isWereworlf){
                 this.werewolfSkillDialogVisible = true;
-            }else if(this.user.isProphet){
+            }else if(this.Me.isProphet){
                 this.prophetSkillDialogVisible = true;
-            }else if(this.user.isKnight){
+            }else if(this.Me.isKnight){
                 this.knightSkillDialogVisible = true;
             }else{
                 this.$message({
@@ -232,31 +227,15 @@ export default {
             this.updateGame(game);
             this.updateGameLogs(gameLogs);
             this.updateGameUsers(gameUsers);
-            if (this.user.isRoomMajor) {
+            if (this.Me.isRoomMajor) {
                 soundMechine.playByData(soundData);
             }
         },
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
-                .here(users => {
-                    this.$store.state.users = users;
-                })
-                .joining(newUser => {
-                    let users = this.$store.state.users.filter(function(
-                        originUser
-                    ) {
-                        return originUser.id != newUser.id;
-                    });
-                    users.push(newUser);
-                    this.$store.state.users = users;
-                })
-                .leaving(user => {
-                    this.$store.state.users = this.$store.state.users.filter(
-                        function(originUser) {
-                            return originUser.id != user.id;
-                        }
-                    );
-                })
+                .here(this.FETCH_ROOM_USERS)
+                .joining(this.handleUserJoined)
+                .leaving(this.handleUserLeaving)
                 .listen("Frontend\\StageChanged", this.changeStage)
         }
     }
