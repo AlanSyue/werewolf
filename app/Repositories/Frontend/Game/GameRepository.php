@@ -57,6 +57,18 @@ class GameRepository extends BaseRepository
             ->pluck('target_user_id');
     }
 
+    public function getKnightKillUserId(Game $game)
+    {
+        return $this->logModel
+            ->select('target_user_id')
+            ->where([
+                ['game_id', $game->id],
+                ['day', $game->day],
+                ['skill', 'knight']
+            ])
+            ->get();
+    }
+
     public function isProphet($gameId, $userId)
     {
         $ROLE_TYPE = \Config::get('constants.role_type');

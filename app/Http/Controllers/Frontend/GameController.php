@@ -117,7 +117,6 @@ class GameController extends Controller
         }
     }
 
-    // 尚未完成
     public function useSkillKnightEnd(Request $request)
     {
         $this->validate($request, [
@@ -127,10 +126,15 @@ class GameController extends Controller
         $user = Auth::user();
         try {
             $isKnight = $this->repository->isKnight($user, $gameId);
-            $gameLogs = $this->repository->getGameLogByGameId($gameId);
-            var_dump($gameLogs);
-            exit();
-            $this->service->changeStage($user, $gameId, 'knightEnd');
+            $game = $this->repository->getById($gameId);
+            $deadUserIds = $this->repository->getKnightKillUserId($game);
+            $isWerewolf = $this->repository->isWerewolf($gameId, $deadUserIds);
+            if ($isWerewolf) {
+                $this->service->changeStage($user, $gameId, 'knightEnd');
+            } else {
+               $this->service->changeStage($user, $gameId, 'morningContinue'); 
+            }
+            
             return 'ok';
         } catch (\Exception $e) {
             \Log::error($e);

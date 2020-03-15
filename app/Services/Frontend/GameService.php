@@ -129,8 +129,24 @@ class GameService
                     $skillAllowedTarget
                 );
                 break;
-            case 'knightEnd':
-                $isSuccess = true;
+            case 'knightEnd': // 騎士尚未完成，待後續功能補上調整
+                $stage = 'night';
+                $skillAllowedTarget = ['werewolf'];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'morningContinue':
+                $stage = 'morning';
+                $skillAllowedTarget = [];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
             default:
                 // code...
                 break;
