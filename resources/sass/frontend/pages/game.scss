@@ -1,29 +1,92 @@
-#game{
+#app > #game {
+    padding-top: 24px;
+}
+
+#game {
+    padding: 0 24px;
     transition: 1s;
-    &.night-mode{
+    &.night-mode {
         background-color: #000;
     }
-    .kill-radio-btn{
-        position: relative;
-        .index{
-            position: absolute;
-            top:0;
-            left:0;
-            padding: 0 4px;
-            background-color: #DEDEDE;
-            &.werewolf{
-                background-color: #FF9999;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        h3 {
+            color: #ffffff;
+        }
+        .leave-game-btn {
+            opacity: 0.6;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.27px;
+            color: #ffffff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    }
+    .seat-wrapper {
+        max-width: 280px;
+        margin: 60px auto 24px auto;
+    }
+    .action-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+    .footer{
+        width: 100%;
+        box-shadow: 0 2px 24px 0 rgba(0, 0, 0, 0.77);
+        background-color: rgb(213, 200, 225, 0.14);
+        .el-col{
+            display: flex;
+            justify-content: center;
+            .icon-btn{
+                height: 60px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                .icon{
+                    width: 18px;
+                    height: 18px;
+                    background-color: #DEDEDE;
+                    margin: 4px auto;
+                }
+                .content{
+                    font-size: 12px;
+                    font-weight: 600;
+                    letter-spacing: 1.67px;
+                    color: #ffffff;
+                }
+                &.disabled{
+                    opacity: 0.65;
+                }
             }
         }
-        .el-radio__inner{
+    }
+
+    .kill-radio-btn {
+        position: relative;
+        .index {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 0 4px;
+            background-color: #dedede;
+            &.werewolf {
+                background-color: #ff9999;
+            }
+        }
+        .el-radio__inner {
             display: none;
         }
     }
-    .seat-area{
-        .el-col{
+    .seat-area {
+        .el-col {
             display: inline-flex;
             float: none;
-            .el-tag{
+            .el-tag {
                 position: relative;
                 width: 4em;
                 height: 4em;
@@ -32,36 +95,31 @@
                 text-align: center;
                 line-height: 4em;
                 overflow: hidden;
-                .index{
+                .index {
                     position: absolute;
-                    top:0;
-                    left:0;
+                    top: 0;
+                    left: 0;
                     padding: 2px;
                     font-size: 1em;
                     line-height: 1em;
                     border-radius: 4px;
                     color: #999999;
                     text-align: center;
-                    background-color: #DEDEDE;
+                    background-color: #dedede;
                 }
             }
         }
     }
-    .select-area{
+    .select-area {
         display: flex;
         flex-wrap: wrap;
-        .el-radio{
+        .el-radio {
             margin: 4px 8px;
         }
     }
-    .role-description{
+    .role-description {
         padding-top: 0.8em;
         padding-bottom: 0.8em;
         border-bottom: 1px solid #dedede;
-    }
-    .el-footer{
-        > *{
-            height: 60px;
-        }
     }
 }

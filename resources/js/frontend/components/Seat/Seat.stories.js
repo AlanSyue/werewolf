@@ -1,21 +1,26 @@
 import Seat from "Seat/Seat";
 
-
-const paddedDecorator = () => {
-    return {
-        template:
-            '<div style="margin: 16px; padding: 16px;"><story/></div>'
-    };
-};
-
 export default {
     title: "Seat",
     // Our exports that end in "Data" are not stories.
-    excludeStories: /.*Data$/,
-    decorators: [paddedDecorator]
+    excludeStories: /.*Data$/
 };
 
-const Template = `<Seat :active="active" :number="number" :content="content" :self-active="selfActive"/>`;
+const Template = `
+    <div>
+        <div style="16px; padding: 16px; background-color: #DEDEDE">
+            <p>theme-normal:</p>
+            <br/><br/>
+            <Seat :theme="'normal'"  :active="active" :number="number" :content="content" :self-active="selfActive"/>
+            <br/><br/>
+        </div>
+        <div style="16px; padding: 16px; background-color: #1E1F4A">
+            <p>theme-gameuser:</p>
+            <br/><br/>
+            <Seat :theme="'gameuser'" :active="active" :number="number" :content="content" :self-active="selfActive"/>
+        </div>
+    </div>
+`;
 
 // default task state
 export const SeatData = {
@@ -30,6 +35,9 @@ export const SeatData = {
     },
     selfActive: {
         default: false
+    },
+    theme: {
+        default: 'normal'
     }
 };
 

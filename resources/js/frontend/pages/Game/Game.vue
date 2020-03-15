@@ -1,44 +1,53 @@
 <template>
-    <section id="game" :class="{ 'night-mode': game.stage == 'night' || false }">
-        <div class="main">
-            <div class="seat-area">
-                <el-col :span="6" v-for="gameUser in GameUsers" :key="gameUser.seatIndex" class="justify-center square">
-                    <el-tag :type="(gameUser.isLive) ? '' : 'danger' ">
-                        <span class="index">{{gameUser.seatIndex}}</span>
-                        <span>{{
-                            gameUser.isLive ?
-                            userMap[gameUser.userId].firstName :
-                            '死亡'
-                        }}</span>
-                    </el-tag>
-                </el-col>
-            </div>
-            <div v-if="Me.isRoomManager && isGameStarted == false">
-                <el-button :loading="loading" @click="startGame" type="success" plain>開始遊戲</el-button>
-            </div>
+    <section
+        id="game"
+        :class="{ 'night-mode': game.stage == 'night' || false }"
+    >
+        <div class="header">
+            <h3>{{ room.pinCode }} 室</h3>
+            <a @click="backToHome" class="leave-game-btn">離開房間</a>
         </div>
-        <el-footer class="bg-gray">
+        <div class="seat-wrapper">
+            <SeatList :theme="'gameuser'" :seats="seats" />
+        </div>
+
+        <div class="action-wrapper">
+            <Button
+                v-if="Me && Me.isRoomManager && !isGameStarted"
+                @onClick="startGame"
+            >
+                開始遊戲
+            </Button>
+        </div>
+
+        <el-footer class="footer">
             <el-row type="flex">
                 <el-col :span="8">
-                    <el-button
-                        :loading="loading"
+                    <div
+                        class="icon-btn"
                         @click="roleDialogVisible = true"
-                        >查看角色</el-button
                     >
+                        <span class="icon"></span>
+                        <span class="content">查看角色</span>
+                    </div>
                 </el-col>
                 <el-col :span="8">
-                    <el-button
-                        :loading="loading"
-                        @click="showSkillDialog"
-                        >使用技能</el-button
+                    <div
+                        :class="[{ disabled: !isGameStarted }, 'icon-btn']"
+                        @click="isGameStarted && showSkillDialog"
                     >
+                        <span class="icon"></span>
+                        <span class="content">使用技能</span>
+                    </div>
                 </el-col>
                 <el-col :span="8">
-                    <el-button
-                        :loading="loading"
-                        @click="gameRecordDialogVisible = true"
-                        >遊戲紀錄</el-button
+                    <div
+                        :class="[{ disabled: !isGameStarted }, 'icon-btn']"
+                        @click="isGameStarted? gameRecordDialogVisible = true: ()=>{}"
                     >
+                        <span class="icon"></span>
+                        <span class="content">遊戲紀錄</span>
+                    </div>
                 </el-col>
             </el-row>
         </el-footer>
@@ -49,8 +58,8 @@
             width="90%"
             center
         >
-            <h3>{{ (auth && Me) ? Me.role.name : ""}} </h3>
-            <p>{{ (auth && Me) ? Me.role.introducation : "" }}</p>
+            <h3>{{ auth && Me ? Me.role.name : "" }}</h3>
+            <p>{{ auth && Me ? Me.role.introducation : "" }}</p>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="roleDialogVisible = false"
                     >知道了</el-button
@@ -67,30 +76,39 @@
             <p>選擇·對象</p>
             <div class="select-area">
                 <el-radio
-                    v-for="gameUser in GameUsers" :key="gameUser.seatIndex"
+                    v-for="gameUser in GameUsers"
+                    :key="gameUser.seatIndex"
                     class="kill-radio-btn"
-                    :disabled="!(gameUser.isLive)"
+                    :disabled="!gameUser.isLive"
                     v-model="werewolfKillUserId"
                     :label="gameUser.userId"
                     border
                 >
-                    <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
-                        {{(gameUser.isWereworlf)? '狼人' : gameUser.seatIndex}}
+                    <span
+                        :class="[
+                            'index',
+                            { werewolf: gameUser.role.enName == 'werewolf' }
+                        ]"
+                    >
+                        {{ gameUser.isWereworlf ? "狼人" : gameUser.seatIndex }}
                     </span>
                     <span>{{
-                        gameUser.isLive ?
-                        userMap[gameUser.userId].firstName :
-                        '死亡'
+                        gameUser.isLive
+                            ? userMap[gameUser.userId].firstName
+                            : "死亡"
                     }}</span>
                 </el-radio>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary"
+                <el-button
+                    type="primary"
                     :loading="loading"
                     @click="useWerewolfSkill"
                     >確認</el-button
                 >
-                <el-button type="primary" @click="werewolfSkillDialogVisible = false"
+                <el-button
+                    type="primary"
+                    @click="werewolfSkillDialogVisible = false"
                     >關閉</el-button
                 >
             </span>
@@ -110,34 +128,44 @@
                     class="scan-radio-btn"
                     :disabled="
                         isScanedTonight ||
-                        (gameUser.userId == Me.userId) ||
-                        !(gameUser.isLive) ||
-                        (prophetScanedUserIds.indexOf(gameUser.userId) > -1 ) ||
-                        (scanResultBackupUserIds.indexOf(gameUser.userId) > -1)
+                            gameUser.userId == Me.userId ||
+                            !gameUser.isLive ||
+                            prophetScanedUserIds.indexOf(gameUser.userId) >
+                                -1 ||
+                            scanResultBackupUserIds.indexOf(gameUser.userId) >
+                                -1
                     "
                     v-model="scanUserId"
                     :label="gameUser.userId"
                     border
                 >
-                    <span :class="['index',{'werewolf': gameUser.role.enName == 'werewolf'}]">
-                        {{gameUser.seatIndex}}
+                    <span
+                        :class="[
+                            'index',
+                            { werewolf: gameUser.role.enName == 'werewolf' }
+                        ]"
+                    >
+                        {{ gameUser.seatIndex }}
                         {{
-                            (
-                                (scanResultBackupUserIds.indexOf(gameUser.userId) > -1) ||
-                                (prophetScanedUserIds.indexOf(gameUser.userId) > -1 )||
-                                gameUser.userId == Me.userId
-                            ) ? gameUser.role.name : ''
+                            scanResultBackupUserIds.indexOf(gameUser.userId) >
+                                -1 ||
+                            prophetScanedUserIds.indexOf(gameUser.userId) >
+                                -1 ||
+                            gameUser.userId == Me.userId
+                                ? gameUser.role.name
+                                : ""
                         }}
                     </span>
                     <span>{{
-                        gameUser.isLive ?
-                        userMap[gameUser.userId].firstName :
-                        '死亡'
+                        gameUser.isLive
+                            ? userMap[gameUser.userId].firstName
+                            : "死亡"
                     }}</span>
                 </el-radio>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary"
+                <el-button
+                    type="primary"
                     :loading="loading"
                     @click="useProphetSkill"
                     >確認</el-button

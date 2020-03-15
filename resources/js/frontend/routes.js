@@ -61,7 +61,12 @@ const routes = [
     {
         path: "/game",
         component: Game,
-        meta: { title: "遊戲中" }
+        meta: {
+            title: "遊戲中",
+            pageHeader: {
+                hidden: true
+            }
+        }
     }
 ];
 
