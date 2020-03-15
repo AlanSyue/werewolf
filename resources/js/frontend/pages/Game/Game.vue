@@ -33,8 +33,8 @@
                 </el-col>
                 <el-col :span="8">
                     <div
-                        :class="[{ disabled: !isGameStarted }, 'icon-btn']"
-                        @click="isGameStarted && showSkillDialog"
+                        :class="['icon-btn']"
+                        @click="showSkillDialog"
                     >
                         <span class="icon"></span>
                         <span class="content">使用技能</span>
@@ -42,8 +42,8 @@
                 </el-col>
                 <el-col :span="8">
                     <div
-                        :class="[{ disabled: !isGameStarted }, 'icon-btn']"
-                        @click="isGameStarted? gameRecordDialogVisible = true: ()=>{}"
+                        :class="['icon-btn']"
+                        @click="gameRecordDialogVisible = true"
                     >
                         <span class="icon"></span>
                         <span class="content">遊戲紀錄</span>
