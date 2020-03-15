@@ -1,66 +1,40 @@
-body{
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
     background-color: #000;
 }
 
-#app{
+#app {
     position: relative;
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     background-color: white;
-    margin: 0 auto;
-    @media screen and (min-width: 1024px) {
-        width: 500px;
-        height: 70vh;
+    @media screen and (min-width: 600px) {
+        width: 375px;
+        max-height: 640px;
     }
-
-    >.el-page-header{
-        position: fixed;
-        top:0;
-        left:0;
-        width: 100%;
-        height: 56px;
-        background-color: #DEDEDE;
-        padding: 0 12px;
-        display: flex;
-        align-items: center;
-        .el-page-header__left{
-            .el-icon-back:before{
-                font-size:2em;
-            }
-            .el-page-header__title{
-                font-size:0;
-            }
-        }
-
-        &.noBackBtn{
-            .el-page-header__left{
-                .el-icon-back:before
-                {
-                    font-size:0em;
-                }
-            }
-        }
-    }
-    >section{
+    > section {
         padding-top: 56px;
         width: 100%;
-        height: 100vh;
-        >.el-footer{
+        height: 100%;
+        box-sizing: border-box;
+        background-color: $color-main;
+        > .el-footer {
             position: absolute;
             left: 0;
             bottom: 0;
             width: 100%;
-            padding:0;
+            padding: 0;
             height: 60px;
-            .el-row{
+            .el-row {
                 padding: 0;
-                .el-button{
+                .el-button {
                     height: 60px;
                     width: 100%;
                 }
             }
         }
-    }    
+    }
 }
-

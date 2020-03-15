@@ -1,18 +1,8 @@
 #home{
-    width: 100%;
-    height: 100vh;
-    background-image: url('/img/frontend/game/background.jpg');
-    background-size: 130% auto;
-    background-repeat: no-repeat;
-    background-position: center center;
-    .el-col{
+    .el-row{
         margin-bottom: 20px;
-        a{
-            width: 50%;
-            max-width: 400px;
-        }
-        .el-button{
-            width: 100%;
+        &:first-child{
+            margin-top: 150px;
         }
     }
 }

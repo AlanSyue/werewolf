@@ -1,11 +1,11 @@
-import NotFound from "./pages/NotFound.vue";
-import Empty from "./pages/Empty.vue";
-import Login from "./pages/Login.vue";
-import Home from "./pages/Home.vue";
-import Room from "./pages/Room.vue";
-import RoomCreate from "./pages/RoomCreate.vue";
-import RoomJoin from "./pages/RoomJoin.vue";
-import Game from "./pages/Game.vue";
+import NotFound from "./pages/NotFound/NotFound.vue";
+import Empty from "./pages/Empty/Empty.vue";
+import Login from "./pages/Login/Login.vue";
+import Home from "./pages/Home/Home.vue";
+import Room from "./pages/Room/Room.vue";
+import RoomCreate from "./pages/RoomCreate/RoomCreate.vue";
+import RoomJoin from "./pages/RoomJoin/RoomJoin.vue";
+import Game from "./pages/Game/Game.vue";
 
 const routes = [
     {
@@ -16,12 +16,22 @@ const routes = [
     {
         path: "/",
         component: Home,
-        meta: { title: "狼人面紗" }
+        meta: {
+            title: "狼人面紗",
+            pageHeader: {
+                hidden: true
+            }
+        }
     },
     {
         path: "/room",
         component: Room,
-        meta: { title: "遊戲室" }
+        meta: {
+            title: "遊戲室",
+            pageHeader: {
+                hidden: true
+            }
+        }
     },
     {
         path: "/login",
@@ -36,7 +46,12 @@ const routes = [
     {
         path: "/room/create",
         component: RoomCreate,
-        meta: { title: "建立遊戲" }
+        meta: {
+            title: "建立遊戲",
+            pageHeader: {
+                hidden: true
+            }
+        }
     },
     {
         path: "/room/join",
