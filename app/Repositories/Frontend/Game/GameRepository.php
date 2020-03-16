@@ -57,7 +57,7 @@ class GameRepository extends BaseRepository
             ->pluck('target_user_id');
     }
 
-    public function getKnightKillUserId(Game $game)
+    public function getKnightSkillTargetUserId(Game $game)
     {
         return $this->logModel
             ->select('target_user_id')

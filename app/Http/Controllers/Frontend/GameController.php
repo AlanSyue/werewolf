@@ -127,8 +127,8 @@ class GameController extends Controller
         try {
             $isKnight = $this->repository->isKnight($user, $gameId);
             $game = $this->repository->getById($gameId);
-            $deadUserIds = $this->repository->getKnightKillUserId($game);
-            $isWerewolf = $this->repository->isWerewolf($gameId, $deadUserIds);
+            $targetUserId = $this->repository->getKnightSkillTargetUserId($game);
+            $isWerewolf = $this->repository->isWerewolf($gameId, $targetUserId);
             if ($isWerewolf) {
                 $this->service->changeStage($user, $gameId, 'knightEnd');
             } else {
