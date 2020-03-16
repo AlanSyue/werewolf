@@ -1,5 +1,5 @@
-import SeatList from './SeatList';
-import { SeatData } from '../Seat/Seat.stories';
+import SeatList from 'SeatList/SeatList';
+import { SeatData } from 'Seat/Seat.stories';
 
 const paddedList = () => {
   return {

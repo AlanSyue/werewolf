@@ -1,5 +1,5 @@
 import StoryRouter from 'storybook-vue-router';
-import PageHeader from "./PageHeader";
+import PageHeader from "PageHeader/PageHeader";
 
 const paddedDecorator = () => {
     return {
