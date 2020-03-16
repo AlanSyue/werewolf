@@ -4,6 +4,12 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #000;
+    @media screen and (min-width: 600px) {
+        width: 375px;
+        max-height: 640px;
+    }
+    position: relative;
+    overflow: hidden;
 }
 
 #app {
@@ -11,10 +17,6 @@ body {
     width: 100%;
     height: 100%;
     background-color: white;
-    @media screen and (min-width: 600px) {
-        width: 375px;
-        max-height: 640px;
-    }
     > section {
         padding-top: 56px;
         width: 100%;

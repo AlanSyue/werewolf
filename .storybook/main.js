@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   stories: ['../resources/js/frontend/components/**/*.stories.js'],
   addons: ['@storybook/addon-actions', '@storybook/addon-knobs/register', '@storybook/addon-links'],
@@ -11,6 +13,9 @@ module.exports = {
       test: /\.scss$/,
       use: ['style-loader', 'css-loader', 'sass-loader']
     });
+    config.resolve.modules.push(
+      path.resolve(__dirname, '../resources/js/frontend/components')
+    )
 
     // Return the altered config
     return config;

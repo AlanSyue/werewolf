@@ -1,4 +1,4 @@
-import Button from '../../components/Button/Button.vue'
+import Button from 'Button/Button.vue'
 
 export default {
     data: function() {

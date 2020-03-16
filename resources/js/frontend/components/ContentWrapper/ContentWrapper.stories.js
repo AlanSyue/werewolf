@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 import { withKnobs, boolean } from "@storybook/addon-knobs";
-import ContentWrapper from "./ContentWrapper";
+import ContentWrapper from "ContentWrapper/ContentWrapper";
 
 const paddedDecorator = () => {
     return {

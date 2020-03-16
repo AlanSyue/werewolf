@@ -1,8 +1,8 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 
-import Button from '../../components/Button/Button.vue';
-import SeatList from '../../components/SeatList/SeatList.vue';
-import ContentWrapper from '../../components/ContentWrapper/ContentWrapper.vue';
+import Button from 'Button/Button.vue';
+import SeatList from 'SeatList/SeatList.vue';
+import ContentWrapper from 'ContentWrapper/ContentWrapper.vue';
 
 export default {
     name: 'Room',

@@ -11,6 +11,15 @@ const mix = require('laravel-mix');
  |
  */
 
+mix.webpackConfig({
+    resolve: {
+        modules: [
+            'node_modules',
+            path.resolve(__dirname, './resources/js/frontend/components')
+        ]
+    }
+});
+
 mix.setPublicPath("public")
     .setResourceRoot("../") // Turns assets paths in css relative to css file
     // .options({

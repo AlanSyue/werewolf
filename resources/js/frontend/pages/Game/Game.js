@@ -1,9 +1,15 @@
 import soundMechine from "../module/soundMechine";
 import GameUser from "../module/GameUser";
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions, mapMutations } from "vuex";
+import Button from "Button/Button.vue";
+import SeatList from "SeatList/SeatList.vue";
 
 export default {
     name: "Game",
+    components: {
+        Button,
+        SeatList
+    },
     data: function() {
         return {
             isGameStarted: false,
@@ -21,20 +27,15 @@ export default {
         };
     },
     computed: {
-        ...mapState([
-            'auth',
-            'room',
-            'game',
-            'auth',
-            'userMap',
-            'gameLogs'
-        ]),
+        ...mapState(["auth", "room", "game", "auth", "userMap", "gameLogs"]),
         prophetScanedUserIds() {
             let logs = this.gameLogs;
-            if(!Boolean(logs)){
+            if (!Boolean(logs)) {
                 return [];
             }
-            return logs.filter(row => row.skill === 'prophet').map( row => row.target_user_id);
+            return logs
+                .filter(row => row.skill === "prophet")
+                .map(row => row.target_user_id);
         },
         GameUsers() {
             if (!Boolean(this.room)) {
@@ -43,7 +44,7 @@ export default {
             const gameUsers = this.$store.state.gameUsers;
             return gameUsers.map(gameUser => {
                 return new GameUser(gameUser, this.room);
-            })
+            });
         },
         GameUserMap() {
             if (!Boolean(this.GameUsers)) {
@@ -58,11 +59,27 @@ export default {
         Me() {
             let defaultMe = {
                 isRoomManager: false
-            }
+            };
             if (!Boolean(this.GameUserMap) || !this.auth) {
                 return defaultMe;
             }
             return this.GameUserMap[this.auth.id] || defaultMe;
+        },
+        seats() {
+            return this.GameUsers.map(GameUser => {
+                let content = "死亡";
+                if (!this.userMap[GameUser.userId]) {
+                    content = "離線";
+                } else if (GameUser.isLive) {
+                    content = this.userMap[GameUser.userId].firstName;
+                }
+                return {
+                    number: GameUser.seatIndex,
+                    content: content,
+                    active: !!GameUser.isLive,
+                    selfActive: GameUser.userId == this.auth.id
+                };
+            });
         }
     },
     created() {
@@ -75,17 +92,20 @@ export default {
     mounted() {},
     methods: {
         ...mapMutations({
-            FETCH_ROOM_USERS: 'FETCH_ROOM_USERS',
-            updateGame: 'FETCH_GAME',
-            updateGameUsers: 'UPDATE_GAME_USERS',
-            updateGameLogs: 'FETCH_GAME_LOGS'
+            FETCH_ROOM_USERS: "FETCH_ROOM_USERS",
+            updateGame: "FETCH_GAME",
+            updateGameUsers: "UPDATE_GAME_USERS",
+            updateGameLogs: "FETCH_GAME_LOGS"
         }),
         ...mapActions([
-            'fetchAuth',
-            'fetchGameData',
-            'handleUserJoined',
-            'handleUserLeaving'
+            "fetchAuth",
+            "fetchGameData",
+            "handleUserJoined",
+            "handleUserLeaving"
         ]),
+        backToHome() {
+            this.$router.push("/");
+        },
         showSkillDialog() {
             if (!Boolean(this.Me)) {
                 this.$message({
@@ -93,26 +113,28 @@ export default {
                     type: "warning"
                 });
             }
-            if(this.Me.isCivilian || this.Me.isSkillAllowed == false){
+            if (this.Me.isCivilian || this.Me.isSkillAllowed == false) {
                 this.$message({
-                    message: "沒有技能可使用哦"
+                    message: "沒有技能可使用哦",
+                    type: "warning"
                 });
-            }else if(this.Me.isWereworlf){
+            } else if (this.Me.isWereworlf) {
                 this.werewolfSkillDialogVisible = true;
-            }else if(this.Me.isProphet){
+            } else if (this.Me.isProphet) {
                 this.prophetSkillDialogVisible = true;
-            }else if(this.Me.isKnight){
+            } else if (this.Me.isKnight) {
                 this.knightSkillDialogVisible = true;
-            }else{
+            } else {
                 this.$message({
-                    message: "沒有技能可使用哦!"
+                    message: "沒有技能可使用哦!",
+                    type: "warning"
                 });
             }
         },
-        startGame(){
+        startGame() {
             this.loading = true;
             axios
-                .post("/game/start",{
+                .post("/game/start", {
                     gameId: this.game.id
                 })
                 .then(res => {
@@ -125,18 +147,18 @@ export default {
                     this.loading = false;
                 });
         },
-        useWerewolfSkill(){
-            if(!Boolean(this.werewolfKillUserId)){
+        useWerewolfSkill() {
+            if (!Boolean(this.werewolfKillUserId)) {
                 this.$message({
                     message: "請先選擇殺人對象",
                     type: "warning"
                 });
-            } 
+            }
             this.loading = true;
             axios
-                .post("/game/skill/werewolf",{
+                .post("/game/skill/werewolf", {
                     gameId: this.game.id,
-                    targetUserId:  this.werewolfKillUserId
+                    targetUserId: this.werewolfKillUserId
                 })
                 .then(res => {
                     console.log(res);
@@ -149,17 +171,17 @@ export default {
                     this.loading = false;
                 });
         },
-        useProphetSkill(){
-            if(!Boolean(this.scanUserId)){
+        useProphetSkill() {
+            if (!Boolean(this.scanUserId)) {
                 this.$message({
                     message: "請先選擇查驗對象",
                     type: "warning"
                 });
-            } 
+            }
             axios
-                .post("/game/skill/prophet",{
+                .post("/game/skill/prophet", {
                     gameId: this.game.id,
-                    targetUserId:  this.scanUserId
+                    targetUserId: this.scanUserId
                 })
                 .then(res => {
                     this.scanResultBackupUserIds.push(this.scanUserId);
@@ -173,13 +195,13 @@ export default {
                     this.loading = false;
                 });
         },
-        closeProphetSkillDialog(){
-            this.prophetSkillDialogVisible = false
-            if(this.isScanedTonight){
+        closeProphetSkillDialog() {
+            this.prophetSkillDialogVisible = false;
+            if (this.isScanedTonight) {
                 axios
-                    .post("/game/skill/prophet_end",{
+                    .post("/game/skill/prophet_end", {
                         gameId: this.game.id,
-                        targetUserId:  this.werewolfKillUserId
+                        targetUserId: this.werewolfKillUserId
                     })
                     .then(res => {
                         this.scanResultBackupUserIds.push(this.scanUserId);
@@ -194,17 +216,17 @@ export default {
                     });
             }
         },
-        useKnightSkill(){
-            if(!Boolean(this.knightKillUserId)){
+        useKnightSkill() {
+            if (!Boolean(this.knightKillUserId)) {
                 this.$message({
                     message: "請先選擇查驗對象",
                     type: "warning"
                 });
-            } 
+            }
             axios
-                .post("/game/skill/knight",{
+                .post("/game/skill/knight", {
                     gameId: this.game.id,
-                    targetUserId:  this.knightKillUserId
+                    targetUserId: this.knightKillUserId
                 })
                 .then(res => {
                     this.knightSkillDialogVisible = false;
@@ -216,14 +238,9 @@ export default {
                     this.loading = false;
                 });
         },
-        changeStage(data){
+        changeStage(data) {
             console.log(data);
-            let {
-                game,
-                gameUsers,
-                gameLogs,
-                soundData
-            } = data;
+            let { game, gameUsers, gameLogs, soundData } = data;
             this.updateGame(game);
             this.updateGameLogs(gameLogs);
             this.updateGameUsers(gameUsers);
@@ -236,7 +253,7 @@ export default {
                 .here(this.FETCH_ROOM_USERS)
                 .joining(this.handleUserJoined)
                 .leaving(this.handleUserLeaving)
-                .listen("Frontend\\StageChanged", this.changeStage)
+                .listen("Frontend\\StageChanged", this.changeStage);
         }
     }
 };

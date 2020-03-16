@@ -1,5 +1,5 @@
-import Button from "../../components/Button/Button.vue";
-import ContentWrapper from "../../components/ContentWrapper/ContentWrapper.vue";
+import Button from "Button/Button.vue";
+import ContentWrapper from "ContentWrapper/ContentWrapper.vue";
 
 export default {
     name: "RoomCreate",
