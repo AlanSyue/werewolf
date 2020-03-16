@@ -69,7 +69,7 @@ class GameRepository extends BaseRepository
             ->get();
     }
 
-    public function isProphet($gameId, $userId)
+    public function isProphetUser($gameId, $userId)
     {
         $ROLE_TYPE = \Config::get('constants.role_type');
         return $this->gameUserModel->where([
@@ -79,7 +79,18 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
-    public function isKnight($gameId, $userId)
+    public function isKnighSkillAllowed($gameId)
+    {
+        $ROLE_TYPE = \Config::get('constants.role_type');
+        return $this->gameUserModel->where([
+            ['game_id', $gameId],
+            ['role_type', $ROLE_TYPE['knight']],
+            ['skill_use_status', 0],
+            ['is_live', 1]
+        ])->exists();
+    }
+
+    public function isKnightUser($gameId, $userId)
     {
         $ROLE_TYPE = \Config::get('constants.role_type');
         return $this->gameUserModel->where([
@@ -89,7 +100,17 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
-    public function isWerewolfAndAlive($gameId, $userId)
+    public function isSkillUsed($gameId, $userId)
+    {
+        $ROLE_TYPE = \Config::get('constants.role_type');
+        return $this->gameUserModel->where([
+            ['game_id', $gameId],
+            ['user_id', $userId],
+            ['skill_use_status', '=', 1]
+        ])->exists();
+    }
+
+    public function isWerewolfSkillAllowed($gameId, $userId)
     {
         return $this->gameUserModel->where([
             ['game_id', $gameId],
@@ -100,7 +121,7 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
-    public function isWerewolf($gameId, $userId)
+    public function isWerewolfUser($gameId, $userId)
     {
         return $this->gameUserModel->where([
             ['game_id', $gameId],
@@ -110,7 +131,7 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
-    public function isAlive($gameId, $userId)
+    public function isUserAlive($gameId, $userId)
     {
         return $this->gameUserModel->where([
             ['game_id', $gameId],
@@ -171,6 +192,17 @@ class GameRepository extends BaseRepository
         }
 
         DB::commit();
+    }
+
+    public function setSkillUsed($gameId, $userId){
+        return $this->gameUserModel->where([
+                ['game_id', $gameId],
+                ['user_id', $userId],
+                ['skill_use_status', 0]
+            ])
+            ->update([
+                'skill_use_status' => 1
+            ]);
     }
 
     public function changeStage($gameId, $stage, $skillAllowedTarget, $isNextDay = false)

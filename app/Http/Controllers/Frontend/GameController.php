@@ -87,7 +87,7 @@ class GameController extends Controller
         $gameId = $request->input('gameId');
         $user = Auth::user();
         try {
-            $isProphet = $this->repository->isProphet($user, $gameId);
+            $isProphetUser = $this->repository->isProphetUser($user, $gameId);
             $this->service->changeStage($user, $gameId, 'prophetEnd');
             return 'ok';
         } catch (\Exception $e) {
