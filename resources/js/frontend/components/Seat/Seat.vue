@@ -1,12 +1,12 @@
 <template>
-<div :class="classObject">
-    <div class="index">
-        <p class="content">{{number}}</p>
+    <div :class="classObject">
+        <div class="index">
+            <p class="content">{{ number }}</p>
+        </div>
+        <div class="content">
+            <p>{{ content }}</p>
+        </div>
     </div>
-    <div class="content">
-        <p>{{content}}</p>
-    </div>
-</div>
 </template>
 
 <style lang="scss">
@@ -17,17 +17,14 @@
     position: relative;
     width: 52px;
     display: flex;
-    border: 1px solid $color-main;
-    background-color: transparent;
-    color: $color-main;
     border-radius: 8px;
     @include pseudoPaddingHeight(100%);
-    > .content{
+    > .content {
         @include abs-center;
         width: calc(100% - 4px);
         font-size: 12px;
         overflow: hidden;
-        > p{
+        > p {
             margin: 0;
             text-align: center;
         }
@@ -40,7 +37,6 @@
         width: 35%;
         border-radius: 50%;
         background-color: $color-main;
-        color: white;
         @include pseudoPaddingHeight(100%);
         > .content {
             @include abs-center;
@@ -49,26 +45,60 @@
         }
     }
 
-    &.self {
-        color: white;
-        border-color: $color-main;
-        background-color: $color-main;
+    &.theme-normal {
+        border: 1px solid $color-main;
+        background-color: transparent;
+        color: $color-main;
         .index {
-            border: 1px solid white;
-            background-color: $color-main;
+            color: white;
         }
-    }
+        &.self {
+            color: white;
+            border-color: $color-main;
+            background-color: $color-main;
+            .index {
+                border: 1px solid white;
+                background-color: $color-main;
+            }
+        }
 
-    &.active {
-        border-color: $color-pass;
-        .index {
-            border: 1px solid white;
+        &.active {
+            border-color: $color-pass;
+            .index {
+                border: 1px solid white;
+                background-color: $color-pass;
+            }
+        }
+
+        &.active.self {
             background-color: $color-pass;
         }
     }
 
-    &.active.self {
-        background-color: $color-pass;
+    &.theme-gameuser {
+        opacity: 0.2;
+        border: 2px solid $color-white;
+        background-color: transparent;
+        color: $color-white;
+        .index {
+            color: $color-main;
+            background-color: $color-white;
+        }
+        
+        &.self {
+        }
+
+        &.active {
+            opacity: 1;
+            .index {
+                border: 1px solid $color-white;
+                background-color: $color-white;
+            }
+        }
+
+        &.active.self {
+            background-color: $color-sub3;
+        }
     }
 }
 </style>
@@ -92,15 +122,21 @@ export default {
         selfActive: {
             type: Boolean,
             default: false
+        },
+        theme: {
+            type: String,
+            default: "normal"
         }
     },
     computed: {
-        classObject: function () {
-            return {
+        classObject: function() {
+            let obj = {
                 "c-seat": true,
                 active: Boolean(this.active),
                 self: Boolean(this.selfActive)
             };
+            obj[`theme-${this.theme}`] = true;
+            return obj;
         }
     }
 };
