@@ -87,7 +87,7 @@ class GameController extends Controller
         $gameId = $request->input('gameId');
         $user = Auth::user();
         try {
-            $isProphet = $this->repository->isProphet($user, $gameId);
+            $isProphetUser = $this->repository->isProphetUser($user, $gameId);
             $this->service->changeStage($user, $gameId, 'prophetEnd');
             return 'ok';
         } catch (\Exception $e) {
@@ -127,8 +127,8 @@ class GameController extends Controller
         try {
             $isKnight = $this->repository->isKnight($user, $gameId);
             $game = $this->repository->getById($gameId);
-            $deadUserIds = $this->repository->getKnightKillUserId($game);
-            $isWerewolf = $this->repository->isWerewolf($gameId, $deadUserIds);
+            $targetUserId = $this->repository->getKnightSkillTargetUserId($game);
+            $isWerewolf = $this->repository->isWerewolf($gameId, $targetUserId);
             if ($isWerewolf) {
                 $this->service->changeStage($user, $gameId, 'knightEnd');
             } else {
