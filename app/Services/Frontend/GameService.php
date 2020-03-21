@@ -27,7 +27,7 @@ class GameService
 
         $game = $this->repository->getById($gameId);
 
-        return $this->repository->createKillUserLog($game, $user, $targetUserId);
+        return $this->repository->createUserLog($game, $user, $targetUserId, 'werewolf');
     }
 
     public function prophetUseSkill(User $user, $gameId, $targetUserId)
@@ -40,7 +40,7 @@ class GameService
 
         $game = $this->repository->getById($gameId);
 
-        return $this->repository->createScenUserLog($game, $user, $targetUserId);
+        return $this->repository->createUserLog($game, $user, $targetUserId, 'prophet');
     }
 
     public function knightUseSkill(User $user, $gameId, $targetUserId)
@@ -65,7 +65,7 @@ class GameService
         }else{
             $this->repository->killUsers($gameId, [$user->id]);
         }
-        $this->repository->createCheckUserLog($game, $user, $targetUserId);
+        $this->repository->createUserLog($game, $user, $targetUserId, 'knight');
         $success = $this->repository->setSkillUsed($game, $user);
         if(!$success){
             throw new \Exception('Updated Skill Error');

@@ -140,40 +140,16 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
-    public function createKillUserLog(Game $game, User $user, $targetUserId)
+    public function createUserLog(Game $game, User $user, $targetUserId, $skillUsedTarget)
     {
         return $this->logModel->create([
             'game_id' => $game->id,
             'stage' => $game->stage,
             'day' => $game->day,
-            'skill' => 'werewolf',
+            'skill' => $skillUsedTarget,
             'user_id' => $user->id,
             'target_user_id' => $targetUserId
-        ]);
-    }
-
-    public function createScenUserLog(Game $game, User $user, $targetUserId)
-    {
-        return $this->logModel->create([
-            'game_id' => $game->id,
-            'stage' => $game->stage,
-            'day' => $game->day,
-            'skill' => 'prophet',
-            'user_id' => $user->id,
-            'target_user_id' => $targetUserId
-        ]);
-    }
-
-    public function createCheckUserLog(Game $game, User $user, $targetUserId)
-    {
-        return $this->logModel->create([
-            'game_id' => $game->id,
-            'stage' => $game->stage,
-            'day' => $game->day,
-            'skill' => 'knight',
-            'user_id' => $user->id,
-            'target_user_id' => $targetUserId
-        ]);
+        ]);        
     }
 
     public function killUsers($gameId, $userIds)
