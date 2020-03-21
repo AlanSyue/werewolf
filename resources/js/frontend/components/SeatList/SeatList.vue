@@ -1,7 +1,7 @@
 <template>
 <ul class="c-seat-list">
     <li v-for="(seat, index) in seats" :key="index">
-        <Seat :number="seat.number" :content="seat.content" :active="seat.active" :self-active="seat.selfActive" />
+        <Seat :theme="theme" :number="seat.number" :content="seat.content" :active="seat.active" :self-active="seat.selfActive" />
     </li>
 </ul>
 </template>
@@ -14,7 +14,6 @@ ul.c-seat-list {
     @include flexable(row, flex-start, flex-start);
     flex-wrap: wrap;
     list-style: none;
-    margin: 8px 0;
     width: 100%;
     li {
         width: calc(25% - 15px);
@@ -40,15 +39,14 @@ export default {
         seats: {
             type: Array,
             default: []
+        },
+        theme: {
+            type: String,
+            deafult: "normal"
         }
     },
     components: {
         Seat
-    },
-    computed: {
-        classObject: function () {
-            return {};
-        }
     }
 };
 </script>
