@@ -19,31 +19,62 @@ class GameService
 
     public function werewolfUseSkill(User $user, $gameId, $targetUserId)
     {
-        $isWerewolf = $this->repository->isWerewolfAndAlive($gameId, $user->id);
+        $isWerewolfSkillAllowed = $this->repository->isWerewolfSkillAllowed($gameId, $user->id);
 
-        if (! $isWerewolf) {
-            throw new \Exception('No Auth');
+        if (! $isWerewolfSkillAllowed) {
+            throw new \Exception('No Auth or skill used');
         }
 
         $game = $this->repository->getById($gameId);
 
-        return $this->repository->createKillUserLog($game, $user, $targetUserId);
+        return $this->repository->createUserLog($game, $user, $targetUserId, 'werewolf');
     }
 
     public function prophetUseSkill(User $user, $gameId, $targetUserId)
     {
-        $isProphet = $this->repository->isProphet($gameId, $user->id);
+        $isProphetUser = $this->repository->isProphetUser($gameId, $user->id);
 
-        if (! $isProphet) {
+        if (! $isProphetUser) {
             throw new \Exception('No Auth');
         }
 
         $game = $this->repository->getById($gameId);
 
-        return $this->repository->createScenUserLog($game, $user, $targetUserId);
+        return $this->repository->createUserLog($game, $user, $targetUserId, 'prophet');
     }
 
-    public function changeStage(User $user, $gameId, $stageName)
+    public function knightUseSkill(User $user, $gameId, $targetUserId)
+    {
+        $isKnightUser = $this->repository->isKnightUser($gameId, $user->id);
+        if (! $isKnightUser) {
+            throw new \Exception('No Auth');
+        }
+
+        $isSkillUsed = $this->repository->isSkillUsed($gameId, $user->id);
+        if ($isSkillUsed) {
+            throw new \Exception('Skill Used');
+        }       
+
+        $isWerewolfUser = $this->repository->isWerewolfUser($gameId, $targetUserId);
+        $game = $this->repository->getById($gameId);
+
+        DB::beginTransaction();
+
+        if ($isWerewolfUser) {
+            $this->repository->killUsers($gameId, [$targetUserId]);
+        }else{
+            $this->repository->killUsers($gameId, [$user->id]);
+        }
+        $this->repository->createUserLog($game, $user, $targetUserId, 'knight');
+        $success = $this->repository->setSkillUsed($game, $user);
+        if(!$success){
+            throw new \Exception('Updated Skill Error');
+        }
+
+        DB::commit();
+    }
+
+    public function changeStage(User $user, $gameId, $stageName, $targetUserId = null)
     {
         $isSuccess = false;
         $stage = 'morning';
@@ -83,7 +114,11 @@ class GameService
                 break;
             case 'prophetEnd':
                 $stage = 'morning';
-                $skillAllowedTarget = ['knight'];
+                $skillAllowedTarget = [];
+                $isKnightSkillAllowed = $this->repository->isKnighSkillAllowed($gameId);
+                if($isKnightSkillAllowed){
+                    $skillAllowedTarget = ['knight'];
+                }
                 $soundData = [
                     ['method' => 'addSound', 'param' => '預言家請閉眼'],
                     ['method' => 'delay', 'param' => 3],
@@ -91,12 +126,40 @@ class GameService
                     ['method' => 'delay', 'param' => 1],
                     ['method' => 'addSound', 'param' => '昨晚被淘汰的是這些玩家'],
                 ];
+                // TODO: 會回傳 0 ，要研究錯誤原因
                 $isSuccess = $this->repository->changeStage(
                     $gameId,
                     $stage,
                     $skillAllowedTarget
                 );
                 $this->commitNightResult($gameId);
+            case 'knightUseResult':
+                $stage = 'morning';
+                $skillAllowedTarget = ['knight'];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'knightEnd': // 騎士尚未完成，待後續功能補上調整
+                $stage = 'night';
+                $skillAllowedTarget = ['werewolf'];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'morningContinue':
+                $stage = 'morning';
+                $skillAllowedTarget = [];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
             default:
                 // code...
                 break;
@@ -107,7 +170,8 @@ class GameService
             $game = $this->roomRepository->getGameByRoomId($room->id);
             $gameUsers = $this->repository->getGameUsers($game->id);
             $gameLogs = $this->repository->getGameLogByGameId($game->id);
-            event(new StageChanged($room, $game, $gameUsers, $gameLogs, $soundData));
+            $targetUserId = ['targetUserId' => $targetUserId];
+            event(new StageChanged($room, $game, $gameUsers, $gameLogs, $soundData, $targetUserId));
         } else {
             throw new \Exception('無成功更新遊戲階段');
         }

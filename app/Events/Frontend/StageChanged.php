@@ -18,13 +18,15 @@ class StageChanged implements ShouldBroadcast
     public $gameUsers;
     public $gameLogs;
     public $soundData;
-    public function __construct(Room $room, Game $game, $gameUsers, $gameLogs, $soundData)
+    public $targetUserId;
+    public function __construct(Room $room, Game $game, $gameUsers, $gameLogs, $soundData, $targetUserId)
     {
         $this->room = $room;
         $this->game = $game;
         $this->gameUsers = $gameUsers;
         $this->gameLogs = $gameLogs;
         $this->soundData = $soundData;
+        $this->targetUserId = $targetUserId;
     }
     
     public function broadcastOn()

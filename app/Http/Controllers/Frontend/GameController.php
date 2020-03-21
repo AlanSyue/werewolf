@@ -87,8 +87,54 @@ class GameController extends Controller
         $gameId = $request->input('gameId');
         $user = Auth::user();
         try {
-            $isProphet = $this->repository->isProphet($user, $gameId);
+            $isProphetUser = $this->repository->isProphetUser($user, $gameId);
             $this->service->changeStage($user, $gameId, 'prophetEnd');
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
+
+    public function useSkillKnight(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required',
+            'targetUserId' => 'required',
+        ]);
+        $gameId = $request->input('gameId');
+        $targetUserId = $request->input('targetUserId');
+        
+        $user = Auth::user();
+
+        try {
+            $this->service->knightUseSkill($user, $gameId, $targetUserId);
+            $this->service->changeStage($user, $gameId, 'knightUseResult', $targetUserId);
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
+
+    public function useSkillKnightEnd(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required'
+        ]);
+        $gameId = $request->input('gameId');
+        $user = Auth::user();
+        try {
+            $isKnight = $this->repository->isKnight($user, $gameId);
+            $game = $this->repository->getById($gameId);
+            $targetUserId = $this->repository->getKnightSkillTargetUserId($game);
+            $isWerewolf = $this->repository->isWerewolf($gameId, $targetUserId);
+            if ($isWerewolf) {
+                $this->service->changeStage($user, $gameId, 'knightEnd');
+            } else {
+               $this->service->changeStage($user, $gameId, 'morningContinue'); 
+            }
+            
             return 'ok';
         } catch (\Exception $e) {
             \Log::error($e);
