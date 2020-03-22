@@ -17,10 +17,10 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
 
     Route::group(['prefix' => 'room'], function () {
         Route::post('join', [RoomsController::class, 'join']);
-        Route::post('store', [RoomsController::class, 'store'])->name('rooms.store');
-        Route::get('data', [RoomsController::class, 'roomData'])->name('rooms.roomData');
+        Route::post('store', [RoomsController::class, 'store']);
+        Route::get('data', [RoomsController::class, 'roomData']);
         // Route::get('{room}', [RoomsController::class, 'show'])->name('rooms.show');
-        Route::post('seats', [RoomsController::class, 'upadteRoomSeats'])->name('rooms.seats');
+        Route::post('seats', [RoomsController::class, 'upadteRoomSeats']);
         Route::post('toGameView', [RoomsController::class, 'toGameView']);
     });
     Route::group(['prefix' => 'game'], function () {
@@ -35,8 +35,8 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         });
     });
 
-    Route::get('auth', [AccountController::class, 'getAuth'])->name('auth.get');
-    Route::get('{any}', function () {
+    Route::get('auth', [AccountController::class, 'getAuth']);
+    Route::get('/', function () {
         return view('frontend.app');
-    })->where('any', '.*');
+    })->where('any', '.*')->name('app');
 });
