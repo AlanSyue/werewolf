@@ -6,6 +6,7 @@ use App\Models\Auth\User;
 use App\Events\Frontend\StageChanged;
 use App\Repositories\Frontend\Game\GameRepository;
 use App\Repositories\Frontend\Room\RoomRepository;
+use DB;
 
 class GameService
 {

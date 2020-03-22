@@ -244,7 +244,7 @@ export default {
             this.updateGame(game);
             this.updateGameLogs(gameLogs);
             this.updateGameUsers(gameUsers);
-            if (this.Me.isRoomMajor) {
+            if (this.Me.isRoomManager) {
                 soundMechine.playByData(soundData);
             }
         },
