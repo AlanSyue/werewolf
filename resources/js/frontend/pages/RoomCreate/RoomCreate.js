@@ -28,11 +28,13 @@ export default {
             return this.$store.state.auth;
         },
         player_count() {
-            return this.civilianAmount +
+            return (
+                this.civilianAmount +
                 this.werewolfAmount +
                 this.kingwolfAmount +
                 this.snowwolfAmount +
-                this.activeGodRoles.length;
+                this.activeGodRoles.length
+            );
         }
     },
     watch: {},
@@ -43,7 +45,7 @@ export default {
     methods: {
         goBackPage() {
             try {
-                this.$router.push("/")
+                this.$router.push("/");
             } catch (e) {
                 console.error(e);
             }
