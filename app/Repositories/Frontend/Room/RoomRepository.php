@@ -104,74 +104,15 @@ class RoomRepository extends BaseRepository
             ->first();
     }
 
-    public function createOrUpdateGameUser(Game $game, array $seats)
+    public function deleteAndInsertGameUser(Game $game, array $insertData)
     {
         $this->gameUserModel->where('game_id', $game->id)->delete();
-        $insertData = $this->getGameUserInsertDataWithRandomRoleType($game, $seats);
-        $bool = $this->gameUserModel
-            ->insert($insertData);
-
-        return $bool;
+        return $this->gameUserModel->insert($insertData);
     }
 
     public function getGameUsers($gameId)
     {
         return $this->gameUserModel->where('game_id', $gameId)->get();
-    }
-
-    public function getGameUserInsertDataWithRandomRoleType(Game $game, array $gameUsers)
-    {
-        $roleTypeTable = \Config::get('constants.role_type');
-        $roleTypes = [];
-        for ($i = 0; $i < $game->civilian_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['civilian']);
-        }
-        for ($i = 0; $i < $game->werewolf_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['werewolf']);
-        }
-        for ($i = 0; $i < $game->snowwolf_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['snowwolf']);
-        }
-        for ($i = 0; $i < $game->kingwolf_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['kingwolf']);
-        }
-        for ($i = 0; $i < $game->prophet_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['prophet']);
-        }
-        for ($i = 0; $i < $game->witch_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['witch']);
-        }
-        for ($i = 0; $i < $game->knight_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['knight']);
-        }
-        for ($i = 0; $i < $game->hunter_amount; $i++) {
-            array_push($roleTypes, $roleTypeTable['hunter']);
-        }
-
-        return collect($gameUsers)->shuffle()
-            ->map(function ($gameUser, $key) use ($game, $roleTypes) {
-                $roleType = $roleTypes[$key];
-                return [
-                    'game_id' => $game->id,
-                    'seat_index' => $gameUser['seat_index'],
-                    'user_id' => $gameUser['user_id'],
-                    'role_type' => $roleType,
-                ];
-            })->toArray();
-    }
-    
-    protected function getRoleTypeTable()
-    {
-        return [
-            'civilian' => 1001,
-            'werewolf' => 2001,
-            'snowwolf' => 2002,
-            'kingwolf' => 2003,
-            'prophet' => 3001,
-            'witch' => 3002,
-            'knight' => 3003,
-            'hunter' => 3004,
-        ];
     }
 
     /**
@@ -180,7 +121,7 @@ class RoomRepository extends BaseRepository
      * @return array
      */
     public function getReadyUsersArray($roomId, $gameId)
-    {   
+    {
         return Redis::hgetall($roomId . '.' . $gameId);
     }
 }

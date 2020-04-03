@@ -23,9 +23,9 @@ class RoomsController extends Controller
      * @param  RoomService  $roomService
      * @param  RoomRepository  $roomRepository
      */
-    public function __construct(RoomService $roomService, RoomRepository $roomRepository)
+    public function __construct(RoomService $service, RoomRepository $roomRepository)
     {
-        $this->roomService = $roomService;
+        $this->service = $service;
         $this->roomRepository = $roomRepository;
     }
 
@@ -150,7 +150,8 @@ class RoomsController extends Controller
         $user = Auth::user();
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
         $game = $this->roomRepository->getGameByRoomId($roomUser->room_id);
-        $isSuccess = $this->roomRepository->createOrUpdateGameUser($game, $seats);
+        $insertData = $this->service->generateGameUserInsert($game, $seats);
+        $isSuccess = $this->roomRepository->deleteAndInsertGameUser($game, $insertData);
 
         if ($isSuccess) {
             $gameUsers = $this->roomRepository->getGameUsers($game->id);
