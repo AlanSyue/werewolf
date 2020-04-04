@@ -41,6 +41,7 @@
         <server name="APP_READ_ONLY" value="false"/>
         <server name="APP_ENV" value="testing"/>
         <server name="BCRYPT_ROUNDS" value="4"/>
+        <server name="BROADCAST_DRIVER" value="log"/>
         <server name="CACHE_DRIVER" value="array"/>
         <server name="CONTACT_CAPTCHA_STATUS" value="false"/>
         <server name="DB_CONNECTION" value="sqlite_testing"/>

@@ -142,6 +142,18 @@ class GameRepository extends BaseRepository
 
     public function createUserLog(Game $game, User $user, $targetUserId, $skillUsedTarget)
     {
+        $isSavedBefore = $this->logModel->where([
+            'game_id' => $game->id,
+            'stage' => $game->stage,
+            'day' => $game->day,
+            'skill' => $skillUsedTarget,
+            'user_id' => $user->id,
+            'target_user_id' => $targetUserId
+        ])->exists();
+        if($isSavedBefore){
+            throw new \Exception('以前儲存過此 game log');
+        }
+
         return $this->logModel->create([
             'game_id' => $game->id,
             'stage' => $game->stage,
@@ -150,6 +162,12 @@ class GameRepository extends BaseRepository
             'user_id' => $user->id,
             'target_user_id' => $targetUserId
         ]);        
+    }
+
+    public function getGameLogs($gameId){
+        return $this->logModel->where([
+            'game_id' => $gameId
+        ]);    
     }
 
     public function killUsers($gameId, $userIds)

@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Frontend\HomeController;
+// use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\GameController;
+use App\Http\Controllers\Frontend\GameVoteController;
 use App\Http\Controllers\Frontend\RoomsController;
 // use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Backend\DashboardController;
@@ -23,6 +24,7 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
         Route::post('seats', [RoomsController::class, 'upadteRoomSeats']);
         Route::post('toGameView', [RoomsController::class, 'toGameView']);
     });
+
     Route::group(['prefix' => 'game'], function () {
         Route::post('ready', [RoomsController::class, 'readyGame']);
         Route::post('start', [GameController::class, 'startGame']);
@@ -32,6 +34,10 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
             Route::post('prophet_end', [GameController::class, 'useSkillProphetEnd']);
             Route::post('knight', [GameController::class, 'useSkillKnight']);
             Route::post('knight_end', [GameController::class, 'useSkillKnightEnd']);
+        });
+        Route::group(['prefix' => 'vote'], function () {
+            Route::post('show', [GameVoteController::class,  'show']);
+            Route::post('action', [GameVoteController::class,  'action']);
         });
     });
 
