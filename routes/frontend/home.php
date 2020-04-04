@@ -36,7 +36,7 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     });
 
     Route::get('auth', [AccountController::class, 'getAuth']);
-    Route::get('/', function () {
+    Route::get('/{any}', function () {
         return view('frontend.app');
     })->where('any', '.*')->name('app');
 });
