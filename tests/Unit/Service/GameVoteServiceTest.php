@@ -8,11 +8,11 @@ use App\Models\Room\Room;
 use App\Models\Game\Game;
 use App\Models\Game\GameUser;
 use App\Services\Frontend\GameVoteService;
+use Illuminate\Support\Facades\Event;
 use App\Repositories\Frontend\Game\GameRepository;
 use App\Repositories\Frontend\Room\RoomRepository;
 use App\Events\Frontend\GameVote\VoteModelShowed;
 use App\Events\Frontend\GameVote\Voted;
-use Event;
 
 class GameVoteServiceTest extends TestCase
 {
@@ -57,6 +57,7 @@ class GameVoteServiceTest extends TestCase
     /** @test */
     public function showModel_method_will_throw_error_when_user_is_not_alive()
     {
+        Event::fake();
         $userId = 1;
         $gameId = 2;
         $user = factory(User::class)->make(['id' => $userId]);
@@ -67,12 +68,14 @@ class GameVoteServiceTest extends TestCase
             ->with($gameId, $userId)
             ->andReturn(false);
         $this->service->showModel($user, $gameId);
+        Event::assertNotDispatched(VoteModelShowed::class);
         
     }
 
     /** @test */
     public function vote_method_will_throw_error_when_user_is_not_alive()
     {
+        Event::fake();
         $userId = 1;
         $targetUserId = 2;
         $gameId = 1000;
@@ -84,11 +87,13 @@ class GameVoteServiceTest extends TestCase
             ->with($gameId, $userId)
             ->andReturn(false);
         $this->service->vote($user, $gameId, $targetUserId);
+        Event::assertNotDispatched(Voted::class);
     }
 
     /** @test */
     public function vote_method_will_throw_error_when_target_user_is_not_alive()
     {
+        Event::fake();
         $userId = 1;
         $targetUserId = 2;
         $gameId = 1000;
@@ -107,6 +112,7 @@ class GameVoteServiceTest extends TestCase
             ->andReturn(false);
 
         $this->service->vote($user, $gameId, $targetUserId);
+        Event::assertNotDispatched(Voted::class);
     }
 
     /** @test */
