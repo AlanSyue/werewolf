@@ -10,7 +10,7 @@ use App\Models\Room\Room;
 use App\Models\Room\RoomUser;
 use App\Models\Game\Game;
 use App\Models\Game\GameUser;
-use App\Events\Frontend\GameVote\VoteModelShowed;
+use App\Events\Frontend\StageChanged;
 use App\Events\Frontend\GameVote\Voted;
 
 class GameVoteTest extends TestCase
@@ -22,13 +22,17 @@ class GameVoteTest extends TestCase
     {
         // Setup
         Event::fake();
+        $expectedStage = 'vote';
         $user = factory(User::class)->create(['password' => '1234']);
-        $room = factory(Room::class)->create([]);
+        $room = factory(Room::class)->create(['user_id' => $user->id]);
+        $game = factory(Game::class)->state('standard')->create([
+            'stage' => 'morning',
+            'room_id' => $room->id
+        ]);
         factory(RoomUser::class)->create([
             'room_id' => $room->id,
             'user_id' => $user->id
-            ]);
-        $game = factory(Game::class)->state('standard')->create(['room_id' => $room->id]);
+        ]);
         factory(GameUser::class)->create([
             'game_id' => $game->id,
             'user_id' => $user->id
@@ -42,7 +46,9 @@ class GameVoteTest extends TestCase
             ->assertStatus(200);
 
         // Verify
-        Event::assertDispatched(VoteModelShowed::class);
+        Event::assertDispatched(StageChanged::class, function($e) use ($expectedStage) {
+            return $e->game->stage === $expectedStage;
+        });
     }
 
     /** @test */
@@ -52,7 +58,7 @@ class GameVoteTest extends TestCase
         Event::fake();
         $user = factory(User::class)->create(['password' => '1234']);
         $targetUser = factory(User::class)->create(['password' => '1234']);
-        $room = factory(Room::class)->create([]);
+        $room = factory(Room::class)->create(['user_id' => $user->id]);
         $game = factory(Game::class)->state('standard')->create(['room_id' => $room->id]);
         $expect = [
             'game_id' => $game->id,

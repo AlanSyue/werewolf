@@ -29,6 +29,12 @@ class RoomsController extends Controller
         $this->roomRepository = $roomRepository;
     }
 
+
+    public function home()
+    {
+        return view('frontend.app');
+    }
+
     /**
      * Store a newly created room in storage.
      *

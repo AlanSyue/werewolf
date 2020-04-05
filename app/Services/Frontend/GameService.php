@@ -81,7 +81,6 @@ class GameService
         $stage = 'morning';
         $skillAllowedTarget = [];
         $soundData = [];
-
         switch ($stageName) {
             case 'nightComing':
                 $stage = 'night';
@@ -153,6 +152,24 @@ class GameService
                 );
                 break;
             case 'morningContinue':
+                $stage = 'morning';
+                $skillAllowedTarget = [];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'vote':
+                $stage = 'vote';
+                $skillAllowedTarget = [];
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'dayEnd':
                 $stage = 'morning';
                 $skillAllowedTarget = [];
                 $isSuccess = $this->repository->changeStage(

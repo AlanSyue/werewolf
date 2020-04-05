@@ -68,7 +68,6 @@ class GameRepository extends BaseRepository
             ])
             ->get();
     }
-
     public function isProphetUser($gameId, $userId)
     {
         $ROLE_TYPE = \Config::get('constants.role_type');
@@ -167,7 +166,7 @@ class GameRepository extends BaseRepository
     public function getGameLogs($gameId){
         return $this->logModel->where([
             'game_id' => $gameId
-        ]);    
+        ])->get();
     }
 
     public function killUsers($gameId, $userIds)

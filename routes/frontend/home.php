@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     Route::group(['prefix' => 'game'], function () {
         Route::post('ready', [RoomsController::class, 'readyGame']);
         Route::post('start', [GameController::class, 'startGame']);
+        Route::post('dayEnd', [GameController::class, 'dayEnd']);
         Route::group(['prefix' => 'skill'], function () {
             Route::post('werewolf', [GameController::class, 'useSkillWerewolf']);
             Route::post('prophet', [GameController::class, 'useSkillProphet']);
@@ -42,7 +43,13 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
     });
 
     Route::get('auth', [AccountController::class, 'getAuth']);
+
+    Route::get('/', function () {
+        return view('frontend.app');
+    })->name('app');
+
     Route::get('/{any}', function () {
         return view('frontend.app');
-    })->where('any', '.*')->name('app');
+    })->where('any', '.*');
+
 });

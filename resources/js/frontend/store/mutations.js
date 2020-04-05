@@ -97,7 +97,19 @@ let mutations = {
         return (state.auth = auth);
     },
     FETCH_GAME_LOGS(state, gameLogs) {
-        return (state.gameLogs = gameLogs);
+        let translatedGameLogs = gameLogs.map( log => {
+            const {
+                id: id,
+                game_id: gameId,
+                user_id: userId,
+                target_user_id: targetUserId,
+                stage: stage,
+                day: day,
+                skill
+            } = log;
+            return {id, gameId, userId, targetUserId, stage, day, skill}
+        });
+        return (state.gameLogs = translatedGameLogs);
     }
 };
 export default mutations;

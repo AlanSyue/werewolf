@@ -2,7 +2,6 @@
 
 namespace App\Events\Frontend;
 
-use App\Models\Auth\User;
 use App\Models\Room\Room;
 use App\Models\Game\Game;
 use Illuminate\Queue\SerializesModels;

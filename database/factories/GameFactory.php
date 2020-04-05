@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 $factory->define(Game::class, function (Generator $faker) {
     return [
         'room_id' => Str::random(10),
+        'stage' => 'morning',
         'civilian_amount' => 0,
         'prophet_amount' => 0,
         'witch_amount' => 0,

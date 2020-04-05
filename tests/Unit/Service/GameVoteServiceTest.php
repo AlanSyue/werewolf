@@ -4,28 +4,32 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\Auth\User;
-use App\Models\Room\Room;
 use App\Models\Game\Game;
 use App\Models\Game\GameUser;
+use App\Services\Frontend\GameService;
 use App\Services\Frontend\GameVoteService;
 use Illuminate\Support\Facades\Event;
 use App\Repositories\Frontend\Game\GameRepository;
 use App\Repositories\Frontend\Room\RoomRepository;
-use App\Events\Frontend\GameVote\VoteModelShowed;
 use App\Events\Frontend\GameVote\Voted;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class GameVoteServiceTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
     protected $service;
+    protected $gameService;
     protected $repository;
     protected $roomRepository;
 
     protected function setUp() : void
     {
         parent::setUp();
+        $this->gameService = \Mockery::mock(GameService::class);
         $this->repository = \Mockery::mock(GameRepository::class);
         $this->roomRepository = \Mockery::mock(RoomRepository::class);
         $this->service = new GameVoteService(
+            $this->gameService,
             $this->repository,
             $this->roomRepository
         );
@@ -37,39 +41,38 @@ class GameVoteServiceTest extends TestCase
     }
 
     /** @test */
-    public function showModel_method_can_trigger_event_for_showing_vote_modal()
-    {
-        Event::fake();
-        $userId = 1;
-        $gameId = 2;
-        $user = factory(User::class)->make(['id' => $userId]);
-        $room = factory(Room::class)->make(['id' => 999, 'user_id' => $userId]);
-        $this->repository
-            ->shouldReceive('isUserAlive')
-            ->andReturn(true);
-        $this->roomRepository
-            ->shouldReceive('getRoomByUserId')
-            ->andReturn($room);
-        $this->service->showModel($user, $gameId);
-        Event::assertDispatched(VoteModelShowed::class);
-    }
-
-    /** @test */
     public function showModel_method_will_throw_error_when_user_is_not_alive()
     {
         Event::fake();
         $userId = 1;
         $gameId = 2;
         $user = factory(User::class)->make(['id' => $userId]);
+        $dummyGame = factory(Game::class)->make();
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('發起投票者權限錯誤');
-        $this->repository
-            ->shouldReceive('isUserAlive')
-            ->with($gameId, $userId)
-            ->andReturn(false);
+        $this->expectExceptionMessage('發起投票者需要是室長權限');
+        $this->repository->shouldReceive('getById')->andReturn($dummyGame);
+        $this->roomRepository->shouldReceive('isRoomManager')->andReturn(false);
+
         $this->service->showModel($user, $gameId);
-        Event::assertNotDispatched(VoteModelShowed::class);
-        
+    }
+
+
+    /** @test */
+    public function showModel_method_can_trigger_event_for_showing_vote_modal()
+    {
+        Event::fake();
+        $gameId = 2;
+        $user = factory(User::class)->make(['id' => '1']);
+        $dummyGame = factory(Game::class)->make();
+        $this->repository->shouldReceive('getById')->andReturn($dummyGame);
+        $this->roomRepository->shouldReceive('isRoomManager')->andReturn(true);
+
+        $this->gameService
+            ->shouldReceive('changeStage')
+            ->with($user, $gameId, 'vote')
+            ->once();
+
+        $this->service->showModel($user, $gameId);
     }
 
     /** @test */
@@ -129,6 +132,7 @@ class GameVoteServiceTest extends TestCase
             factory(GameUser::class),
             factory(GameUser::class)
         ];
+        $gameLogCollect = collect($gameLogs);
 
         $this->repository
             ->shouldReceive('isUserAlive')
@@ -144,7 +148,7 @@ class GameVoteServiceTest extends TestCase
 
         $this->repository
             ->shouldReceive('getGameLogs')
-            ->andReturn($gameLogs);
+            ->andReturn($gameLogCollect);
         
         $this->service->vote($user, $gameId, $targetUserId);
         Event::assertDispatched(Voted::class, function ($e) use ($gameLogs) {
