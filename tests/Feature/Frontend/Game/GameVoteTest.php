@@ -37,7 +37,7 @@ class GameVoteTest extends TestCase
             'game_id' => $game->id,
             'user_id' => $user->id
         ]);
-        
+
         // Exercise
         $this->actingAs($user)
             ->post('/game/vote/show', [
@@ -46,7 +46,7 @@ class GameVoteTest extends TestCase
             ->assertStatus(200);
 
         // Verify
-        Event::assertDispatched(StageChanged::class, function($e) use ($expectedStage) {
+        Event::assertDispatched(StageChanged::class, function ($e) use ($expectedStage) {
             return $e->game->stage === $expectedStage;
         });
     }

@@ -22,7 +22,7 @@ class GameVoteServiceTest extends TestCase
     protected $repository;
     protected $roomRepository;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->gameService = \Mockery::mock(GameService::class);
@@ -108,7 +108,7 @@ class GameVoteServiceTest extends TestCase
             ->shouldReceive('isUserAlive')
             ->with($gameId, $userId)
             ->andReturn(true);
-        
+
         $this->repository
             ->shouldReceive('isUserAlive')
             ->with($gameId, $targetUserId)
@@ -149,7 +149,7 @@ class GameVoteServiceTest extends TestCase
         $this->repository
             ->shouldReceive('getGameLogs')
             ->andReturn($gameLogCollect);
-        
+
         $this->service->vote($user, $gameId, $targetUserId);
         Event::assertDispatched(Voted::class, function ($e) use ($gameLogs) {
             return $e->gameLogs === $gameLogs;

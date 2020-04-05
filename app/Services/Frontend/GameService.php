@@ -22,7 +22,7 @@ class GameService
     {
         $isWerewolfSkillAllowed = $this->repository->isWerewolfSkillAllowed($gameId, $user->id);
 
-        if (! $isWerewolfSkillAllowed) {
+        if (!$isWerewolfSkillAllowed) {
             throw new \Exception('No Auth or skill used');
         }
 
@@ -35,7 +35,7 @@ class GameService
     {
         $isProphetUser = $this->repository->isProphetUser($gameId, $user->id);
 
-        if (! $isProphetUser) {
+        if (!$isProphetUser) {
             throw new \Exception('No Auth');
         }
 
@@ -47,14 +47,14 @@ class GameService
     public function knightUseSkill(User $user, $gameId, $targetUserId)
     {
         $isKnightUser = $this->repository->isKnightUser($gameId, $user->id);
-        if (! $isKnightUser) {
+        if (!$isKnightUser) {
             throw new \Exception('No Auth');
         }
 
         $isSkillUsed = $this->repository->isSkillUsed($gameId, $user->id);
         if ($isSkillUsed) {
             throw new \Exception('Skill Used');
-        }       
+        }
 
         $isWerewolfUser = $this->repository->isWerewolfUser($gameId, $targetUserId);
         $game = $this->repository->getById($gameId);
@@ -63,12 +63,12 @@ class GameService
 
         if ($isWerewolfUser) {
             $this->repository->killUsers($gameId, [$targetUserId]);
-        }else{
+        } else {
             $this->repository->killUsers($gameId, [$user->id]);
         }
         $this->repository->createUserLog($game, $user, $targetUserId, 'knight');
         $success = $this->repository->setSkillUsed($game, $user);
-        if(!$success){
+        if (!$success) {
             throw new \Exception('Updated Skill Error');
         }
 
@@ -81,6 +81,7 @@ class GameService
         $stage = 'morning';
         $skillAllowedTarget = [];
         $soundData = [];
+
         switch ($stageName) {
             case 'nightComing':
                 $stage = 'night';
@@ -116,7 +117,7 @@ class GameService
                 $stage = 'morning';
                 $skillAllowedTarget = [];
                 $isKnightSkillAllowed = $this->repository->isKnighSkillAllowed($gameId);
-                if($isKnightSkillAllowed){
+                if ($isKnightSkillAllowed) {
                     $skillAllowedTarget = ['knight'];
                 }
                 $soundData = [

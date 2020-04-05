@@ -29,12 +29,6 @@ class RoomsController extends Controller
         $this->roomRepository = $roomRepository;
     }
 
-
-    public function home()
-    {
-        return view('frontend.app');
-    }
-
     /**
      * Store a newly created room in storage.
      *
@@ -106,7 +100,7 @@ class RoomsController extends Controller
 
         $room = $model->find($roomId);
 
-        if (! $room) {
+        if (!$room) {
             return  response('尚未加入房間', 400);
         }
 
@@ -131,12 +125,12 @@ class RoomsController extends Controller
     {
         $user = Auth::user();
 
-        if (! $user) {
+        if (!$user) {
             abort(403);
         }
         $roomUser = $this->roomRepository->getRoomUserForUser($user);
 
-        if (! isset($roomUser)) {
+        if (!isset($roomUser)) {
             return  response('尚未加入房間');
         }
         $roomRelationData = $this->roomRepository->getRoomAllRelationData($roomUser->room_id);

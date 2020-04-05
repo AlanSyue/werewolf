@@ -10,7 +10,7 @@ export default {
         Button,
         SeatList
     },
-    data: function() {
+    data: function () {
         return {
             loading: false,
             roleDialogVisible: false,
@@ -29,27 +29,27 @@ export default {
     computed: {
         ...mapState(["auth", "room", "game", "auth", "userMap", "gameLogs"]),
         voteDialogVisible() {
-            if(!this.game){
+            if (!this.game) {
                 return false;
             }
             return this.game.stage === 'vote';
         },
         isShowVoteResult() {
-            if(!this.GameUsers){
+            if (!this.GameUsers) {
                 return false;
             }
-            const liveUserCount = this.GameUsers.filter( user => user.isLive ).length;
-            const votedUserCount = this.GameUsers.filter( user => user.isVoted ).length;
+            const liveUserCount = this.GameUsers.filter(user => user.isLive).length;
+            const votedUserCount = this.GameUsers.filter(user => user.isVoted).length;
             return liveUserCount == votedUserCount;
         },
         isWaitingVoteResult() {
-            if(!this.Me){
+            if (!this.Me) {
                 return false;
             }
             return !this.Me.isLive || this.Me.isVoted;
         },
         voteResult() {
-            if(!this.GameUsers || !this.game ||!this.gameLogs){
+            if (!this.GameUsers || !this.game || !this.gameLogs) {
                 return null;
             }
             let voteGroupBy = this.gameLogs.filter(log => {
@@ -57,7 +57,7 @@ export default {
             }).reduce((voteGroupBy, log) => {
                 let voteTo = log.targetUserId;
                 let voteFrom = log.userId;
-                if(!voteGroupBy.hasOwnProperty(voteTo)){
+                if (!voteGroupBy.hasOwnProperty(voteTo)) {
                     voteGroupBy[voteTo] = [];
                 }
                 voteGroupBy[voteTo] = [...voteGroupBy[voteTo], voteFrom];
@@ -67,13 +67,13 @@ export default {
             return voteGroupBy;
         },
         isAvailableToStartGame() {
-            if(!this.game || !this.Me){
+            if (!this.game || !this.Me) {
                 return false;
             }
             return this.game.stage === 'idle' && this.Me.isRoomManager;
         },
         isAvailableToTriggerVote() {
-            if(!this.game || !this.Me){
+            if (!this.game || !this.Me) {
                 return false;
             }
             return this.game.stage === 'morning' && this.Me.isRoomManager;
@@ -106,7 +106,7 @@ export default {
                 return null;
             }
             let object = {};
-            _.forEach(this.GameUsers, function(user) {
+            _.forEach(this.GameUsers, function (user) {
                 object[user.userId] = user;
             });
             return object;
@@ -140,11 +140,11 @@ export default {
     created() {
         let self = this;
         this.fetchAuth();
-        this.fetchGameData().then(function() {
+        this.fetchGameData().then(function () {
             self.handleEventService(self.room.id);
         });
     },
-    mounted() {},
+    mounted() { },
     methods: {
         ...mapMutations({
             FETCH_ROOM_USERS: "FETCH_ROOM_USERS",
@@ -304,7 +304,7 @@ export default {
                 });
         },
         vote() {
-            if(!this.voteUserId){
+            if (!this.voteUserId) {
                 this.$message({
                     message: "請先選擇投票對象",
                     type: "warning"

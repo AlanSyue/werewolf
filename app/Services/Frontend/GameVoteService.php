@@ -27,10 +27,10 @@ class GameVoteService
     public function showModel(User $user, $gameId)
     {
         $stageName = 'vote';
-        
+
         $game = $this->repository->getById($gameId);
         $isRoomManager = $this->roomRepository->isRoomManager($game->room_id, $user->id);
-        if(!$isRoomManager){
+        if (!$isRoomManager) {
             throw new \Exception('發起投票者需要是室長權限');
         }
 
@@ -41,11 +41,11 @@ class GameVoteService
     public function vote(User $user, $gameId, $targetUserId)
     {
         $isAlive = $this->repository->isUserAlive($gameId, $user->id);
-        if(!$isAlive){
+        if (!$isAlive) {
             throw new \Exception('投票者權限錯誤');
         }
         $isTargetAlive = $this->repository->isUserAlive($gameId, $targetUserId);
-        if(!$isTargetAlive){
+        if (!$isTargetAlive) {
             throw new \Exception('投票對象不是允許的對象');
         }
         $game = $this->repository->getById($gameId);
