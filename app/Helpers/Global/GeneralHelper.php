@@ -35,9 +35,9 @@ if (! function_exists('home_route')) {
                 return 'admin.dashboard';
             }
 
-            return 'frontend.index';
+            return 'frontend.app';
         }
 
-        return 'frontend.index';
+        return 'frontend.app';
     }
 }
