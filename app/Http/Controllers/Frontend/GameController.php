@@ -141,4 +141,43 @@ class GameController extends Controller
             abort(400, '伺服器忙碌中');
         }
     }
+
+    public function useSkillWitch(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required',
+            'targetUserId' => 'required',
+            'useMethod' => 'required,'
+        ]);
+        $gameId = $request->input('gameId');
+        $targetUserId = $request->input('targetUserId');
+        $useMethod = $request->input('useMethod') ? "save" : "kill";
+        try {
+            $isSuccess = $this->service->witchUseSkill($user, $gameId, $targetUserId, $useMethod);
+            if (!$isSuccess) {
+                throw new \Exception('更新錯誤');
+            }
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
+
+    public function useSkillWitchEnd(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required'
+        ]);
+        $gameId = $request->input('gameId');
+        $user = Auth::user();
+        try {
+            $isWitchUser = $this->repository->isWitchUser($user, $gameId);
+            $this->service->changeStage($user, $gameId, 'witchEnd');
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
 }

@@ -79,12 +79,23 @@ class GameRepository extends BaseRepository
         ])->exists();
     }
 
-    public function isKnighSkillAllowed($gameId)
+    public function isKnightSkillAllowed($gameId)
     {
         $ROLE_TYPE = \Config::get('constants.role_type');
         return $this->gameUserModel->where([
             ['game_id', $gameId],
             ['role_type', $ROLE_TYPE['knight']],
+            ['skill_use_status', 0],
+            ['is_live', 1]
+        ])->exists();
+    }
+
+    public function isWitchSkillAllowed($gameId)
+    {
+        $ROLE_TYPE = \Config::get('constants.role_type');
+        return $this->gameUserModel->where([
+            ['game_id', $gameId],
+            ['role_type', $ROLE_TYPE['witch']],
             ['skill_use_status', 0],
             ['is_live', 1]
         ])->exists();
@@ -97,6 +108,16 @@ class GameRepository extends BaseRepository
             ['game_id', $gameId],
             ['user_id', $userId],
             ['role_type', $ROLE_TYPE['knight']]
+        ])->exists();
+    }
+
+    public function isWitchUser($gameId, $userId)
+    {
+        $ROLE_TYPE = \Config::get('constants.role_type');
+        return $this->gameUserModel->where([
+            ['game_id', $gameId],
+            ['user_id', $userId],
+            ['role_type', $ROLE_TYPE['witch']]
         ])->exists();
     }
 
@@ -150,6 +171,24 @@ class GameRepository extends BaseRepository
             'user_id' => $user->id,
             'target_user_id' => $targetUserId
         ]);        
+    }
+
+    public function saveUsers($gameId, $userIds)
+    {
+        DB::beginTransaction();
+        $updatedRows = $this->gameUserModel->where([
+                ['game_id', $gameId],
+                ['is_live', 0]
+            ])->whereIn('user_id', $userIds)
+            ->update([
+                'is_live' => 1
+            ]);
+
+        if ($updatedRows !== count($userIds)) {
+            throw new \Exception('伺服器錯誤');
+        }
+
+        DB::commit();
     }
 
     public function killUsers($gameId, $userIds)

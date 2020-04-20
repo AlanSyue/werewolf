@@ -74,6 +74,36 @@ class GameService
         DB::commit();
     }
 
+    public function witchUseSkill(User $user, $gameId, $targetUserId, $useMethod)
+    {
+        $isWitchUser = $this->repository->isWitchUser($gameId, $user->id);
+        if (! $isWitchUser) {
+            throw new \Exception('No Auth');
+        }
+
+        $isSkillUsed = $this->repository->isSkillUsed($gameId, $user->id);
+        if ($isSkillUsed) {
+            throw new \Exception('Skill Used');
+        }       
+
+        $game = $this->repository->getById($gameId);
+
+        DB::beginTransaction();
+
+        if ($useMethod == "save") {
+            $this->repository->saveUsers($gameId, [$targetUserId]);
+        } else {
+            $this->repository->killUsers($gameId, [$targetUserId]);
+        }
+        $this->repository->createUserLog($game, $user, $targetUserId, 'witch');
+        $success = $this->repository->setSkillUsed($game, $user);
+        if(!$success){
+            throw new \Exception('Updated Skill Error');
+        }
+
+        DB::commit();
+    }
+
     public function changeStage(User $user, $gameId, $stageName, $targetUserId = null)
     {
         $isSuccess = false;
@@ -113,6 +143,27 @@ class GameService
                 );
                 break;
             case 'prophetEnd':
+                $stage = 'night';
+                $skillAllowedTarget = [];
+                $isWitchSkillAllowed = $this->repository->isWitchSkillAllowed($gameId);
+
+                if($isWitchSkillAllowed) {
+                    $skillAllowedTarget = ['witch'];
+                }
+
+                $soundData = [
+                    ['method' => 'addSound', 'param' => '預言家請閉眼'],
+                    ['method' => 'delay', 'param' => 3],
+                    ['method' => 'addSound', 'param' => '女巫請睜眼，是否使用解藥或毒藥'],
+                ];
+                // TODO: 會回傳 0 ，要研究錯誤原因
+                $isSuccess = $this->repository->changeStage(
+                    $gameId,
+                    $stage,
+                    $skillAllowedTarget
+                );
+                break;
+            case 'witchEnd':
                 $stage = 'morning';
                 $skillAllowedTarget = [];
                 $isKnightSkillAllowed = $this->repository->isKnighSkillAllowed($gameId);
@@ -120,7 +171,7 @@ class GameService
                     $skillAllowedTarget = ['knight'];
                 }
                 $soundData = [
-                    ['method' => 'addSound', 'param' => '預言家請閉眼'],
+                    ['method' => 'addSound', 'param' => '女巫請閉眼'],
                     ['method' => 'delay', 'param' => 3],
                     ['method' => 'addSound', 'param' => '天亮請睜眼'],
                     ['method' => 'delay', 'param' => 1],

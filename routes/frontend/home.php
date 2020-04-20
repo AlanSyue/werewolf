@@ -37,6 +37,8 @@ Route::group(['middleware' => ['auth', 'password_expires']], function () {
             Route::post('werewolf', [GameController::class, 'useSkillWerewolf']);
             Route::post('prophet', [GameController::class, 'useSkillProphet']);
             Route::post('prophet_end', [GameController::class, 'useSkillProphetEnd']);
+            Route::post('witch', [GameController::class, 'useSkillWitch']);
+            Route::post('witch_end', [GameController::class, 'useSkillWitchEnd']);
             Route::post('knight', [GameController::class, 'useSkillKnight']);
             Route::post('knight_end', [GameController::class, 'useSkillKnightEnd']);
         });
