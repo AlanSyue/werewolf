@@ -10,9 +10,8 @@ export default {
         Button,
         SeatList
     },
-    data: function() {
+    data: function () {
         return {
-            isGameStarted: false,
             loading: false,
             roleDialogVisible: false,
             werewolfSkillDialogVisible: false,
@@ -20,6 +19,7 @@ export default {
             knightSkillDialogVisible: false,
             werewolfKillUserId: null,
             isScanedTonight: false,
+            voteUserId: null,
             scanUserId: null,
             scanResultBackupUserIds: [], // 在預言家查驗時先呈現給使用者看，不必再等 game_log 更新，但寫法需要再思考
             gameRecordDialogVisible: false,
@@ -28,6 +28,56 @@ export default {
     },
     computed: {
         ...mapState(["auth", "room", "game", "auth", "userMap", "gameLogs"]),
+        voteDialogVisible() {
+            if (!this.game) {
+                return false;
+            }
+            return this.game.stage === 'vote';
+        },
+        isShowVoteResult() {
+            if (!this.GameUsers) {
+                return false;
+            }
+            const liveUserCount = this.GameUsers.filter(user => user.isLive).length;
+            const votedUserCount = this.GameUsers.filter(user => user.isVoted).length;
+            return liveUserCount == votedUserCount;
+        },
+        isWaitingVoteResult() {
+            if (!this.Me) {
+                return false;
+            }
+            return !this.Me.isLive || this.Me.isVoted;
+        },
+        voteResult() {
+            if (!this.GameUsers || !this.game || !this.gameLogs) {
+                return null;
+            }
+            let voteGroupBy = this.gameLogs.filter(log => {
+                return log.skill === 'vote' && log.day === this.game.day;
+            }).reduce((voteGroupBy, log) => {
+                let voteTo = log.targetUserId;
+                let voteFrom = log.userId;
+                if (!voteGroupBy.hasOwnProperty(voteTo)) {
+                    voteGroupBy[voteTo] = [];
+                }
+                voteGroupBy[voteTo] = [...voteGroupBy[voteTo], voteFrom];
+                return voteGroupBy;
+            }, {})
+
+            return voteGroupBy;
+        },
+        isAvailableToStartGame() {
+            if (!this.game || !this.Me) {
+                return false;
+            }
+            return this.game.stage === 'idle' && this.Me.isRoomManager;
+        },
+        isAvailableToTriggerVote() {
+            if (!this.game || !this.Me) {
+                return false;
+            }
+            return this.game.stage === 'morning' && this.Me.isRoomManager;
+        },
         prophetScanedUserIds() {
             let logs = this.gameLogs;
             if (!Boolean(logs)) {
@@ -38,12 +88,17 @@ export default {
                 .map(row => row.target_user_id);
         },
         GameUsers() {
-            if (!Boolean(this.room)) {
-                return null;
-            }
-            const gameUsers = this.$store.state.gameUsers;
+            let gameUsers = this.$store.state.gameUsers;
+            let game = this.$store.state.game;
+            let room = this.$store.state.room;
+            let gameLogs = this.$store.state.gameLogs;
             return gameUsers.map(gameUser => {
-                return new GameUser(gameUser, this.room);
+                return new GameUser({
+                    gameUser: gameUser,
+                    game: game,
+                    room: room,
+                    gameLogs: gameLogs
+                });
             });
         },
         GameUserMap() {
@@ -51,7 +106,7 @@ export default {
                 return null;
             }
             let object = {};
-            _.forEach(this.GameUsers, function(user) {
+            _.forEach(this.GameUsers, function (user) {
                 object[user.userId] = user;
             });
             return object;
@@ -85,11 +140,11 @@ export default {
     created() {
         let self = this;
         this.fetchAuth();
-        this.fetchGameData().then(function() {
+        this.fetchGameData().then(function () {
             self.handleEventService(self.room.id);
         });
     },
-    mounted() {},
+    mounted() { },
     methods: {
         ...mapMutations({
             FETCH_ROOM_USERS: "FETCH_ROOM_USERS",
@@ -137,8 +192,18 @@ export default {
                 .post("/game/start", {
                     gameId: this.game.id
                 })
-                .then(res => {
-                    this.isGameStarted = true;
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        showAllUserVoteModel() {
+            this.loading = true;
+            axios
+                .post("/game/vote/show", {
+                    gameId: this.game.id
                 })
                 .catch(err => {
                     console.log(err);
@@ -238,6 +303,38 @@ export default {
                     this.loading = false;
                 });
         },
+        vote() {
+            if (!this.voteUserId) {
+                this.$message({
+                    message: "請先選擇投票對象",
+                    type: "warning"
+                });
+            }
+            axios
+                .post("/game/vote/action", {
+                    gameId: this.game.id,
+                    targetUserId: this.voteUserId
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
+        triggerDayEnd() {
+            this.loading = true;
+            axios
+                .post("/game/dayEnd", {
+                    gameId: this.game.id
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        },
         changeStage(data) {
             console.log(data);
             let { game, gameUsers, gameLogs, soundData } = data;
@@ -248,12 +345,17 @@ export default {
                 soundMechine.playByData(soundData);
             }
         },
+        changeGameLogs(data) {
+            let { gameLogs } = data;
+            this.updateGameLogs(gameLogs);
+        },
         handleEventService: function joinedRoom(roomId) {
             window.Echo.join(`room.${roomId}`)
                 .here(this.FETCH_ROOM_USERS)
                 .joining(this.handleUserJoined)
                 .leaving(this.handleUserLeaving)
-                .listen("Frontend\\StageChanged", this.changeStage);
+                .listen("Frontend\\StageChanged", this.changeStage)
+                .listen("Frontend\\GameVote\\Voted", this.changeGameLogs);
         }
     }
 };

@@ -125,6 +125,7 @@ class GameController extends Controller
         $gameId = $request->input('gameId');
         $user = Auth::user();
         try {
+            // Todos: 需做身份檢查
             $isKnight = $this->repository->isKnight($user, $gameId);
             $game = $this->repository->getById($gameId);
             $targetUserId = $this->repository->getKnightSkillTargetUserId($game);
@@ -135,6 +136,23 @@ class GameController extends Controller
                $this->service->changeStage($user, $gameId, 'morningContinue'); 
             }
             
+            return 'ok';
+        } catch (\Exception $e) {
+            \Log::error($e);
+            abort(400, '伺服器忙碌中');
+        }
+    }
+
+    public function dayEnd(Request $request)
+    {
+        $this->validate($request, [
+            'gameId' => 'required'
+        ]);
+        $gameId = $request->input('gameId');
+        $user = Auth::user();
+        try {
+            // Todos: 需做身份檢查
+            $this->service->changeStage($user, $gameId, 'dayEnd');
             return 'ok';
         } catch (\Exception $e) {
             \Log::error($e);

@@ -12,30 +12,27 @@
         </div>
 
         <div class="action-wrapper">
-            <Button
-                v-if="Me && Me.isRoomManager && !isGameStarted"
-                @onClick="startGame"
-            >
+            <Button v-if="isAvailableToStartGame" @onClick="startGame">
                 開始遊戲
+            </Button>
+            <Button
+                v-if="isAvailableToTriggerVote"
+                @onClick="showAllUserVoteModel"
+            >
+                發起投票
             </Button>
         </div>
 
         <el-footer class="footer">
             <el-row type="flex">
                 <el-col :span="8">
-                    <div
-                        class="icon-btn"
-                        @click="roleDialogVisible = true"
-                    >
+                    <div class="icon-btn" @click="roleDialogVisible = true">
                         <span class="icon"></span>
                         <span class="content">查看角色</span>
                     </div>
                 </el-col>
                 <el-col :span="8">
-                    <div
-                        :class="['icon-btn']"
-                        @click="showSkillDialog"
-                    >
+                    <div :class="['icon-btn']" @click="showSkillDialog">
                         <span class="icon"></span>
                         <span class="content">使用技能</span>
                     </div>
@@ -87,13 +84,14 @@
                     <span
                         :class="[
                             'index',
-                            { werewolf: gameUser.role.enName == 'werewolf' }
+                            { werewolf: gameUser.role.enName == 'werewolf' },
                         ]"
                     >
                         {{ gameUser.isWereworlf ? "狼人" : gameUser.seatIndex }}
                     </span>
                     <span>{{
-                        gameUser.isLive
+                        gameUser.isLive &&
+                        userMap.hasOwnProperty(gameUser.userId)
                             ? userMap[gameUser.userId].firstName
                             : "死亡"
                     }}</span>
@@ -128,12 +126,10 @@
                     class="scan-radio-btn"
                     :disabled="
                         isScanedTonight ||
-                            gameUser.userId == Me.userId ||
-                            !gameUser.isLive ||
-                            prophetScanedUserIds.indexOf(gameUser.userId) >
-                                -1 ||
-                            scanResultBackupUserIds.indexOf(gameUser.userId) >
-                                -1
+                        gameUser.userId == Me.userId ||
+                        !gameUser.isLive ||
+                        prophetScanedUserIds.indexOf(gameUser.userId) > -1 ||
+                        scanResultBackupUserIds.indexOf(gameUser.userId) > -1
                     "
                     v-model="scanUserId"
                     :label="gameUser.userId"
@@ -142,7 +138,7 @@
                     <span
                         :class="[
                             'index',
-                            { werewolf: gameUser.role.enName == 'werewolf' }
+                            { werewolf: gameUser.role.enName == 'werewolf' },
                         ]"
                     >
                         {{ gameUser.seatIndex }}
@@ -157,7 +153,8 @@
                         }}
                     </span>
                     <span>{{
-                        gameUser.isLive
+                        gameUser.isLive &&
+                        userMap.hasOwnProperty(gameUser.userId)
                             ? userMap[gameUser.userId].firstName
                             : "死亡"
                     }}</span>
@@ -194,22 +191,91 @@
                     border
                 >
                     <span>{{
-                        gameUser.isLive ?
-                        userMap[gameUser.userId].firstName :
-                        '死亡'
+                        gameUser.isLive &&
+                        userMap.hasOwnProperty(gameUser.userId)
+                            ? userMap[gameUser.userId].firstName
+                            : "死亡"
                     }}</span>
                 </el-radio>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary"
+                <el-button
+                    type="primary"
                     :loading="loading"
                     @click="useKnightSkill"
                     >確認</el-button
                 >
-                <el-button type="primary" @click="knightSkillDialogVisible = false"
+                <el-button
+                    type="primary"
+                    @click="knightSkillDialogVisible = false"
                     >關閉</el-button
                 >
             </span>
+        </el-dialog>
+        <el-dialog
+            title="發起投票"
+            :visible.sync="voteDialogVisible"
+            width="90%"
+            center
+        >
+            <div v-if="isShowVoteResult">
+                公布投票結果
+                <ul>
+                    <li v-for="voteTo in Object.keys(voteResult)">
+                        <span>
+                            投給 {{ GameUserMap[voteTo].seatIndex }} 的有
+                        </span>
+                        <span>
+                            {{
+                                voteResult[voteTo]
+                                    .map(
+                                        (userId) =>
+                                            GameUserMap[userId].seatIndex
+                                    )
+                                    .join(",")
+                            }}
+                        </span>
+                    </li>
+                </ul>
+                <Button
+                    type="secondary"
+                    v-if="Me.isRoomManager"
+                    @onClick="triggerDayEnd"
+                >
+                    白天結束
+                </Button>
+            </div>
+            <div v-else-if="isWaitingVoteResult">
+                等待投票結果
+            </div>
+            <div v-else>
+                <div class="select-area">
+                    <el-radio
+                        v-for="gameUser in GameUsers"
+                        :key="gameUser.seatIndex"
+                        class="vote-radio-btn"
+                        :disabled="
+                            gameUser.userId == Me.userId || !gameUser.isLive
+                        "
+                        v-model="voteUserId"
+                        :label="gameUser.userId"
+                        border
+                    >
+                        <span class="index">{{ gameUser.seatIndex }}</span>
+                        <span>{{
+                            gameUser.isLive &&
+                            userMap.hasOwnProperty(gameUser.userId)
+                                ? userMap[gameUser.userId].firstName
+                                : "死亡"
+                        }}</span>
+                    </el-radio>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                    <el-button type="primary" :loading="loading" @click="vote"
+                        >確認</el-button
+                    >
+                </span>
+            </div>
         </el-dialog>
         <el-dialog
             title="遊戲過程"

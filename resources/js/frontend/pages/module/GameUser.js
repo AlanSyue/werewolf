@@ -1,7 +1,7 @@
 import { ROLE_KEY_MAP } from "./constant";
 
 class GameUser{
-    constructor(data, room) {
+    constructor({gameUser, room, gameLogs, game}) {
         const {
             gameId,
             isLive,
@@ -10,7 +10,7 @@ class GameUser{
             skill_use_status,
             roleType,
             userId
-        } = data;
+        } = gameUser;
         this.userId = userId;
         this.gameId = gameId;
         this.isLive = isLive;
@@ -26,6 +26,9 @@ class GameUser{
         this.isKnight = this.role.enName == 'knight';
         this.isHunter = this.role.enName == 'hunter';
         this.isCivilian = this.role.enName == 'civilian';
+        this.isVoted = gameLogs.filter( log => {
+            return log.userId == userId && log.skill === 'vote' && log.day == game.day
+        }).length > 0;
     }
     
     isWerewolf(role){

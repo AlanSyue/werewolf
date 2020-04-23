@@ -23,14 +23,14 @@ class GameRepository extends BaseRepository
         Game $model,
         GameUser $gameUserModel,
         GameLogs $logModel
-    )
-    {
+    ) {
         $this->model = $model;
         $this->gameUserModel = $gameUserModel;
         $this->logModel = $logModel;
     }
-    
-    public function getGameUserById($id){
+
+    public function getGameUserById($id)
+    {
         return $this->gameUserModel->find($id);
     }
 
@@ -142,6 +142,18 @@ class GameRepository extends BaseRepository
 
     public function createUserLog(Game $game, User $user, $targetUserId, $skillUsedTarget)
     {
+        $isSavedBefore = $this->logModel->where([
+            'game_id' => $game->id,
+            'stage' => $game->stage,
+            'day' => $game->day,
+            'skill' => $skillUsedTarget,
+            'user_id' => $user->id,
+            'target_user_id' => $targetUserId
+        ])->exists();
+        if ($isSavedBefore) {
+            throw new \Exception('以前儲存過此 game log');
+        }
+
         return $this->logModel->create([
             'game_id' => $game->id,
             'stage' => $game->stage,
@@ -149,16 +161,23 @@ class GameRepository extends BaseRepository
             'skill' => $skillUsedTarget,
             'user_id' => $user->id,
             'target_user_id' => $targetUserId
-        ]);        
+        ]);
+    }
+
+    public function getGameLogs($gameId)
+    {
+        return $this->logModel->where([
+            'game_id' => $gameId
+        ])->get();
     }
 
     public function killUsers($gameId, $userIds)
     {
         DB::beginTransaction();
         $updatedRows = $this->gameUserModel->where([
-                ['game_id', $gameId],
-                ['is_live', 1]
-            ])->whereIn('user_id', $userIds)
+            ['game_id', $gameId],
+            ['is_live', 1]
+        ])->whereIn('user_id', $userIds)
             ->update([
                 'is_live' => 0
             ]);
@@ -170,12 +189,13 @@ class GameRepository extends BaseRepository
         DB::commit();
     }
 
-    public function setSkillUsed($gameId, $userId){
+    public function setSkillUsed($gameId, $userId)
+    {
         return $this->gameUserModel->where([
-                ['game_id', $gameId],
-                ['user_id', $userId],
-                ['skill_use_status', 0]
-            ])
+            ['game_id', $gameId],
+            ['user_id', $userId],
+            ['skill_use_status', 0]
+        ])
             ->update([
                 'skill_use_status' => 1
             ]);
@@ -189,20 +209,20 @@ class GameRepository extends BaseRepository
         $gameUpdatedArr = [
             'stage' => $stage
         ];
-        if($isNextDay){
+        if ($isNextDay) {
             $gameUpdatedArr['day'] = DB::raw('day + 1');
         }
 
         $updateCount += Game::where('id', $gameId)->update($gameUpdatedArr);
         $updateCount += $this->gameUserModel->where([
-                ['game_id', $gameId],
-                ['is_live', 1]
-            ])->update([
-                'is_skill_allowed' => 0
-            ]);
+            ['game_id', $gameId],
+            ['is_live', 1]
+        ])->update([
+            'is_skill_allowed' => 0
+        ]);
 
         $skillAllowedRoleTypeArr = $this->transladteRoleTypeByName($skillAllowedTarget);
-        $updateCount += $this->gameUserModel->whereIn('role_type',$skillAllowedRoleTypeArr)
+        $updateCount += $this->gameUserModel->whereIn('role_type', $skillAllowedRoleTypeArr)
             ->where([
                 ['game_id', $gameId],
                 ['is_live', 1],

@@ -38,6 +38,6 @@ if (! function_exists('home_route')) {
             return 'frontend.app';
         }
 
-        return 'frontend.app';
+        return 'frontend.auth.login';
     }
 }

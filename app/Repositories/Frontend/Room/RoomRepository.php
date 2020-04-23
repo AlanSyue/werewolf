@@ -75,6 +75,15 @@ class RoomRepository extends BaseRepository
             ->first();
     }
 
+    public function isRoomManager($roomId, $userId)
+    {
+        return $this->model
+            ->where([
+                'id' => $roomId,
+                'user_id' => $userId
+            ])->exists();
+    }
+
     public function updateRoomUser(User $user, Room $room)
     {
         $roomUser = $this->roomUserModel
